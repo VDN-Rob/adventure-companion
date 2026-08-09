@@ -1,59 +1,86 @@
-import { setupDatabase } from "@/database/database";
 import { TripsRepository } from "@/database/tripRepository";
 import { Trip } from "@/models/Trip";
-import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
-import { useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import * as Crypto from "expo-crypto";
+import { useSQLiteContext } from "expo-sqlite";
+import { useEffect, useState } from "react";
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function Index() {
   // Temporary memory
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [text, onChangeText] = useState('Useless Text');
-  const [count, setCount] = useState(0);
+  const [name, setName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const db = useSQLiteContext();
+  const repository = new TripsRepository(db);
+
+  // When Index finishes loading, get the trips
+  useEffect(() => {
+    async function loadTrips() {
+      const loadedTrips = await repository.getTrips();
+
+      setTrips(loadedTrips);
+    }
+
+    loadTrips();
+  }, [db]);
   
   // Event handlers
-  function handleAddTrip() {
+  async function handleAddTrip() {
     const newTrip: Trip = {
-      id: "0", // TODO
-      name: "Test", // TODO
-      startDate: "01.01.00", // TODO
-      endDate: "31.12.00" // TODO
+      id: Crypto.randomUUID(),
+      name: name,
+      startDate: startDate,
+      endDate: endDate
     }
-    setTrips([...trips, newTrip]);
+
+    await repository.createTrip(newTrip);
+    const trips = await repository.getTrips();
+    
+    setTrips(trips);
   }
 
   return (
-    <SQLiteProvider
-      databaseName="cycling.db"
-      onInit={setupDatabase}
-    >
       <View style={styles.container}>
-        <Text style={styles.title}>Cycling Companion</Text>
+        <Text>Cycling Companion</Text>
 
         <Text>Your offline cycling companion.</Text>
         
-        {trips.length === 0 ? (
-          <Text>No trips yet.</Text>
-        ) : (
-          trips.map((trip) => (
-            <Text key={trip.id}>
-              {trip.name}
-              </Text> ))
-        )}
+        <FlatList
+          data={trips}
+          keyExtractor={(trip) => trip.id}
+          renderItem={({ item }) => (
+            <View>
+              <Text>{item.name}</Text>
+              <Text>{item.startDate}</Text>
+              <Text>{item.endDate}</Text>
+            </View>
+          )}
+        />
+
+        <TextInput
+          placeholder="Trip name"
+          value={name}
+          onChangeText={setName}
+        />
+
+        <TextInput
+          placeholder="Start date"
+          value={startDate}
+          onChangeText={setStartDate}
+        />
+
+        <TextInput
+          placeholder="End date"
+          value={endDate}
+          onChangeText={setEndDate}
+        />
         
         <Button title="+ New Trip" onPress={handleAddTrip} />
       </View>
-    </SQLiteProvider>
   );
 }
 
-export function TripScreen() {
-  const db = useSQLiteContext();
-
-  const tripsRepository = new TripsRepository(db);
-
-  return
-}
 // Button list component
 type ItemProps = { title: string };
 
