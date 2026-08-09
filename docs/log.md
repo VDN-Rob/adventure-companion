@@ -1,4 +1,4 @@
-# Day 1
+# Step 1
 
 ## Checklist
 # Environment
@@ -40,6 +40,39 @@
 - Make different screens
 - Add real memory
 
-## Next step
+## Step 2
 
-SQLite and persistent local storage.
+# SQLite
+[X] expo-sqlite installed
+[ ] Database opens successfully
+[ ] trips table created
+[ ] Understanding primary keys
+[ ] Understanding CRUD
+[ ] Understanding parameterized queries
+
+# Application
+[ ] Trips can be created
+[ ] Trips can be displayed
+[ ] Trips can be edited
+[ ] Trips can be deleted
+[ ] Data survives an application restart
+
+# Architecture
+[ ] UI doesn't contain SQL
+[ ] Repository handles database operations
+[ ] SQLite is the local source of truth
+
+# Understanding SQL
+[ ] SELECT
+[ ] INSERT
+[ ] UPDATE
+[ ] DELETE
+[ ] WHERE
+[ ] ORDER BY
+
+# Documentation
+[ ] Architecture updated
+[ ] Learning log updated
+[ ] Changes committed to Git
+[ ] SQLite and persistent local storage.
+
