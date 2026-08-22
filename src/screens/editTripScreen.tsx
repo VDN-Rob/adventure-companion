@@ -62,28 +62,25 @@ export default function EditTripScreen() {
         <TextInput
             value={name}
             onChangeText={setName}
-            placeholder={name}
         />
 
         <Text>Start date</Text>
         <TextInput
             value={startDate}
             onChangeText={setStartDate}
-            placeholder={startDate}
         />
 
         <Text>End date</Text>
         <TextInput
             value={endDate}
             onChangeText={setEndDate}
-            placeholder={endDate}
         />
 
         <Text>Description</Text>
         <TextInput
             value={description}
             onChangeText={setDescription}
-            placeholder={description}
+            placeholder= "Add new description"
         />
 
         <Button
