@@ -34,14 +34,14 @@ export default function Index() {
           renderItem={({ item }) => (
             <View>
               <Text>{item.name}</Text>
-              <Button
-                title="Edit"
-                onPress={() => handleEditTrip(item.id)}
-              />
               <Text>{item.startDate}</Text>
               <Text>{item.endDate}</Text>
               {(item && item.description != null) &&
               <Text>{item.description}</Text>}
+              <Button
+                title="Edit"
+                onPress={() => handleEditTrip(item.id)}
+              />
             </View>
           )}
         />
@@ -52,6 +52,7 @@ export default function Index() {
         />
       </View>
   );
+
 }
 
 // Button list component
@@ -68,6 +69,7 @@ function handleEditTrip(id: string){
     params: {id}
   })
 }
+
 
 
 // Aestethic

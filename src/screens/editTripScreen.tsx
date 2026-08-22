@@ -3,7 +3,7 @@ import { useTripsRepository } from "@/utils/useTripsRepository";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { Button, SafeAreaView, Text, TextInput } from "react-native";
+import { Alert, Button, SafeAreaView, Text, TextInput } from "react-native";
 
 export default function EditTripScreen() {
     // Retrieve id from parameters
@@ -53,6 +53,32 @@ export default function EditTripScreen() {
 
         router.replace("/")
     }
+
+    function handleDeleteTrip(id: string){
+        Alert.alert(
+          "Delete trip?",
+          "This action cannot be undone.",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Delete",
+              style: "destructive",
+              onPress: deleteTrip,
+            },
+          ]
+        );
+      }
+    
+    async function deleteTrip() {
+        if (!id) return;
+      
+        await tripsRepository.deleteTrip(id);
+      
+        router.replace("/");
+      }
     
     return (
         <SafeAreaView>
@@ -86,6 +112,10 @@ export default function EditTripScreen() {
         <Button
             title="Save changes"
             onPress={handleSave}
+        />
+        <Button
+        title="Delete"
+        onPress={() => handleDeleteTrip(id)}
         />
         </SafeAreaView>
     );
