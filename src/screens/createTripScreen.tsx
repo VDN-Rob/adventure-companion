@@ -33,13 +33,15 @@ export default function CreateTripScreen() {
 
     async function handleSaveTrip() {
         const newTrip: Trip = {
-        id: Crypto.randomUUID(),
-        name: name,
-        startDate: startDate,
-        endDate: endDate,
-        description: description
+            id: Crypto.randomUUID(),
+            name: name,
+            startDate: startDate,
+            endDate: endDate,
+            description: description
         }
 
+        console.log("Trip before saving:", newTrip);
+        
         await tripsRepository.createTrip(newTrip);
         const trips = await tripsRepository.getTrips();
         

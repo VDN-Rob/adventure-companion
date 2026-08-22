@@ -48,7 +48,7 @@ export default function EditTripScreen() {
         endDate: endDate,
         description: description
         }
-
+        
         await tripsRepository.updateTrip(updatedTrip);
 
         router.replace("/")

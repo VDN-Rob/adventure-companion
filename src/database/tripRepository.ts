@@ -3,34 +3,61 @@
 import { Trip } from "@/models/Trip";
 import { SQLiteDatabase } from "expo-sqlite";
 
+type TripRow = {
+    id: string;
+    name: string;
+    start_date: string;
+    end_date: string;
+    description: string;
+  };
 
 export class TripsRepository {
     constructor(private db: SQLiteDatabase) {}
     
     // Function to get all the trips
-    async getTrips() : Promise<Trip[]> {
-        return this.db.getAllAsync<Trip>(
-            "SELECT * FROM trips ORDER BY start_date"
+    async getTrips(): Promise<Trip[]> {
+        const rows = await this.db.getAllAsync<TripRow>(
+          "SELECT * FROM trips ORDER BY start_date"
         );
-    }
+      
+        return rows.map(row => this.mapRowToTrip(row));
+      }
 
     // Function to get one specific trip
-    async getTripById(id: string) : Promise<Trip | null> {
-        return this.db.getFirstAsync<Trip>(
-            "SELECT * FROM trips WHERE id = ?",
-            [id]
+    async getTripById(id: string): Promise<Trip | null> {
+        const row = await this.db.getFirstAsync<TripRow>(
+          "SELECT * FROM trips WHERE id = ?",
+          id
         );
-    }
+      
+        if (!row) {
+          return null;
+        }
+      
+        return this.mapRowToTrip(row);
+      }
+
+    // Small helper function to map database to react
+    private mapRowToTrip(row: TripRow): Trip {
+        return {
+          id: row.id,
+          name: row.name,
+          startDate: row.start_date,
+          endDate: row.end_date,
+          description: row.description,
+        };
+      }
 
     // Funtion to create a new trip
     async createTrip(trip: Trip) {
         return this.db.runAsync(
-            `INSERT INTO trips (id, name, start_date, end_date) 
-            VALUES (?, ?, ?, ?)`,
+            `INSERT INTO trips (id, name, start_date, end_date, description) 
+            VALUES (?, ?, ?, ?, ?)`,
             trip.id,
             trip.name,
             trip.startDate,
-            trip.endDate
+            trip.endDate,
+            trip.description ?? ""
         );    
     }
 
@@ -38,11 +65,12 @@ export class TripsRepository {
     async updateTrip(trip: Trip) {
         return this.db.runAsync(
             `UPDATE trips
-             SET name = ?, start_date = ?, end_date = ?
+             SET name = ?, start_date = ?, end_date = ?, description = ?
              WHERE id = ?`,
             trip.name,
             trip.startDate,
             trip.endDate,
+            trip.description ?? "",
             trip.id
         );
     }
