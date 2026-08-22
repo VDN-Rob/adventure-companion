@@ -12,6 +12,32 @@ export async function setupDatabase(db: SQLiteDatabase) {
         description TEXT 
       );
     `);
+
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS days (
+        id TEXT PRIMARY KEY NOT NULL,
+        trip_id TEXT NOT NULL,
+        date TEXT NOT NULL,
+        title TEXT,
+        notes TEXT,
+        planned_elevation REAL,
+        planned_distance REAL,
+        FOREIGN KEY (trip_id) REFERENCES trips(id)
+      );
+    `);
+
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS stops (
+        id TEXT PRIMARY KEY NOT NULL,
+        day_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL,
+        latitude REAL NOT NULL,
+        longitude REAL NOT NULL,
+        notes TEXT,
+        FOREIGN KEY (day_id) REFERENCES days(id)
+      );
+    `);
   }
 
 // For development purposes: database reset
