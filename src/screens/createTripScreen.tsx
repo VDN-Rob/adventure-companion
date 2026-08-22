@@ -40,8 +40,6 @@ export default function CreateTripScreen() {
             description: description
         }
 
-        console.log("Trip before saving:", newTrip);
-        
         await tripsRepository.createTrip(newTrip);
         const trips = await tripsRepository.getTrips();
         
