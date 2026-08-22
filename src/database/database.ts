@@ -8,7 +8,8 @@ export async function setupDatabase(db: SQLiteDatabase) {
         id TEXT PRIMARY KEY NOT NULL,
         name TEXT NOT NULL,
         start_date TEXT NOT NULL,
-        end_date TEXT NOT NULL
+        end_date TEXT NOT NULL,
+        description TEXT 
       );
     `);
   }

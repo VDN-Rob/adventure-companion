@@ -1,23 +1,20 @@
-import { TripsRepository } from "@/database/tripRepository";
 import { Trip } from "@/models/Trip";
-import * as Crypto from "expo-crypto";
+import { useTripsRepository } from "@/utils/useTripsRepository";
+import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   // Temporary memory
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [name, setName] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const db = useSQLiteContext();
-  const repository = new TripsRepository(db);
+  const tripsRepository = useTripsRepository();
 
   // When Index finishes loading, get the trips
   useEffect(() => {
     async function loadTrips() {
-      const loadedTrips = await repository.getTrips();
+      const loadedTrips = await tripsRepository.getTrips();
 
       setTrips(loadedTrips);
     }
@@ -25,21 +22,6 @@ export default function Index() {
     loadTrips();
   }, [db]);
   
-  // Event handlers
-  async function handleAddTrip() {
-    const newTrip: Trip = {
-      id: Crypto.randomUUID(),
-      name: name,
-      startDate: startDate,
-      endDate: endDate
-    }
-
-    await repository.createTrip(newTrip);
-    const trips = await repository.getTrips();
-    
-    setTrips(trips);
-  }
-
   return (
       <View style={styles.container}>
         <Text>Cycling Companion</Text>
@@ -54,29 +36,16 @@ export default function Index() {
               <Text>{item.name}</Text>
               <Text>{item.startDate}</Text>
               <Text>{item.endDate}</Text>
+              {(item && item.description != null) &&
+              <Text>{item.description}</Text>}
             </View>
           )}
         />
-
-        <TextInput
-          placeholder="Trip name"
-          value={name}
-          onChangeText={setName}
-        />
-
-        <TextInput
-          placeholder="Start date"
-          value={startDate}
-          onChangeText={setStartDate}
-        />
-
-        <TextInput
-          placeholder="End date"
-          value={endDate}
-          onChangeText={setEndDate}
-        />
         
-        <Button title="+ New Trip" onPress={handleAddTrip} />
+        <Button
+          title="+ New Trip"
+          onPress={() => router.push("/createTrip")}
+        />
       </View>
   );
 }
