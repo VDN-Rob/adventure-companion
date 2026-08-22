@@ -1,4 +1,4 @@
-# Step 1
+# Step 1 - Building application
 
 ## Checklist
 # Environment
@@ -40,39 +40,63 @@
 - Make different screens
 - Add real memory
 
-## Step 2
+## Step 2 - Trips and persistent storage
 
 # SQLite
 [X] expo-sqlite installed
-[ ] Database opens successfully
-[ ] trips table created
-[ ] Understanding primary keys
-[ ] Understanding CRUD
-[ ] Understanding parameterized queries
+[X] Database opens successfully
+[X] trips table created
+[X] Understanding primary keys
+[X] Understanding CRUD
+[X] Understanding parameterized queries
 
 # Application
-[ ] Trips can be created
-[ ] Trips can be displayed
-[ ] Trips can be edited
-[ ] Trips can be deleted
-[ ] Data survives an application restart
+[X] Trips can be created
+[X] Trips can be displayed
+[X] Trips can be edited
+[X] Trips can be deleted
+[X] Data survives an application restart
 
 # Architecture
-[ ] UI doesn't contain SQL
-[ ] Repository handles database operations
-[ ] SQLite is the local source of truth
+[X] UI doesn't contain SQL
+[X] Repository handles database operations
+[X] SQLite is the local source of truth
+[X] SQLite and persistent local storage.
 
-# Understanding SQL
-[ ] SELECT
-[ ] INSERT
-[ ] UPDATE
-[ ] DELETE
-[ ] WHERE
-[ ] ORDER BY
+# Step 3 - Trip and Day planning
 
-# Documentation
-[ ] Architecture updated
-[ ] Learning log updated
-[ ] Changes committed to Git
-[ ] SQLite and persistent local storage.
+# Data
+[X] Day model created
+[X] Stop model created
+[X] days table created
+[ ] stops table created
+[X] Foreign keys understood
+[ ] Trip → Days relationship works
+[ ] Day → Stops relationship works
+
+# UI
+[ ] Trip details screen
+[ ] Day list
+[ ] Create day
+[ ] Edit day
+[ ] Delete day
+[ ] Create stop
+[ ] Edit stop
+[ ] Delete stop
+[ ] Empty states
+
+# Architecture
+[ ] Day repository
+[ ] Stop repository
+[ ] SQL remains outside UI
+[ ] Reusable cards/components
+[ ] Navigation parameters understood
+[ ] Validation implemented
+[ ] Derived trip statistics implemented
+
+# Offline
+[ ] Create data in airplane mode
+[ ] Data remains available
+[ ] Editing works offline
+[ ] Deletion works offline
 
