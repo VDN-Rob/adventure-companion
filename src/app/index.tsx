@@ -34,6 +34,10 @@ export default function Index() {
           renderItem={({ item }) => (
             <View>
               <Text>{item.name}</Text>
+              <Button
+                title="Edit"
+                onPress={() => handleEditTrip(item.id)}
+              />
               <Text>{item.startDate}</Text>
               <Text>{item.endDate}</Text>
               {(item && item.description != null) &&
@@ -58,7 +62,12 @@ const Item = ({ title }: ItemProps) => (
 );
 
 
-
+function handleEditTrip(id: string){
+  router.push({
+    pathname: "/editTrip",
+    params: {id}
+  })
+}
 
 
 // Aestethic
