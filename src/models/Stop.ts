@@ -5,5 +5,5 @@ export interface Stop {
     type: string;
     latitude: number;
     longitude: number;
-    notes?: string;
+    notes: string | null;
 }

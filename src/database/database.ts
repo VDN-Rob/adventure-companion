@@ -5,19 +5,19 @@ import { deleteDatabaseAsync, SQLiteDatabase } from "expo-sqlite";
 export async function setupDatabase(db: SQLiteDatabase) {
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS trips (
-        id TEXT PRIMARY KEY NOT NULL,
-        name TEXT NOT NULL,
-        start_date TEXT NOT NULL,
-        end_date TEXT NOT NULL,
+        id TEXT PRIMARY KEY ,
+        name TEXT ,
+        start_date TEXT ,
+        end_date TEXT ,
         description TEXT 
       );
     `);
 
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS days (
-        id TEXT PRIMARY KEY NOT NULL,
-        trip_id TEXT NOT NULL,
-        date TEXT NOT NULL,
+        id TEXT PRIMARY KEY ,
+        trip_id TEXT ,
+        date TEXT ,
         title TEXT,
         notes TEXT,
         planned_elevation REAL,
@@ -28,12 +28,12 @@ export async function setupDatabase(db: SQLiteDatabase) {
 
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS stops (
-        id TEXT PRIMARY KEY NOT NULL,
-        day_id TEXT NOT NULL,
-        name TEXT NOT NULL,
-        type TEXT NOT NULL,
-        latitude REAL NOT NULL,
-        longitude REAL NOT NULL,
+        id TEXT PRIMARY KEY ,
+        day_id TEXT ,
+        name TEXT ,
+        type TEXT ,
+        latitude REAL ,
+        longitude REAL ,
         notes TEXT,
         FOREIGN KEY (day_id) REFERENCES days(id)
       );
