@@ -55,7 +55,7 @@ export default function EditPOIScreen() {
         
         await poisRepository.updatePOI(updatedPOI);
 
-        router.replace("/")
+        router.back()
     }
 
     if (!poi) {
@@ -85,7 +85,7 @@ export default function EditPOIScreen() {
           
             await poisRepository.deletePOI(poiId);
           
-            router.replace("/");
+            router.back();
           }
         
     return (

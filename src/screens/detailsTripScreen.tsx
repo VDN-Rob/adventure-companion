@@ -8,7 +8,7 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { Button, FlatList, SafeAreaView, Text } from "react-native";
 
-export default async function TripDetailsScreen() {
+export default function TripDetailsScreen() {
     // Retrieve id from parameters
     const { id: tripId } = useLocalSearchParams<{ id: string }>();
 

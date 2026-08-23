@@ -75,6 +75,12 @@ export default function DayDetailsScreen() {
         <Text>{day.plannedElevation}</Text>
         <Text>{day.plannedDistance}</Text>
 
+        <Button
+        title="Edit day"
+        onPress={() => {editDay(dayId)}}
+        />
+
+
         <Text>Point of interest</Text>
         <Text>--------------</Text>
         <FlatList
@@ -82,7 +88,7 @@ export default function DayDetailsScreen() {
           keyExtractor={(poi) => poi.id}
           renderItem={({ item }) => (
             <POICard
-              poi={item} onPress={() => {}}
+              poi={item} onPress={() => editPOI(item.id)}
               />
           )}
           ListEmptyComponent={
@@ -98,13 +104,6 @@ export default function DayDetailsScreen() {
     );
 }
 
-// Button list component
-type ItemProps = { title: string };
-
-const Item = ({ title }: ItemProps) => (
-  <Text>{title}</Text>
-);
-
 function handleAddPoi(dayId: string){
   router.push({
     pathname: "/createPoi",
@@ -112,9 +111,16 @@ function handleAddPoi(dayId: string){
   })
 }
 
-// function handleDetailsPoi(poiId: string){
-//   router.push({
-//     pathname: "/detailsPoi",
-//     params: {poiId}
-//   })
-// }
+function editPOI(poiId: string){
+  router.push({
+    pathname: "/editPOI",
+    params: {poiId}
+  })
+}
+
+function editDay(dayId: string){
+  router.push({
+    pathname: "/editDay",
+    params: {dayId}
+  })
+}
