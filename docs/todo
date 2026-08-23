@@ -1,0 +1,18 @@
+QOL:
+- start date < end date
+- calendar for dates
+- Day date in range trip dates
+- 
+
+UI:
+- Copy/move editing and deleting inside of trip details
+- styling:
+    * index
+    * tripDetailsScreen
+    * createTripScreen
+    * editTripScreen
+    * createDayScreen
+
+Bugs:
+- possible to go back in index with added trips dissapearing
+

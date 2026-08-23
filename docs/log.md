@@ -100,3 +100,12 @@
 [ ] Editing works offline
 [ ] Deletion works offline
 
+# Step 4 — Offline-first architecture
+# Step 5 — Maps & OpenStreetMap
+# Step 6 — GPX & route data
+# Step 7 — Diary, photos & FIT
+# Step 8 — GPS & navigation
+# Step 9 — Strava integration
+# Step 10 — Testing
+# Step 11 — CI/CD & professionalisation
+# Step 12 — Portfolio & interview preparation
