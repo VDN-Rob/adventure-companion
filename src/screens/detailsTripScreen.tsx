@@ -1,10 +1,11 @@
+import { DayCard } from "@/components/DayCard";
 import { Day } from "@/models/Day";
 import { Trip } from "@/models/Trip";
 import { useDaysRepository } from "@/utils/useDaysRepository";
 import { useTripsRepository } from "@/utils/useTripsRepository";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
-import { Button, FlatList, SafeAreaView, Text, View } from "react-native";
+import { Button, FlatList, SafeAreaView, Text } from "react-native";
 
 export default function TripDetailsScreen() {
     // Retrieve id from parameters
@@ -16,29 +17,56 @@ export default function TripDetailsScreen() {
 
     // State
     const [trip, setTrip] = useState<Trip>();
-    const [days, setDays] = useState<Day[]>();
+    const [days, setDays] = useState<Day[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     
     // Load the right trip everytime the screen is loaded
     useFocusEffect(
       useCallback(() => {
         async function loadTrip() {
-          if (!tripId) return;
-    
-          const trip = await tripsRepository.getTripById(tripId);
-    
-          if (!trip) return;
-    
-          setTrip(trip);
-    
-          const days = await daysRepository.getAllDayForTrip(tripId);
-    
-          setDays(days);
+          if (!tripId) {
+            setError("No trip ID was provided.");
+            setIsLoading(false);
+            return;
+          }
+  
+          try {
+            setIsLoading(true);
+            setError(null);
+  
+            const trip = await tripsRepository.getTripById(tripId);
+  
+            if (!trip) {
+              setError("Trip not found.");
+              return;
+            }
+  
+            setTrip(trip);
+  
+            const days =
+              await daysRepository.getAllDayForTrip(tripId);
+  
+            setDays(days);
+          } catch {
+            setError("Unable to load trip.");
+          } finally {
+            setIsLoading(false);
+          }
         }
-    
+  
         loadTrip();
       }, [tripId])
     );
-    
+  
+    if (isLoading) {
+      return <Text>Loading...</Text>;
+    }
+  
+    if (error || !trip) {
+      return <Text>{error ?? "Trip not found."}</Text>;
+    }
+
     return (
         <SafeAreaView>
         <Text>{trip?.name}</Text>
@@ -52,14 +80,10 @@ export default function TripDetailsScreen() {
           data={days}
           keyExtractor={(day) => day.id}
           renderItem={({ item }) => (
-            <View>
-              <Text
-                onPress={() => handleDetailsDay(item.id)}>{item.title}</Text>
-              <Text>{item.date}</Text>
-              <Text>{item.notes}</Text>
-              <Text>{item.plannedDistance}</Text>
-              <Text>{item.plannedElevation}</Text>
-            </View>
+            <DayCard
+              day={item}
+              onPress={() => handleDetailsDay(item.id)}
+            />
           )}
         />
         <Button
@@ -70,13 +94,6 @@ export default function TripDetailsScreen() {
         </SafeAreaView>
     );
 }
-
-// Button list component
-type ItemProps = { title: string };
-
-const Item = ({ title }: ItemProps) => (
-  <Text>{title}</Text>
-);
 
 function handleAddDay(tripId: string){
   router.push({

@@ -56,10 +56,10 @@ export class DaysRepository {
             day.id,
             day.tripId,
             day.date,
-            day.title ?? "",
-            day.notes ?? "",
-            day.plannedElevation ?? 0,
-            day.plannedDistance ?? 0
+            day.title,
+            day.notes,
+            day.plannedElevation,
+            day.plannedDistance
         );
     }
 
@@ -69,10 +69,10 @@ export class DaysRepository {
             SET date = ?, title = ?, notes = ?, planned_elevation = ?, planned_distance = ?
             WHERE id = ?`,
             day.date,
-            day.title ?? "",
-            day.notes ?? "",
-            day.plannedElevation ?? 0,
-            day.plannedDistance ?? 0,
+            day.title,
+            day.notes,
+            day.plannedElevation,
+            day.plannedDistance,
             day.id
         );
     }
