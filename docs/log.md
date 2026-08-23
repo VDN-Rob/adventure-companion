@@ -69,25 +69,25 @@
 [X] Day model created
 [X] Stop model created
 [X] days table created
-[ ] stops table created
+[X] pois table created
 [X] Foreign keys understood
-[ ] Trip → Days relationship works
-[ ] Day → Stops relationship works
+[X] Trip → Days relationship works
+[X] Day → POIs relationship works
 
 # UI
-[ ] Trip details screen
-[ ] Day list
-[ ] Create day
-[ ] Edit day
-[ ] Delete day
-[ ] Create stop
-[ ] Edit stop
-[ ] Delete stop
+[X] Trip details screen
+[X] Day list
+[X] Create day
+[X] Edit day
+[X] Delete day
+[X] Create POI
+[ ] Edit POI
+[ ] Delete POI
 [ ] Empty states
 
 # Architecture
-[ ] Day repository
-[ ] Stop repository
+[X] Day repository
+[X] POI repository
 [ ] SQL remains outside UI
 [ ] Reusable cards/components
 [ ] Navigation parameters understood
