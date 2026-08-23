@@ -24,7 +24,7 @@ export default function TripDetailsScreen() {
     // Load the right trip everytime the screen is loaded
     useFocusEffect(
       useCallback(() => {
-        async function loadTrip() {
+        async function loadData() {
           if (!tripId) {
             setError("No trip ID was provided.");
             setIsLoading(false);
@@ -55,7 +55,7 @@ export default function TripDetailsScreen() {
           }
         }
   
-        loadTrip();
+        loadData();
       }, [tripId])
     );
   
@@ -85,6 +85,9 @@ export default function TripDetailsScreen() {
               onPress={() => handleDetailsDay(item.id)}
             />
           )}
+          ListEmptyComponent={
+            <Text>No days planned yet.</Text>
+          }
         />
         <Button
           title="Add new day"

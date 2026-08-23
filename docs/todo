@@ -5,6 +5,7 @@ QOL:
 - calendar for dates
 - stops sorted by distance from start
 - Add custom poitypes
+- suggestions if no POI/Days, ...
 
 UI:
 - Copy/move editing and deleting inside of trip details
@@ -37,3 +38,34 @@ Validation:
     * edit Trip
     * create POI
     * edit POI
+
+REfactoring:
+- Move elements into "cards". example:
+DayDetails
+│
+├── DayHeader
+│
+├── RouteSummary
+│
+├── Map
+│
+├── Planned stops
+│
+├── Notes
+│
+├── Photos
+│
+└── Recorded ride
+- Separate errors
+Day
+──────────────────
+
+120 km
+850 m
+
+POIs
+──────────────────
+
+⚠ Unable to load POIs
+[Retry]
+

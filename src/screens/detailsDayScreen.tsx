@@ -1,10 +1,11 @@
+import { POICard } from "@/components/POICard";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { useDaysRepository } from "@/utils/useDaysRepository";
 import { usePoisRepository } from "@/utils/usePoisRepository";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
-import { Button, FlatList, SafeAreaView, Text, View } from "react-native";
+import { Button, FlatList, SafeAreaView, Text } from "react-native";
 
 export default function DayDetailsScreen() {
     // Retrieve id from parameters
@@ -16,31 +17,54 @@ export default function DayDetailsScreen() {
 
     // State
     const [day, setDay] = useState<Day | null>(null);
-    const [pois, setPois] = useState<POI[]>();
+    const [pois, setPois] = useState<POI[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     
     
-    // Load the right trip everytime the screen is loaded
+    // Load the right day everytime the screen is loaded
     useFocusEffect(
       useCallback(() => {
-        async function loadDay() {
-          if (!dayId) return;
+        async function loadData() {
+          if (!dayId) {
+            setError("No day ID was provided");
+            setIsLoading(false);
+            return;
+          }
     
-          const day = await daysRepository.getDayById(dayId);
-    
-          setDay(day);
+          try {
+            setIsLoading(true);
+            setError(null);
 
-          const pois = await poisRepository.getAllPOIsForDay(dayId);
+            const day = await daysRepository.getDayById(dayId);
+      
+            if (!day) {
+              setError("Day not Found");
+              return;
+            }
 
-          setPois(pois);
+            setDay(day);
+
+            const pois = await poisRepository.getAllPOIsForDay(dayId);
+            setPois(pois);
+          } catch {
+            setError("Unable to load day");
+          } finally {
+            setIsLoading(false);
+          }
         }
     
-        loadDay();
+        loadData();
       }, [dayId])
     );
     
-    if (!day) {
+    if (isLoading) {
         return <Text>Loading...</Text>;
-      }
+    }
+
+    if (error || !day) {
+      return <Text>{error ?? "Day not found."}</Text>;
+    }
 
     return (
         <SafeAreaView>
@@ -51,24 +75,23 @@ export default function DayDetailsScreen() {
         <Text>{day.plannedElevation}</Text>
         <Text>{day.plannedDistance}</Text>
 
-        <Text>Stops</Text>
+        <Text>Point of interest</Text>
         <Text>--------------</Text>
         <FlatList
-        data={pois}
-        keyExtractor={(poi) => poi.id}
-        renderItem={({ item }) => (
-            <View>
-            <Text>{item.name}</Text>
-            <Text>{item.type}</Text>
-            <Text>{item.latitude}</Text>
-            <Text>{item.longitude}</Text>
-            <Text>{item.notes}</Text>
-            </View>
-        )}
+          data={pois}
+          keyExtractor={(poi) => poi.id}
+          renderItem={({ item }) => (
+            <POICard
+              poi={item} onPress={() => {}}
+              />
+          )}
+          ListEmptyComponent={
+            <Text>No points of interest planned yet.</Text>
+          }
         />
         <Button
         title="Add new POI"
-        onPress={() => { if (day) handleAddPoi(dayId)}}
+        onPress={() => {handleAddPoi(dayId)}}
         />
         
         </SafeAreaView>
