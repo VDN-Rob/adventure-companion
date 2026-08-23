@@ -16,3 +16,13 @@ UI:
 Bugs:
 - possible to go back in index with added trips dissapearing
 
+Validation:
+- basic validation:
+    * edit Day
+    * create Trip
+    * edit Trip
+- Advanced validation:
+    * create Day
+    * edit Day
+    * create Trip
+    * edit Trip

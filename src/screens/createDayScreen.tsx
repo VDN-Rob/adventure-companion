@@ -4,6 +4,7 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
+    Alert,
     Button,
     SafeAreaView,
     Text,
@@ -23,14 +24,41 @@ export default function CreateDayScreen() {
     const daysRepository = useDaysRepository();
 
     async function handleSaveDay() {
+        // Validation
+        if (date === "") {
+            Alert.alert(
+                "Invalid date",
+                "Please fill in date"
+            );
+            return;
+        }
+
+        if (plannedElevation !== "" && Number(plannedElevation) < 0) {
+            Alert.alert(
+                "Invalid planned elevation",
+                "Elevation must be positive"
+            );
+            return;
+        }
+
+        if (plannedDistance !== "" && Number(plannedDistance) < 0) {
+            Alert.alert(
+                "Invalid planned distance",
+                "Distance must be positive"
+            );
+            return;
+        }
+
+
+        // Saving
         const newDay: Day = {
             id: Crypto.randomUUID(),
             tripId: tripId,
             date: date,
-            title: title,
-            notes: notes,
-            plannedElevation: Number(plannedElevation),
-            plannedDistance: Number(plannedDistance),
+            title: title || null,
+            notes: notes || null,
+            plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
+            plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
         }
 
         await daysRepository.createDay(newDay);
@@ -45,7 +73,7 @@ export default function CreateDayScreen() {
         <TextInput
             value={title}
             onChangeText={setTitle}
-            placeholder="2026 Cycling Trip"
+            placeholder="Day title"
         />
 
         <Text>Date</Text>
@@ -59,7 +87,7 @@ export default function CreateDayScreen() {
         <TextInput
             value={notes}
             onChangeText={setNotes}
-            placeholder="Description"
+            placeholder="Notes"
         />
 
 
