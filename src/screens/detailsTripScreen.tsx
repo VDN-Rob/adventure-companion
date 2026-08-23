@@ -53,7 +53,8 @@ export default function TripDetailsScreen() {
           keyExtractor={(day) => day.id}
           renderItem={({ item }) => (
             <View>
-              <Text>{item.title}</Text>
+              <Text
+                onPress={() => handleDetailsDay(item.id)}>{item.title}</Text>
               <Text>{item.date}</Text>
               <Text>{item.notes}</Text>
               <Text>{item.plannedDistance}</Text>
@@ -81,5 +82,12 @@ function handleAddDay(tripId: string){
   router.push({
     pathname: "/createDay",
     params: {tripId}
+  })
+}
+
+function handleDetailsDay(dayId: string){
+  router.push({
+    pathname: "/detailsDay",
+    params: {dayId}
   })
 }

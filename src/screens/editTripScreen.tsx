@@ -15,8 +15,8 @@ export default function EditTripScreen() {
     const [trip, setTrip] = useState<Trip>();
     const [name, setName] = useState("");
     const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [description, setDescription] = useState("");
+    const [endDate, setEndDate] = useState<string | null>(null);
+    const [description, setDescription] = useState<string | null>(null);
 
     // Load the right trip when screen finishes loading
     useEffect(() => {
@@ -30,6 +30,7 @@ export default function EditTripScreen() {
                 setName(trip.name);
                 setStartDate(trip.startDate);
                 setEndDate(trip.endDate);
+                setDescription(trip.description)
             }
         }
 
@@ -96,13 +97,13 @@ export default function EditTripScreen() {
 
         <Text>End date</Text>
         <TextInput
-            value={endDate}
+            value={endDate ?? ""}
             onChangeText={setEndDate}
         />
 
         <Text>Description</Text>
         <TextInput
-            value={description}
+            value={description ?? ""}
             onChangeText={setDescription}
             placeholder= "Add new description"
         />

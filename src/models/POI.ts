@@ -1,14 +1,14 @@
-export interface Stop {
+export interface POI {
     id: string;
     dayId: string;
     name: string;
-    type: StopType;
+    type: POIType;
     latitude: number | null;
     longitude: number | null;
     notes: string | null;
 }
 
-export type StopType =
+export type POIType =
   | "food"
   | "water"
   | "supermarket"

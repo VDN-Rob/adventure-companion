@@ -27,7 +27,7 @@ export async function setupDatabase(db: SQLiteDatabase) {
     `);
 
     await db.execAsync(`
-      CREATE TABLE IF NOT EXISTS stops (
+      CREATE TABLE IF NOT EXISTS pois (
         id TEXT PRIMARY KEY NOT NULL,
         day_id TEXT NOT NULL,
         name TEXT NOT NULL,
