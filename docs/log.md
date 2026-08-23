@@ -33,12 +33,7 @@
 [X] Initial architecture documented
 [X] Learning log started
 
-# Improvements after today
 
-- Make real trips
-- Change styling
-- Make different screens
-- Add real memory
 
 ## Step 2 - Trips and persistent storage
 
@@ -63,6 +58,8 @@
 [X] SQLite is the local source of truth
 [X] SQLite and persistent local storage.
 
+
+
 # Step 3 - Trip and Day planning
 
 # Data
@@ -81,24 +78,24 @@
 [X] Edit day
 [X] Delete day
 [X] Create POI
-[ ] Edit POI
-[ ] Delete POI
-[ ] Empty states
+[X] Edit POI
+[X] Delete POI
+[X] Empty states
 
 # Architecture
 [X] Day repository
 [X] POI repository
-[ ] SQL remains outside UI
-[ ] Reusable cards/components
-[ ] Navigation parameters understood
-[ ] Validation implemented
-[ ] Derived trip statistics implemented
+[X] SQL remains outside UI
+[X] Reusable cards/components
+[X] Navigation parameters understood
+[-] Validation implemented
+[-] Derived trip statistics implemented
 
 # Offline
-[ ] Create data in airplane mode
-[ ] Data remains available
-[ ] Editing works offline
-[ ] Deletion works offline
+[X] Create data in airplane mode
+[X] Data remains available
+[X] Editing works offline
+[X] Deletion works offline
 
 # Step 4 — Offline-first architecture
 # Step 5 — Maps & OpenStreetMap
