@@ -1,7 +1,6 @@
 import { Trip } from "@/models/Trip";
 import { useTripsRepository } from "@/utils/useTripsRepository";
 import { router, useLocalSearchParams } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { Alert, Button, SafeAreaView, Text, TextInput } from "react-native";
 
@@ -10,7 +9,6 @@ export default function EditTripScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
 
     // Load databank
-    const db = useSQLiteContext();
     const tripsRepository = useTripsRepository();
 
     // State
