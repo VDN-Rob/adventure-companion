@@ -5,6 +5,7 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
+    Alert,
     Button,
     SafeAreaView,
     Text,
@@ -14,6 +15,10 @@ import {
 export default function CreatePoiScreen() {
     // Retrieve id from parameters
     const { dayId } = useLocalSearchParams<{ dayId: string }>();
+    if (!dayId) {
+        Alert.alert("Error", "No day was specified.");
+        return;
+      }
     
     const [name, setName] = useState("");
     const [type, setType] = useState<POIType>("other");
@@ -23,7 +28,17 @@ export default function CreatePoiScreen() {
 
     const poiRepository = usePoisRepository();
 
-    async function handleSaveDay() {
+    async function handleSavePOI() {
+        if (latitude !== "" && (Number(latitude) < -90 || Number(latitude) > 90)) {
+            Alert.alert("Invalid latitude", "Latitude must be between -90 and 90.");
+            return;
+        }
+        
+        if (longitude !== "" && (Number(longitude) < -180 || Number(longitude) > 180)) {
+            Alert.alert("Invalid longitude", "Longitude must be between -180 and 180.");
+            return;
+        }
+        
         // Saving
         const newPoi: POI = {
             id: Crypto.randomUUID(),
@@ -41,16 +56,16 @@ export default function CreatePoiScreen() {
     
     return (
         <SafeAreaView>
-        <Text>Create new day</Text>
+        <Text>Create new POI</Text>
 
-        <Text>Day title</Text>
+        <Text>Name</Text>
         <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="Day title"
+            placeholder="POI name"
         />
 
-        <Text>Date</Text>
+        <Text>Type</Text>
         <Picker
             selectedValue={type}
             onValueChange={(value) => setType(value as POIType)}
@@ -70,14 +85,14 @@ export default function CreatePoiScreen() {
         />
 
 
-        <Text>Planned Elevation</Text>
+        <Text>Latitude</Text>
         <TextInput
             value={latitude}
             onChangeText={setLatitude}
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
         />
 
-        <Text>Planned Distance</Text>
+        <Text>Longitude</Text>
         <TextInput
             value={longitude}
             onChangeText={setLongitude}
@@ -85,8 +100,8 @@ export default function CreatePoiScreen() {
         />
 
         <Button
-            title="Save trip"
-            onPress={handleSaveDay}
+            title="Save POI"
+            onPress={handleSavePOI}
         />
         </SafeAreaView>
     );

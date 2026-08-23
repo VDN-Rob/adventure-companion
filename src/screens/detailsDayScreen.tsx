@@ -68,7 +68,7 @@ export default function DayDetailsScreen() {
         />
         <Button
         title="Add new POI"
-        onPress={() => { if (day) handleAddPoi(day.id)}}
+        onPress={() => { if (day) handleAddPoi(dayId)}}
         />
         
         </SafeAreaView>
@@ -85,7 +85,7 @@ const Item = ({ title }: ItemProps) => (
 function handleAddPoi(dayId: string){
   router.push({
     pathname: "/createPoi",
-    params: {tripId: dayId}
+    params: {dayId}
   })
 }
 
