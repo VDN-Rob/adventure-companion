@@ -1,13 +1,14 @@
 import { DayCard } from "@/components/DayCard";
 import { Day } from "@/models/Day";
 import { Trip } from "@/models/Trip";
+import { calculateTripStatistics } from "@/services/tripStatistics";
 import { useDaysRepository } from "@/utils/useDaysRepository";
 import { useTripsRepository } from "@/utils/useTripsRepository";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { Button, FlatList, SafeAreaView, Text } from "react-native";
 
-export default function TripDetailsScreen() {
+export default async function TripDetailsScreen() {
     // Retrieve id from parameters
     const { id: tripId } = useLocalSearchParams<{ id: string }>();
 
@@ -20,6 +21,10 @@ export default function TripDetailsScreen() {
     const [days, setDays] = useState<Day[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [statistics, setStatistics] = useState({
+      totalDistance: 0,
+      totalElevation: 0,
+    });
     
     // Load the right trip everytime the screen is loaded
     useFocusEffect(
@@ -44,10 +49,11 @@ export default function TripDetailsScreen() {
   
             setTrip(trip);
   
-            const days =
-              await daysRepository.getAllDayForTrip(tripId);
-  
+            const days = await daysRepository.getAllDayForTrip(tripId);
             setDays(days);
+
+            const statistics = await calculateTripStatistics(tripId, daysRepository);
+            setStatistics(statistics);
           } catch {
             setError("Unable to load trip.");
           } finally {
@@ -72,6 +78,8 @@ export default function TripDetailsScreen() {
         <Text>{trip?.name}</Text>
 
         <Text>{trip?.startDate} to {trip?.endDate}</Text>
+        <Text>Total distance: {statistics.totalDistance} km</Text>
+        <Text>Total elevation: {statistics.totalElevation} m</Text>
         <Text>{trip?.description}</Text>
 
         <Text>Days</Text>
