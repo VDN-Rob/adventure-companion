@@ -11,11 +11,11 @@ type DayRow = {
     planned_distance: number;
   };
 
-export class DayRepository {
+export class DaysRepository {
     constructor(private db: SQLiteDatabase) {}
 
     // Function to retrieve all days for a specific trip
-    async getAllForTrip(tripId: string) {
+    async getAllDayForTrip(tripId: string) {
         const rows = await this.db.getAllAsync<DayRow>(
             "SELECT * FROM days WHERE trip_id = ? ORDER BY date ASC",
             tripId
@@ -25,7 +25,7 @@ export class DayRepository {
     }
 
     // Function to get one specific day
-    async getById(id: string) {
+    async getDayById(id: string) {
         const row = await this.db.getFirstAsync<DayRow>(
             "SELECT * FROM days WHERE id = ?",
             id
@@ -49,7 +49,7 @@ export class DayRepository {
         };
     }
 
-    async create(day: Day) {
+    async createDay(day: Day) {
         return this.db.runAsync(
             `INSERT INTO days (id, trip_id, date, title, notes, planned_elevation, planned_distance)
             VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -63,7 +63,7 @@ export class DayRepository {
         );
     }
 
-    async update(day: Day) {
+    async updateDay(day: Day) {
         return this.db.runAsync(
             `UPDATE days
             SET date = ?, title = ?, notes = ?, planned_elevation = ?, planned_distance = ?
@@ -77,7 +77,7 @@ export class DayRepository {
         );
     }
 
-    async delete(id: string) {
+    async deleteDay(id: string) {
         return this.db.runAsync(
             "DELETE FROM days WHERE id = ?",
             id

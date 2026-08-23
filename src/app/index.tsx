@@ -33,7 +33,9 @@ export default function Index() {
           keyExtractor={(trip) => trip.id}
           renderItem={({ item }) => (
             <View>
-              <Text>{item.name}</Text>
+              <Text
+              style={styles.title}
+              onPress={() => handleDetailsTrip(item.id)}>{item.name}</Text>
               <Text>{item.startDate}</Text>
               <Text>{item.endDate}</Text>
               {(item && item.description != null) &&
@@ -70,7 +72,12 @@ function handleEditTrip(id: string){
   })
 }
 
-
+function handleDetailsTrip(id: string){
+  router.push({
+    pathname: "/detailsTrip",
+    params: {id}
+  })
+}
 
 // Aestethic
 const styles = StyleSheet.create({
