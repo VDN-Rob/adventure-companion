@@ -23,6 +23,7 @@ Bugs:
 - possible to go back in index with added trips dissapearing
 
 Validation:
+- Add validation in application layer
 - start date < end date
 - Day date in range trip dates
 - basic validation:

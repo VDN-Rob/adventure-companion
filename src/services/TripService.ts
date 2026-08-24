@@ -29,6 +29,10 @@ export class TripServices {
 
     }
 
+    async getAllTrips() {
+        return await this.tripsRepository.getTrips();
+    }
+
     async createTrip(trip: Trip) {
         await this.tripsRepository.createTrip(trip);
     }

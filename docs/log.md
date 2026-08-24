@@ -107,7 +107,7 @@
 [X] External data vs local data understood
 [X] Services separated from repositories
 [X] UI no longer contains application/business logic unnecessarily
-[ ] Network access abstracted
+[X] Network access abstracted
 [ ] Error-handling approach established
 
 # Offline behaviour

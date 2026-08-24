@@ -1,4 +1,5 @@
 import { DayServices } from "@/services/DayService";
+import { useNetworkStatus } from "@/services/NetworkServices";
 import { POIServices } from "@/services/POIService";
 import { TripServices } from "@/services/TripService";
 import { useDaysRepository } from "@/utils/useDaysRepository";
@@ -10,6 +11,7 @@ interface AppServices {
   tripServices: TripServices;
   dayServices: DayServices;
   poiServices: POIServices;
+  isOnline: boolean | null;
 }
 export const AppServicesContext = createContext<AppServices | null>(null);
 
@@ -21,6 +23,8 @@ export function AppServicesProvider({
   const tripsRepository = useTripsRepository();
   const daysRepository = useDaysRepository();
   const poisRepository = usePoisRepository();
+
+  const isOnline = useNetworkStatus();
 
   const tripServices = useMemo(
     () => new TripServices(
@@ -47,6 +51,7 @@ export function AppServicesProvider({
       tripServices,
       dayServices,
       poiServices,
+      isOnline,
     }}>
       {children}
     </AppServicesContext.Provider>
