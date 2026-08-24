@@ -97,7 +97,46 @@
 [X] Editing works offline
 [X] Deletion works offline
 
+
+
 # Step 4 — Offline-first architecture
+
+# Architecture
+[X] Offline-first principles documented
+[X] Local data identified
+[X] External data vs local data understood
+[ ] Services separated from repositories
+[ ] UI no longer contains application/business logic unnecessarily
+[ ] Network access abstracted
+[ ] Error-handling approach established
+
+# Offline behaviour
+[ ] App works in airplane mode
+[ ] Existing data works offline
+[ ] New data can be created offline
+[ ] Data can be edited offline
+[ ] Data can be deleted offline
+[ ] App survives network transitions
+
+# Synchronization preparation
+[ ] Synchronization concept documented
+[ ] External IDs understood
+[ ] Idempotency understood
+[ ] Sync failures considered
+[ ] Future Strava integration has a clear place in the architecture
+
+# Files
+[ ] Decision made to store large files outside SQLite
+[ ] SQLite will store file metadata/references
+[ ] Filesystem architecture documented
+
+# Documentation
+[X] offlinFirst.md
+[ ] synchronization.md
+[ ] ADR 001
+[ ] Architecture diagram updated
+[ ] Learning log updated
+
 # Step 5 — Maps & OpenStreetMap
 # Step 6 — GPX & route data
 # Step 7 — Diary, photos & FIT
