@@ -4,6 +4,8 @@ import { deleteDatabaseAsync, SQLiteDatabase } from "expo-sqlite";
 
 export async function setupDatabase(db: SQLiteDatabase) {
     await db.execAsync(`
+      PRAGMA foreign_keys = ON;
+
       CREATE TABLE IF NOT EXISTS trips (
         id TEXT PRIMARY KEY NOT NULL,
         name TEXT NOT NULL,
@@ -11,9 +13,7 @@ export async function setupDatabase(db: SQLiteDatabase) {
         end_date TEXT,
         description TEXT 
       );
-    `);
 
-    await db.execAsync(`
       CREATE TABLE IF NOT EXISTS days (
         id TEXT PRIMARY KEY NOT NULL,
         trip_id TEXT NOT NULL,
@@ -22,11 +22,9 @@ export async function setupDatabase(db: SQLiteDatabase) {
         notes TEXT,
         planned_elevation REAL,
         planned_distance REAL,
-        FOREIGN KEY (trip_id) REFERENCES trips(id)
+        FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
       );
-    `);
 
-    await db.execAsync(`
       CREATE TABLE IF NOT EXISTS pois (
         id TEXT PRIMARY KEY NOT NULL,
         day_id TEXT NOT NULL,
@@ -35,7 +33,7 @@ export async function setupDatabase(db: SQLiteDatabase) {
         latitude REAL,
         longitude REAL,
         notes TEXT,
-        FOREIGN KEY (day_id) REFERENCES days(id)
+        FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
       );
     `);
   }
