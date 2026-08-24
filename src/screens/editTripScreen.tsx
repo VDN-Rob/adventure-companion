@@ -44,13 +44,13 @@ export default function EditTripScreen() {
         ...trip, // Keep same id
         name: name,
         startDate: startDate,
-        endDate: endDate,
-        description: description
+        endDate: endDate === "" ? null : endDate,
+        description: description === "" ? null : description
         }
         
         await tripServices.updateTrip(updatedTrip);
 
-        router.replace("/")
+        router.back();
     }
 
     function handleDeleteTrip(id: string){
@@ -76,7 +76,7 @@ export default function EditTripScreen() {
       
         await tripServices.deleteTrip(id);
       
-        router.replace("/");
+        router.dismiss(2);
       }
     
     return (

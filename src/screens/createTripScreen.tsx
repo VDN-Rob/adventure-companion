@@ -25,8 +25,8 @@ export default function CreateTripScreen() {
             id: Crypto.randomUUID(),
             name: name,
             startDate: startDate,
-            endDate: endDate,
-            description: description
+            endDate: endDate === "" ? null : endDate,
+            description: description === "" ? null : description
         }
 
         await tripServices.createTrip(newTrip);

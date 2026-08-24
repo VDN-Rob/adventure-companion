@@ -12,7 +12,7 @@ export function TripCard({ trip, onPress }: TripCardProps) {
         <View>
           <Text>Trip: {trip.name}</Text>
           <Text>Starting on {trip.startDate} to 
-          {trip.endDate!==null && (<Text>{trip.endDate}</Text>)}{trip.endDate===null && (<Text>infinity and beyond!</Text>)}
+          {trip.endDate!==null && (<Text>{trip.endDate}</Text>)}{trip.endDate===null && (<Text> infinity and beyond!</Text>)}
           </Text>
           
           {trip.description !== null && (

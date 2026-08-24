@@ -78,8 +78,8 @@ export default function EditDayScreen() {
         const updatedDay: Day = {
             ...day,
             date: date,
-            title: title || null,
-            notes: notes || null,
+            title: title === "" ? null : title,
+            notes: notes == "" ? null : notes,
             plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
             plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
         }
@@ -89,7 +89,7 @@ export default function EditDayScreen() {
         router.back();
     }
 
-    function handleDeleteDay(id: string){
+    function handleDeleteDay(){
         Alert.alert(
           "Delete day?",
           "This action cannot be undone.",
@@ -112,7 +112,7 @@ export default function EditDayScreen() {
       
         await dayServices.deleteDay(dayId);
       
-        router.replace("/");
+        router.dismiss(2);
       }
     
     return (
@@ -157,7 +157,7 @@ export default function EditDayScreen() {
         />
         <Button
         title="Delete"
-        onPress={() => handleDeleteDay(dayId)}
+        onPress={() => handleDeleteDay()}
         />
         </SafeAreaView>
     );

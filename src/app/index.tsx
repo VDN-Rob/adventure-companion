@@ -1,3 +1,4 @@
+import { TripCard } from "@/components/TripCard";
 import { Trip } from "@/models/Trip";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router } from "expo-router";
@@ -38,19 +39,10 @@ export default function Index() {
           data={trips}
           keyExtractor={(trip) => trip.id}
           renderItem={({ item }) => (
-            <View>
-              <Text
-              style={styles.title}
-              onPress={() => handleDetailsTrip(item.id)}>{item.name}</Text>
-              <Text>{item.startDate}</Text>
-              <Text>{item.endDate}</Text>
-              {(item && item.description != null) &&
-              <Text>{item.description}</Text>}
-              <Button
-                title="Edit"
-                onPress={() => handleEditTrip(item.id)}
-              />
-            </View>
+            <TripCard 
+              trip={item}
+              onPress={() => handleDetailsTrip(item.id)}>
+            </TripCard>
           )}
         />
         
@@ -61,21 +53,6 @@ export default function Index() {
       </View>
   );
 
-}
-
-// Button list component
-type ItemProps = { title: string };
-
-const Item = ({ title }: ItemProps) => (
-  <Text>{title}</Text>
-);
-
-
-function handleEditTrip(id: string){
-  router.push({
-    pathname: "/editTrip",
-    params: {id}
-  })
 }
 
 function handleDetailsTrip(id: string){

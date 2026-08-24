@@ -77,6 +77,12 @@ export default function TripDetailsScreen() {
         <Text>Total elevation: {statistics.totalElevation} m</Text>
         <Text>{trip?.description}</Text>
 
+
+        <Button
+        title="Edit trip details"
+        onPress={() => handleEditTrip(trip.id)}
+        />
+        
         <Text>Days</Text>
         <Text>--------------</Text>
         <FlatList
@@ -112,5 +118,12 @@ function handleDetailsDay(dayId: string){
   router.push({
     pathname: "/detailsDay",
     params: {dayId}
+  })
+}
+
+function handleEditTrip(id: string){
+  router.push({
+    pathname: "/editTrip",
+    params: {id}
   })
 }
