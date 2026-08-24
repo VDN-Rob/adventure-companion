@@ -6,6 +6,7 @@ export class POIServices {
       private poisRepository: PoisRepository
     ) {}
   
+    // Queries
     async getPOI(poiId: string) {
       return this.poisRepository.getPOIById(poiId);
     }
@@ -14,6 +15,7 @@ export class POIServices {
       return this.poisRepository.getAllPOIsForDay(dayId);
     }
   
+    // Scripts
     async createPOI(poi: POI) {
         await this.poisRepository.createPOI(poi);
     }

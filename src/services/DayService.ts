@@ -6,6 +6,7 @@ export class DayServices {
       private daysRepository: DaysRepository
     ) {}
   
+    // Queries
     async getDay(dayId: string) {
       return this.daysRepository.getDayById(dayId);
     }
@@ -14,6 +15,7 @@ export class DayServices {
       return this.daysRepository.getAllDayForTrip(tripId);
     }
   
+    // Scripts
     async createDay(day: Day) {
         await this.daysRepository.createDay(day);
     }

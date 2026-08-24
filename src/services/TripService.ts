@@ -9,6 +9,7 @@ export class TripServices {
         private daysRepository: DaysRepository
     ) {}
 
+    // Queries
     async getTrip(tripId: string) {
         return await this.tripsRepository.getTripById(tripId);
     }
@@ -33,6 +34,7 @@ export class TripServices {
         return await this.tripsRepository.getTrips();
     }
 
+    // Scripts
     async createTrip(trip: Trip) {
         await this.tripsRepository.createTrip(trip);
     }
