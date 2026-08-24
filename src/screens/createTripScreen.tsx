@@ -1,9 +1,8 @@
 import { Trip } from "@/models/Trip";
-import { useTripsRepository } from "@/utils/useTripsRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import * as Crypto from "expo-crypto";
 import { router } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Button,
     SafeAreaView,
@@ -12,24 +11,14 @@ import {
 } from "react-native";
 
 export default function CreateTripScreen() {
+    // State
     const [name, setName] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [description, setDescription] = useState("");
-    const [trips, setTrips] = useState<Trip[]>([]);
-    const db = useSQLiteContext();
-    const tripsRepository = useTripsRepository();
-
-    // When screen finishes loading, get the trips
-    useEffect(() => {
-    async function loadTrips() {
-        const loadedTrips = await tripsRepository.getTrips();
-
-        setTrips(loadedTrips);
-    }
-
-    loadTrips();
-    }, [db]);
+    
+    // Access application layer
+    const { tripServices } = useAppServices();
 
     async function handleSaveTrip() {
         const newTrip: Trip = {
@@ -40,10 +29,7 @@ export default function CreateTripScreen() {
             description: description
         }
 
-        await tripsRepository.createTrip(newTrip);
-        const trips = await tripsRepository.getTrips();
-        
-        setTrips(trips);
+        await tripServices.createTrip(newTrip);
 
         router.replace("/")
     }

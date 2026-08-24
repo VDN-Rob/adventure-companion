@@ -1,9 +1,7 @@
 import { DayCard } from "@/components/DayCard";
 import { Day } from "@/models/Day";
 import { Trip } from "@/models/Trip";
-import { calculateTripStatistics } from "@/services/tripStatistics";
-import { useDaysRepository } from "@/utils/useDaysRepository";
-import { useTripsRepository } from "@/utils/useTripsRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { Button, FlatList, SafeAreaView, Text } from "react-native";
@@ -12,9 +10,8 @@ export default function TripDetailsScreen() {
     // Retrieve id from parameters
     const { id: tripId } = useLocalSearchParams<{ id: string }>();
 
-    // Load databank
-    const tripsRepository = useTripsRepository();
-    const daysRepository = useDaysRepository();
+    // Use application layer to access databank
+    const { tripServices } = useAppServices();
 
     // State
     const [trip, setTrip] = useState<Trip>();
@@ -40,19 +37,17 @@ export default function TripDetailsScreen() {
             setIsLoading(true);
             setError(null);
   
-            const trip = await tripsRepository.getTripById(tripId);
+            const result = await tripServices.getTripDetails(tripId);
   
-            if (!trip) {
+            if (result === null) {
               setError("Trip not found.");
               return;
             }
   
-            setTrip(trip);
-  
-            const days = await daysRepository.getAllDayForTrip(tripId);
-            setDays(days);
+            setTrip(result.trip);
+            setDays(result.days);
 
-            const statistics = await calculateTripStatistics(tripId, daysRepository);
+            const statistics = await tripServices.calculateTripStatistics(tripId);
             setStatistics(statistics);
           } catch {
             setError("Unable to load trip.");

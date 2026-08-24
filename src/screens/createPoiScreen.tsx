@@ -1,5 +1,5 @@
 import { POI, POIType } from "@/models/POI";
-import { usePoisRepository } from "@/utils/usePoisRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { Picker } from "@react-native-picker/picker";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
@@ -26,7 +26,7 @@ export default function CreatePoiScreen() {
     const [longitude, setLongitude] = useState("");
     const [notes, setNotes] = useState("");
 
-    const poiRepository = usePoisRepository();
+    const { poiServices } = useAppServices();
 
     async function handleSavePOI() {
         if (latitude !== "" && (Number(latitude) < -90 || Number(latitude) > 90)) {
@@ -50,7 +50,7 @@ export default function CreatePoiScreen() {
             notes: notes || null,
         }
 
-        await poiRepository.createPOI(newPoi);
+        await poiServices.createPOI(newPoi);
         router.back()
     }
     

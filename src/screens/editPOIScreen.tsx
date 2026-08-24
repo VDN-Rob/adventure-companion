@@ -1,5 +1,5 @@
 import { POI, POIType } from "@/models/POI";
-import { usePoisRepository } from "@/utils/usePoisRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { Picker } from "@react-native-picker/picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ export default function EditPOIScreen() {
     const { poiId } = useLocalSearchParams<{ poiId: string }>();
 
     // Load databank
-    const poisRepository = usePoisRepository();
+    const { poiServices } = useAppServices();
 
     // State
     const [poi, setPoi] = useState<POI | null>(null);
@@ -25,7 +25,7 @@ export default function EditPOIScreen() {
         async function loadPOI() {
             if (!poiId) return;
 
-            const poi = await poisRepository.getPOIById(poiId);
+            const poi = await poiServices.getPOI(poiId);
 
             if (poi) {
                 setPoi(poi);
@@ -53,7 +53,7 @@ export default function EditPOIScreen() {
         notes: notes
         }
         
-        await poisRepository.updatePOI(updatedPOI);
+        await poiServices.updatePOI(updatedPOI);
 
         router.back()
     }
@@ -83,7 +83,7 @@ export default function EditPOIScreen() {
         async function deleteTrip() {
             if (!poiId) return;
           
-            await poisRepository.deletePOI(poiId);
+            await poiServices.deletePOI(poiId);
           
             router.back();
           }

@@ -1,8 +1,7 @@
 import { POICard } from "@/components/POICard";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
-import { useDaysRepository } from "@/utils/useDaysRepository";
-import { usePoisRepository } from "@/utils/usePoisRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { Button, FlatList, SafeAreaView, Text } from "react-native";
@@ -12,8 +11,7 @@ export default function DayDetailsScreen() {
     const { dayId } = useLocalSearchParams<{ dayId: string }>();
 
     // Load databank
-    const daysRepository = useDaysRepository();
-    const poisRepository = usePoisRepository();
+    const { dayServices, poiServices } = useAppServices();
 
     // State
     const [day, setDay] = useState<Day | null>(null);
@@ -36,7 +34,7 @@ export default function DayDetailsScreen() {
             setIsLoading(true);
             setError(null);
 
-            const day = await daysRepository.getDayById(dayId);
+            const day = await dayServices.getDay(dayId);
       
             if (!day) {
               setError("Day not Found");
@@ -45,7 +43,7 @@ export default function DayDetailsScreen() {
 
             setDay(day);
 
-            const pois = await poisRepository.getAllPOIsForDay(dayId);
+            const pois = await poiServices.getPOIsForDay(dayId);
             setPois(pois);
           } catch {
             setError("Unable to load day");

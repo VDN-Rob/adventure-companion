@@ -1,1 +1,5 @@
 Everything related to memory. I am using SQLite.
+
+The database.ts file is meant to initialize the DB and make sure the tables exists.
+
+The dayRepository/POIRepository/TripRepository are the data access layer.

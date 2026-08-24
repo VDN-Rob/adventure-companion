@@ -105,8 +105,8 @@
 [X] Offline-first principles documented
 [X] Local data identified
 [X] External data vs local data understood
-[ ] Services separated from repositories
-[ ] UI no longer contains application/business logic unnecessarily
+[X] Services separated from repositories
+[X] UI no longer contains application/business logic unnecessarily
 [ ] Network access abstracted
 [ ] Error-handling approach established
 

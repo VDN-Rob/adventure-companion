@@ -1,5 +1,5 @@
 import { Day } from "@/models/Day";
-import { useDaysRepository } from "@/utils/useDaysRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Button, SafeAreaView, Text, TextInput } from "react-native";
@@ -9,7 +9,7 @@ export default function EditDayScreen() {
     const { dayId } = useLocalSearchParams<{ dayId: string }>();
 
     // Load databank
-    const daysRepository = useDaysRepository();
+    const { dayServices } = useAppServices();
 
     // State
     const [day, setDay] = useState<Day>();
@@ -24,7 +24,7 @@ export default function EditDayScreen() {
         async function loadTrip() {
             if (!dayId) return;
             
-            const day = await daysRepository.getDayById(dayId);
+            const day = await dayServices.getDay(dayId);
 
             if (day) {
                 setDay(day);
@@ -84,7 +84,7 @@ export default function EditDayScreen() {
             plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
         }
         
-        await daysRepository.updateDay(updatedDay);
+        await dayServices.updateDay(updatedDay);
 
         router.back();
     }
@@ -110,7 +110,7 @@ export default function EditDayScreen() {
     async function deleteDay() {
         if (!dayId) return;
       
-        await daysRepository.deleteDay(dayId);
+        await dayServices.deleteDay(dayId);
       
         router.replace("/");
       }

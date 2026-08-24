@@ -1,4 +1,5 @@
 import { setupDatabase } from "@/database/database";
+import { AppServicesProvider } from "@/providers/AppServicesProvider";
 import { Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 
@@ -11,7 +12,10 @@ export default function RootLayout() {
     databaseName="cycling.db"
     onInit={setupDatabase}
   >
-    <Stack />
+    
+    <AppServicesProvider>
+      <Stack />
+    </AppServicesProvider>
   </SQLiteProvider>
   );
 }

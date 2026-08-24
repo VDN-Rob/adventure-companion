@@ -1,5 +1,5 @@
 import { Day } from "@/models/Day";
-import { useDaysRepository } from "@/utils/useDaysRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -21,7 +21,7 @@ export default function CreateDayScreen() {
     const [plannedElevation, setPlannedElevation] = useState("");
     const [plannedDistance, setPlannedDistance] = useState("");
 
-    const daysRepository = useDaysRepository();
+    const { dayServices} = useAppServices();
 
     async function handleSaveDay() {
         // Validation
@@ -49,7 +49,6 @@ export default function CreateDayScreen() {
             return;
         }
 
-
         // Saving
         const newDay: Day = {
             id: Crypto.randomUUID(),
@@ -61,7 +60,7 @@ export default function CreateDayScreen() {
             plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
         }
 
-        await daysRepository.createDay(newDay);
+        await dayServices.createDay(newDay);
         router.back()
     }
     

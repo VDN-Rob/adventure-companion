@@ -1,5 +1,5 @@
 import { Trip } from "@/models/Trip";
-import { useTripsRepository } from "@/utils/useTripsRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Button, SafeAreaView, Text, TextInput } from "react-native";
@@ -9,7 +9,7 @@ export default function EditTripScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
 
     // Load databank
-    const tripsRepository = useTripsRepository();
+    const { tripServices } = useAppServices();
 
     // State
     const [trip, setTrip] = useState<Trip>();
@@ -23,7 +23,7 @@ export default function EditTripScreen() {
         async function loadTrip() {
             if (!id) return;
             
-            const trip = await tripsRepository.getTripById(id);
+            const trip = await tripServices.getTrip(id);
 
             if (trip) {
                 setTrip(trip);
@@ -48,7 +48,7 @@ export default function EditTripScreen() {
         description: description
         }
         
-        await tripsRepository.updateTrip(updatedTrip);
+        await tripServices.updateTrip(updatedTrip);
 
         router.replace("/")
     }
@@ -74,7 +74,7 @@ export default function EditTripScreen() {
     async function deleteTrip() {
         if (!id) return;
       
-        await tripsRepository.deleteTrip(id);
+        await tripServices.deleteTrip(id);
       
         router.replace("/");
       }
