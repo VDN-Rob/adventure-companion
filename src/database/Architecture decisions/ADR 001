@@ -1,0 +1,34 @@
+# ADR 001 — Local-first architecture
+
+## Decision
+
+The application will use local storage as its primary source of truth.
+
+Structured data will be stored in SQLite.
+
+Files such as photographs, GPX tracks and FIT activities will be stored on the device filesystem.
+
+External services will be optional integrations.
+
+## Context
+
+The application is intended for use during multi-day adventure trips where network connectivity may be unavailable or unreliable.
+
+The application must therefore remain useful without an internet connection.
+
+## Consequences
+
+### Advantages
+
+- Application remains usable offline.
+- No dependency on a backend for core functionality.
+- Fast access to local data.
+- User data remains available during network outages.
+- External integrations can be added independently.
+
+### Disadvantages
+
+- Synchronization becomes more complicated.
+- Local storage must be managed carefully.
+- Conflicts may need to be handled.
+- Offline map storage can require significant device storage.
