@@ -1,32 +1,38 @@
 import { Trip } from "@/models/Trip";
-import { useTripsRepository } from "@/utils/useTripsRepository";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   // Temporary memory
   const [trips, setTrips] = useState<Trip[]>([]);
-  const db = useSQLiteContext();
-  const tripsRepository = useTripsRepository();
+  
+  const {tripServices, isOnline} = useAppServices();
 
   // When Index finishes loading, get the trips
   useEffect(() => {
     async function loadTrips() {
-      const loadedTrips = await tripsRepository.getTrips();
+      const loadedTrips = await tripServices.getAllTrips();
 
       setTrips(loadedTrips);
     }
 
     loadTrips();
-  }, [db]);
+  }, []);
   
   return (
       <View style={styles.container}>
         <Text>Cycling Companion</Text>
 
         <Text>Your offline cycling companion.</Text>
+        <Text>
+          {isOnline === null
+            ? "Checking connection..."
+            : isOnline
+              ? "Online"
+              : "Offline"}
+        </Text>
         
         <FlatList
           data={trips}
