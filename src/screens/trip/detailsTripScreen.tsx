@@ -11,7 +11,7 @@ export default function TripDetailsScreen() {
     const { id: tripId } = useLocalSearchParams<{ id: string }>();
 
     // Use application layer to access databank
-    const { tripServices, tripMapServices } = useAppServices();
+    const { tripServices, tripMapServices, mapServices } = useAppServices();
 
     // State
     const [trip, setTrip] = useState<Trip>();
@@ -69,8 +69,13 @@ export default function TripDetailsScreen() {
     }
 
 
-    function handleTripMapDownload() {
+    async function handleTripMapDownload() {
       const regions = tripMapServices.getTripMapRegions(tripId, "day");
+
+      for (const region of await regions) {
+        await mapServices.downloadRegion(region.bounds);
+      }
+
     }
 
     function tripDownloadWarning(id: string) {

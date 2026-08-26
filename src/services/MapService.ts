@@ -21,7 +21,7 @@ export class MapServices {
         const offlinePack = await OfflineManager.createPack(
             {
                 mapStyle: MAP_STYLE,
-                minZoom: 8,
+                minZoom: 5,
                 maxZoom: 15,
                 bounds,
                 metadata: {
