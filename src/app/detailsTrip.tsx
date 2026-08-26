@@ -1,4 +1,4 @@
-import TripDetailsScreen from "@/screens/detailsTripScreen";
+import TripDetailsScreen from "@/screens/trip/detailsTripScreen";
 
 export default function TripDetails() {
   return <TripDetailsScreen />;

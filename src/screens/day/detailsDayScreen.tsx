@@ -97,6 +97,11 @@ export default function DayDetailsScreen() {
         title="Add new POI"
         onPress={() => {handleAddPoi(dayId)}}
         />
+
+        <Button
+        title="Show map"
+        onPress={() => handleOpenMap(dayId)}
+        />
         
         </SafeAreaView>
     );
@@ -119,6 +124,13 @@ function editPOI(poiId: string){
 function editDay(dayId: string){
   router.push({
     pathname: "/editDay",
+    params: {dayId}
+  })
+}
+
+function handleOpenMap(dayId: string){
+  router.push({
+    pathname: "/map",
     params: {dayId}
   })
 }

@@ -1,4 +1,4 @@
-import CreatePoiScreen from "@/screens/createPoiScreen";
+import CreatePoiScreen from "@/screens/POI/createPoiScreen";
 
 export default function CreatePoi() {
   return <CreatePoiScreen />;

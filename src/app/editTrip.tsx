@@ -1,4 +1,4 @@
-import EditTripScreen from "@/screens/editTripScreen";
+import EditTripScreen from "@/screens/trip/editTripScreen";
 
 export default function EditTrip() {
   return <EditTripScreen />;

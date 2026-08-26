@@ -50,6 +50,11 @@ export default function Index() {
           title="+ New Trip"
           onPress={() => router.push("/createTrip")}
         />
+
+        <Button
+          title="Open map"
+          onPress={() => router.push("/map")}
+        />
       </View>
   );
 

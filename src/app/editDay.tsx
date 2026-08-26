@@ -1,4 +1,4 @@
-import EditDayScreen from "@/screens/editDayScreen";
+import EditDayScreen from "@/screens/day/editDayScreen";
 
 export default function EditDay() {
   return <EditDayScreen />;
