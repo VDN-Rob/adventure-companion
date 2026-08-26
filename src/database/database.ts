@@ -37,12 +37,16 @@ export async function setupDatabase(db: SQLiteDatabase) {
       );
 
       CREATE TABLE IF NOT EXISTS maps (
-      id TEXT PRIMARY NOT NULL,
-      trip_id TEXT,
-      day_id TEXT,
-      offline_region_id TEXT NOT NULL,
-      FOREIGN KEY (trip_id) REFERENCES trips(id),
-      FOREIGN KEY (day_id) REFERENCES days(id))
+        id TEXT PRIMARY KEY NOT NULL,
+        offline_region_id TEXT NOT NULL,
+        name TEXT,
+        min_zoom INTEGER NOT NULL,
+        max_zoom INTEGER NOT NULL,
+        west REAL NOT NULL,
+        south REAL NOT NULL,
+        east REAL NOT NULL,
+        north REAL NOT NULL
+      );
     `);
   }
 
