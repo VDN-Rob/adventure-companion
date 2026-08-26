@@ -35,8 +35,12 @@ export class MapsRepository {
         )
     }
 
-    async getMaps() {
-        // SELECT
+    async getMaps(): Promise<OfflineMap[]> {
+        const rows = await this.db.getAllAsync<OfflineMapRow>(
+            `SELECT * FROM maps`
+        );
+
+        return rows.map(row => this.mapRowToOfflineMap(row));
     }
 
     async getMapById(id: string) {

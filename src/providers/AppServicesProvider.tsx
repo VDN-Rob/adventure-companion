@@ -5,6 +5,7 @@ import { POIServices } from "@/services/POIService";
 import { TripMapServices } from "@/services/tripMapService";
 import { TripServices } from "@/services/TripService";
 import { useDaysRepository } from "@/utils/useDaysRepository";
+import { useMapsRepository } from "@/utils/useMapsRepository";
 import { usePoisRepository } from "@/utils/usePoisRepository";
 import { useTripsRepository } from "@/utils/useTripsRepository";
 import { createContext, useMemo } from "react";
@@ -27,6 +28,7 @@ export function AppServicesProvider({
   const tripsRepository = useTripsRepository();
   const daysRepository = useDaysRepository();
   const poisRepository = usePoisRepository();
+  const mapsRepository = useMapsRepository();
 
   const isOnline = useNetworkStatus();
 
@@ -51,8 +53,8 @@ export function AppServicesProvider({
   );
 
   const mapServices = useMemo(
-    () => new MapServices(tripsRepository, daysRepository),
-    [tripsRepository, daysRepository]
+    () => new MapServices(mapsRepository),
+    [mapsRepository]
   );
 
   const tripMapServices = useMemo(
