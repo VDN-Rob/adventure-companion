@@ -4,14 +4,14 @@ import { Trip } from "@/models/Trip";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
-import { Button, FlatList, SafeAreaView, Text } from "react-native";
+import { Alert, Button, FlatList, SafeAreaView, Text } from "react-native";
 
 export default function TripDetailsScreen() {
     // Retrieve id from parameters
     const { id: tripId } = useLocalSearchParams<{ id: string }>();
 
     // Use application layer to access databank
-    const { tripServices } = useAppServices();
+    const { tripServices, tripMapServices } = useAppServices();
 
     // State
     const [trip, setTrip] = useState<Trip>();
@@ -68,6 +68,42 @@ export default function TripDetailsScreen() {
       return <Text>{error ?? "Trip not found."}</Text>;
     }
 
+
+    function handleTripMapDownload() {
+      const regions = tripMapServices.getTripMapRegions(tripId, "day");
+    }
+
+    function tripDownloadWarning(id: string) {
+      Alert.alert(
+        "Downloading",
+        `How would you like to download the maps?
+
+        * Entire trip
+          One large map covering the whole trip.
+          Simpler, but may download unnecessary areas.
+
+        * Separate maps per day
+          Downloads only the area around each day.
+          Usually uses less storage for long trips.`,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Entire trip",
+            style: "destructive",
+            onPress: handleTripMapDownload,
+          },
+          {
+            text: "Per day",
+            style: "destructive",
+            onPress: handleTripMapDownload,
+          },
+        ]
+      );
+    }
+
     return (
         <SafeAreaView>
         <Text>{trip?.name}</Text>
@@ -103,6 +139,12 @@ export default function TripDetailsScreen() {
           onPress={() => { if (trip) handleAddDay(trip?.id)}}
         />
         
+        <Text>Map</Text>
+        <Text>--------------</Text>
+        <Button
+          title="Download maps"
+          onPress={() => { if (trip) tripDownloadWarning(trip?.id)}}
+        />
         </SafeAreaView>
     );
 }
@@ -127,3 +169,4 @@ function handleEditTrip(id: string){
     params: {id}
   })
 }
+

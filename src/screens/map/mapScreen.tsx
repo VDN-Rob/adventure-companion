@@ -7,6 +7,12 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
+import adventureStyleJson from "@/assets/map/adventureStyle.json";
+import { MAP_STYLE } from "@/constants/map";
+import type { StyleSpecification } from "@maplibre/maplibre-react-native";
+
+const adventureStyle = adventureStyleJson as unknown as StyleSpecification;
+
 
 export default function MapScreen() {
     // Retrieve id from parameters
@@ -92,7 +98,7 @@ export default function MapScreen() {
       return (
         <Map
             style={{ flex: 1 }}
-            mapStyle="https://demotiles.maplibre.org/style.json"
+            mapStyle={MAP_STYLE}
             >
             {bounds && (
                 <Camera
