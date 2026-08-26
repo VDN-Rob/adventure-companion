@@ -45,7 +45,8 @@ export async function setupDatabase(db: SQLiteDatabase) {
         west REAL NOT NULL,
         south REAL NOT NULL,
         east REAL NOT NULL,
-        north REAL NOT NULL
+        north REAL NOT NULL,
+        creation_date TEXT NOT NULL
       );
     `);
   }

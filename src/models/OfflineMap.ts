@@ -8,4 +8,5 @@ export interface OfflineMap {
     south: number;
     east: number;
     north: number;
+    creationDate: string;
 }

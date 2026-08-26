@@ -11,6 +11,7 @@ type OfflineMapRow = {
     south: number;
     east: number;
     north: number;
+    creation_date: string;
   };
 
 export class MapsRepository {
@@ -29,7 +30,8 @@ export class MapsRepository {
             map.west,
             map.south,
             map.east,
-            map.north
+            map.north,
+            map.creationDate
         )
     }
 
@@ -60,6 +62,7 @@ export class MapsRepository {
             south: row.south,
             east: row.east,
             north: row.north,
+            creationDate: row.creation_date
         };
     }
 
