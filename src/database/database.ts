@@ -35,6 +35,14 @@ export async function setupDatabase(db: SQLiteDatabase) {
         notes TEXT,
         FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
       );
+
+      CREATE TABLE IF NOT EXISTS maps (
+      id TEXT PRIMARY NOT NULL,
+      trip_id TEXT,
+      day_id TEXT,
+      offline_region_id TEXT NOT NULL,
+      FOREIGN KEY (trip_id) REFERENCES trips(id),
+      FOREIGN KEY (day_id) REFERENCES days(id))
     `);
   }
 
