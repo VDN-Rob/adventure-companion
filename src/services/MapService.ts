@@ -39,5 +39,12 @@ export class MapServices {
         return offlinePack;
     }
 
-    deleteRegion() {}
+    async deleteRegion(mapId: string) {
+        // MapLibre deletion
+        // database deletion
+    }
+
+    async getDownloadedMaps() {
+        // database / MapLibre
+    }
 }
