@@ -50,8 +50,22 @@ export async function setupDatabase(db: SQLiteDatabase) {
         north REAL NOT NULL,
         creation_date TEXT NOT NULL
       );
+
+      
     `);
   }
+
+//   routes
+// ────────────────────────
+// id
+// day_id
+// name
+// distance_meters
+// elevation_gain_meters
+// elevation_loss_meters
+// track_point_count
+// file_path
+// imported_at
 
 // For development purposes: database reset
 export async function resetDatabase() {
