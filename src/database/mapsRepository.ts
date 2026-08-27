@@ -20,8 +20,8 @@ export class MapsRepository {
 
     async createMap(map: OfflineMap) {
         return this.db.runAsync(
-            `INSERT INTO maps (id, offline_region_id, name, min_zoom, max_zoom, west, south, east, north)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO maps (id, offline_region_id, name, min_zoom, max_zoom, west, south, east, north, creation_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             map.id,
             map.offlineRegionId,
             map.name,
@@ -37,7 +37,7 @@ export class MapsRepository {
 
     async getMaps(): Promise<OfflineMap[]> {
         const rows = await this.db.getAllAsync<OfflineMapRow>(
-            `SELECT * FROM maps`
+            `SELECT * FROM maps ORDER BY creation_date DESC`
         );
 
         return rows.map(row => this.mapRowToOfflineMap(row));

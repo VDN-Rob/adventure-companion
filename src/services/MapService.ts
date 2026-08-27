@@ -24,57 +24,99 @@ export class MapServices {
         minZoom = 8,
         maxZoom = 15
     ): Promise<OfflineMap> {
+    
         const id = Crypto.randomUUID();
-
-        const offlineRegionId =
-            `region-${id}`;
-
+    
+        let resolveDownload!: () => void;
+        let rejectDownload!: (error: unknown) => void;
+    
+        const downloadFinished = new Promise<void>((resolve, reject) => {
+            resolveDownload = resolve;
+            rejectDownload = reject;
+        });
+    
         const offlinePack = await OfflineManager.createPack(
             {
                 mapStyle: MAP_STYLE,
-                minZoom: 5,
-                maxZoom: 15,
+                minZoom,
+                maxZoom,
                 bounds,
                 metadata: {
-                    name: "cycling-trip",
+                    name,
                 },
             },
+    
             (pack, status) => {
                 console.log("Download:", status);
+    
+                if (status.percentage >= 100) {
+                    console.log("Download complete!");
+                    resolveDownload();
+                }
             },
+    
             (pack, error) => {
                 console.error("Map download error:", error);
+                rejectDownload(error);
             }
         );
-
+    
+        // createPack() has now returned, so we have MapLibre's ID
+        const offlineRegionId = offlinePack.id;
+    
+        // Wait for the actual download
+        await downloadFinished;
+    
+        // Only now save it to SQLite
         const map: OfflineMap = {
             id,
             offlineRegionId,
             name,
-
+    
             minZoom,
             maxZoom,
-
+    
             west: bounds[0],
             south: bounds[1],
             east: bounds[2],
             north: bounds[3],
-
-            creationDate: "26.08.2026"
+    
+            creationDate: new Date().toISOString(),
         };
-
+    
         await this.mapsRepository.createMap(map);
-
+    
         return map;
-
     }
 
-    async deleteRegion(mapId: string) {
-        // MapLibre deletion
-        // database deletion
+    async deleteRegion(map: OfflineMap) {
+        await OfflineManager.deletePack(map.offlineRegionId);
+    
+        await this.mapsRepository.deleteMap(map.id);
     }
 
-    async getDownloadedMaps() {
-        // database / MapLibre
+    async getDownloadedMaps(): Promise<OfflineMap[]> {
+        const maps = await this.mapsRepository.getMaps();
+    
+        const downloadedMaps: OfflineMap[] = [];
+    
+        for (const map of maps) {
+            try {
+                const pack = await OfflineManager.getPack(
+                    map.offlineRegionId
+                );
+    
+                if (pack) {
+                    downloadedMaps.push(map);
+                }
+            } catch (error) {
+                console.error(
+                    `Could not find offline pack ${map.offlineRegionId}`,
+                    error
+                );
+            }
+        }
+    
+        return downloadedMaps;
     }
 }

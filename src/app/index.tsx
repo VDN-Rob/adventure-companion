@@ -1,15 +1,18 @@
 import { TripCard } from "@/components/TripCard";
+import { OfflineMap } from "@/models/OfflineMap";
 import { Trip } from "@/models/Trip";
+import { MapBounds } from "@/utils/combineMapBounds";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, FlatList, StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   // Temporary memory
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [maps, setMaps] = useState<OfflineMap[]>([]);
   
-  const {tripServices, isOnline} = useAppServices();
+  const {tripServices, isOnline, mapServices} = useAppServices();
 
   // When Index finishes loading, get the trips
   useEffect(() => {
@@ -18,10 +21,51 @@ export default function Index() {
 
       setTrips(loadedTrips);
     }
+    async function loadMaps() {
+      const maps = await mapServices.getDownloadedMaps();
+      setMaps(maps);
+    }
 
+    loadMaps();
     loadTrips();
   }, []);
   
+  async function handleDeleteMap(map: OfflineMap) {
+    Alert.alert(
+        "Delete map",
+        `Are you sure you want to delete "${map.name}"?`,
+        [
+            {
+                text: "Cancel",
+                style: "cancel",
+            },
+            {
+                text: "Delete",
+                style: "destructive",
+                onPress: async () => {
+                    try {
+                        await mapServices.deleteRegion(map);
+  
+                        // Remove it from the UI
+                        setMaps(currentMaps =>
+                            currentMaps.filter(
+                                currentMap => currentMap.id !== map.id
+                            )
+                        );
+                    } catch (error) {
+                        console.error("Failed to delete map:", error);
+  
+                        Alert.alert(
+                            "Error",
+                            "The map could not be deleted."
+                        );
+                    }
+                },
+            },
+        ]
+    );
+  }
+
   return (
       <View style={styles.container}>
         <Text>Cycling Companion</Text>
@@ -55,6 +99,56 @@ export default function Index() {
           title="Open map"
           onPress={() => router.push("/map")}
         />
+        <Button
+          title="Download test map"
+          onPress={async () => {
+              const bounds: MapBounds = [
+                  4.5,  // west
+                  49.8, // south
+                  4.9,  // east
+                  50.1, // north
+              ];
+
+              try {
+                  const map = await mapServices.downloadRegion(
+                      "Test map",
+                      bounds
+                  );
+
+                  console.log("Downloaded map:", map);
+
+                  Alert.alert(
+                      "Success",
+                      "Map download started."
+                  );
+              } catch (error) {
+                  console.error(error);
+
+                  Alert.alert(
+                      "Error",
+                      "Could not download map."
+                  );
+              }
+          }}
+      />
+      <FlatList
+        data={maps}
+        keyExtractor={(map) => map.id}
+        renderItem={({ item }) => (
+            <View>
+                <Text>{item.name}</Text>
+
+                <Text>
+                    {item.west}, {item.south} → {item.east}, {item.north}
+                </Text>
+
+                <Button
+                    title="Delete map"
+                    onPress={() => handleDeleteMap(item)}
+                />
+            </View>
+        )}
+    />
       </View>
   );
 
@@ -66,6 +160,7 @@ function handleDetailsTrip(id: string){
     params: {id}
   })
 }
+
 
 // Aestethic
 const styles = StyleSheet.create({

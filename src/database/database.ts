@@ -36,6 +36,8 @@ export async function setupDatabase(db: SQLiteDatabase) {
         FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
       );
 
+      DROP TABLE IF EXISTS maps;
+      
       CREATE TABLE IF NOT EXISTS maps (
         id TEXT PRIMARY KEY NOT NULL,
         offline_region_id TEXT NOT NULL,
