@@ -138,6 +138,49 @@
 [ ] Learning log updated
 
 # Step 5 — Maps & OpenStreetMap
+# Map
+[X] Map library integrated
+[X] Map displays correctly
+[X] Map can be centred on a coordinate
+[-] Map can zoom/pan
+[ ] Map style configured
+[X] OSM/data attribution handled
+[X] Geographic data
+[X] Latitude/longitude understood
+[X] Coordinate ordering is consistent
+[X] Stops displayed on map
+[X] Marker interaction works
+[X] Map can fit all stops
+[X] Bounding-box calculation implemented
+
+# Location
+[X] Location permission handled
+[X] Current location can be obtained
+[X] Current location can be displayed
+[X] Application still works when location permission is denied
+
+# Offline maps
+[X] Offline map approach selected
+[X] Small test area can be downloaded
+[-] Downloaded area persists
+[?] Map works with internet disabled
+[ ] Missing map data handled gracefully
+[-] Map download status represented
+
+# Architecture
+[X] MapService
+[ ] LocationService
+[X] Offline map model
+[X] Map-specific implementation kept out of domain models
+[ ] Map architecture documented
+
+# Documentation
+[X] map-requirements.md
+[ ] map-data.md
+[X] Architecture updated
+[ ] Offline-first documentation updated
+
+
 # Step 6 — GPX & route data
 # Step 7 — Diary, photos & FIT
 # Step 8 — GPS & navigation
