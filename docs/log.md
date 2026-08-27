@@ -181,7 +181,54 @@
 [ ] Offline-first documentation updated
 
 
-# Step 6 — GPX & route data
+## Step 6 — GPX & route data
+# GPX
+[ ] Understand basic GPX structure
+[ ] GPX parser integrated
+[ ] GPX validation implemented
+[ ] Multiple track segments considered
+[ ] Missing elevation handled
+[ ] Original GPX preserved
+
+# Data model
+[ ] Route model
+[ ] TrackPoint model
+[ ] routes database table
+[ ] Route linked to Day
+[ ] Route metadata stored in SQLite
+[ ] GPX stored in filesystem
+[ ] Geographic calculations
+[ ] Haversine distance implemented
+[ ] Route distance calculated
+[ ] Elevation gain calculated
+[ ] Elevation loss calculated
+[ ] Bounding box reused from Step 5
+
+# Map
+[ ] Route displayed on map
+[ ] Stops displayed simultaneously
+[ ] Map fits route
+[ ] Large GPX tested
+[ ] Map remains responsive
+[ ] Application architecture
+[ ] GpxService
+[ ] RouteService
+[ ] RouteRepository
+[ ] Geographic utilities separated
+[ ] Map doesn't parse GPX directly
+[ ] UI doesn't manipulate SQLite directly
+
+# Offline
+[ ] GPX can be imported offline
+[ ] Route remains available offline
+[ ] Map route renders offline
+[ ] Application survives restart offline
+
+# Documentation
+[ ] Architecture updated
+[ ] GPX storage ADR created
+
+
 # Step 7 — Diary, photos & FIT
 # Step 8 — GPS & navigation
 # Step 9 — Strava integration
