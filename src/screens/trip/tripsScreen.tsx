@@ -1,9 +1,9 @@
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 import { theme } from "@/app/theme";
@@ -65,9 +65,9 @@ export default function TripsScreen() {
             totalDays={12}
             onPress={() => {
                 router.push({
-                pathname: "/detailsDay",
+                pathname: "/detailsTrip",
                 params: {
-                    dayId: "4",
+                    tripId: "1",
                 },
                 });
             }}
