@@ -17,6 +17,7 @@ import {
 import { theme } from "@/app/theme";
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
+import { GameModal } from "@/components/Modal";
 
 export default function EditTripScreen() {
     // Retrieve id from parameters
@@ -31,6 +32,7 @@ export default function EditTripScreen() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [description, setDescription] = useState("");
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
     // Load the right trip when screen finishes loading
     useEffect(() => {
@@ -235,7 +237,7 @@ export default function EditTripScreen() {
     
             <Pressable
               style={styles.deleteButton}
-              onPress={handleDeleteTrip}
+              onPress={() => setDeleteModalVisible(true)}
             >
               <Text style={styles.deleteText}>
                 DELETE ADVENTURE
@@ -247,6 +249,24 @@ export default function EditTripScreen() {
             </Pressable>
           </View>
         </ScrollView>
+        <GameModal
+          visible={deleteModalVisible}
+          title="DELETE ADVENTURE?"
+          message="This adventure and its planned days, POIs and other data will be permanently removed. This action cannot be undone."
+          confirmText="DELETE"
+          cancelText="KEEP IT"
+          destructive
+          onCancel={() => setDeleteModalVisible(false)}
+          onConfirm={async () => {
+            if (!id) return;
+
+            setDeleteModalVisible(false);
+
+            await tripServices.deleteTrip(id);
+
+            router.dismiss(2);
+          }}
+        />
       </KeyboardAvoidingView>
     );
 }
