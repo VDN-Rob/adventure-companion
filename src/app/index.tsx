@@ -1,9 +1,11 @@
 import { DayCard } from "@/components/DayCard";
 import { AppHeader } from "@/components/homescreen/AppHeader";
+import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { QuickActions } from "@/components/homescreen/QuickActions";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { StyleSheet, View } from 'react-native';
+import { theme } from "./theme";
 
 export default function HomeScreen() {
   const day: Day = {
@@ -49,6 +51,19 @@ export default function HomeScreen() {
           console.log("Diary pressed");
         }}
       />
+
+      <BottomNavigation
+        activeTab="today"
+        onTodayPress={() => {
+          console.log("Today");
+        }}
+        onMapPress={() => {
+          console.log("Map");
+        }}
+        onMorePress={() => {
+          console.log("More");
+        }}
+      />
     </View>
   );
 }
@@ -56,10 +71,14 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0E1514",
+    backgroundColor: theme.colours.background,
   },
 
   content: {
-    padding: 16,
+    flex: 1,
+  
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.lg,
   },
 });
