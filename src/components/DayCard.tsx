@@ -107,6 +107,37 @@ export function DayCard({
           →
         </Text>
       </View>
+      
+      <View style={styles.summary}>
+        {day.notes ? (
+          <Text
+            style={styles.description}
+            numberOfLines={2}
+          >
+            {day.notes}
+          </Text>
+        ) : pois.length > 0 ? (
+          <View style={styles.poiSummary}>
+            <View style={styles.summaryInfo}>
+              <Text style={styles.summaryLabel}>
+                NEXT
+              </Text>
+
+              <Text style={styles.summaryValue}>
+                {pois[0].name}
+              </Text>
+            </View>
+
+            <Text style={styles.summaryType}>
+              {pois[0].type.toUpperCase()}
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.emptySummary}>
+            No POIs planned for today
+          </Text>
+        )}
+      </View>
     </Pressable>
   );
 }
@@ -200,7 +231,7 @@ const styles = StyleSheet.create({
 
   mapContainer: {
     flex: 1,
-    minHeight: 160,
+    minHeight: 180,
   
     overflow: "hidden",
   
@@ -293,5 +324,70 @@ const styles = StyleSheet.create({
     color: theme.colours.textSecondary,
   
     letterSpacing: 0.5,
+  },
+  summary: {
+    minHeight: 54,
+  
+    justifyContent: "center",
+  
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+  
+    borderTopWidth: 1,
+    borderTopColor: theme.colours.border,
+  
+    backgroundColor: theme.colours.surfaceRaised,
+  },
+  poiSummary: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  
+  summaryInfo: {
+    flex: 1,
+  },
+  
+  summaryLabel: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.xs,
+    color: theme.colours.textMuted,
+    letterSpacing: 1.5,
+  },
+  
+  summaryValue: {
+    marginTop: 2,
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.sm,
+    color: theme.colours.text,
+  },
+  
+  summaryType: {
+    marginLeft: theme.spacing.md,
+  
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.xs,
+  
+    color: theme.colours.accent,
+  
+    letterSpacing: 1,
+  },
+  
+  description: {
+    fontFamily: theme.fonts.body,
+    fontSize: theme.fontSize.sm,
+  
+    lineHeight: 18,
+  
+    color: theme.colours.textSecondary,
+  },
+  
+  emptySummary: {
+    fontFamily: theme.fonts.bodyMedium,
+    fontSize: theme.fontSize.sm,
+  
+    color: theme.colours.textMuted,
+  
+    fontStyle: "italic",
   },
 });

@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       gap: theme.spacing.sm,
   
-      marginTop: theme.spacing.lg,
+      marginTop: theme.spacing.xl,
+      marginBottom: theme.spacing.sm,
     },
   
     button: {
