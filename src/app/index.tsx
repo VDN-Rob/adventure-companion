@@ -4,6 +4,7 @@ import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { QuickActions } from "@/components/homescreen/QuickActions";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
+import { router } from "expo-router";
 import { StyleSheet, View } from 'react-native';
 import { theme } from "./theme";
 
@@ -33,9 +34,14 @@ export default function HomeScreen() {
         <DayCard
           day={day}
           pois={pois}
-          isToday={true}
+          isToday
           onPress={() => {
-            console.log("Day pressed");
+            router.push({
+              pathname: "/detailsDay",
+              params: {
+                dayId: day.id,
+              },
+            });
           }}
         />
       </View>
@@ -55,10 +61,15 @@ export default function HomeScreen() {
       <BottomNavigation
         activeTab="today"
         onTodayPress={() => {
-          console.log("Today");
+          router.push({
+            pathname: "/detailsDay",
+            params: {
+              dayId: day.id,
+            },
+          });
         }}
         onMapPress={() => {
-          console.log("Map");
+          router.push("/map")
         }}
         onMorePress={() => {
           console.log("More");
