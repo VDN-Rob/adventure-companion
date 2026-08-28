@@ -1,5 +1,6 @@
 import { theme } from "@/app/theme";
 import { POICard } from "@/components/POICard";
+import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { useAppServices } from "@/utils/useAppServiceProvider";
@@ -314,18 +315,6 @@ export default function DayDetailsScreen() {
         />
       </View>
     );
-}
-
-function SectionLabel({ title }: { title: string }) {
-  return (
-    <View style={styles.sectionHeader}>
-      <Text style={styles.sectionTitle}>
-        {title}
-      </Text>
-
-      <View style={styles.sectionLine} />
-    </View>
-  );
 }
 
 function editPOI(poiId: string){

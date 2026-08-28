@@ -1,20 +1,20 @@
 import { theme } from "@/app/theme";
-import { InputField } from "@/components/InputField";
+import { InputField } from "@/components/forms/InputField";
 import { Day } from "@/models/Day";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
 } from "react-native";
 
 export default function CreateDayScreen() {
