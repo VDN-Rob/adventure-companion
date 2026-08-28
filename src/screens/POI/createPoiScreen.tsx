@@ -4,18 +4,19 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import { theme } from "@/app/theme";
 import { InputField } from "@/components/forms/InputField";
+import { POITypeSelector } from "@/components/forms/POITypeSelector";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 
 const POI_TYPES: {
@@ -65,6 +66,7 @@ export default function CreatePoiScreen() {
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
     const [notes, setNotes] = useState("");
+    const [visitedAt, setvisitedAt] = useState("");
 
     const { poiServices } = useAppServices();
 
@@ -119,6 +121,7 @@ export default function CreatePoiScreen() {
           notes: notes.trim() === ""
             ? null
             : notes.trim(),
+          visitedAt: visitedAt.trim() === "" ? null : visitedAt.trim(), 
         };
       
         await poiServices.createPOI(newPoi);
@@ -210,50 +213,10 @@ export default function CreatePoiScreen() {
                 TYPE
               </Text>
       
-              <View style={styles.typeGrid}>
-                {POI_TYPES.map((poiType) => {
-                  const selected = type === poiType.type;
-      
-                  return (
-                    <Pressable
-                      key={poiType.type}
-                      onPress={() => setType(poiType.type)}
-                      style={[
-                        styles.typeCard,
-                        selected && styles.typeCardSelected,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.typeSymbol,
-                          selected && styles.typeSymbolSelected,
-                        ]}
-                      >
-                        {poiType.symbol}
-                      </Text>
-      
-                      <Text
-                        style={[
-                          styles.typeLabel,
-                          selected && styles.typeLabelSelected,
-                        ]}
-                      >
-                        {poiType.label}
-                      </Text>
-      
-                      <Text
-                        style={[
-                          styles.typeDescription,
-                          selected &&
-                            styles.typeDescriptionSelected,
-                        ]}
-                      >
-                        {poiType.description}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
+              <POITypeSelector
+                value={type}
+                onChange={setType}
+              />
             </View>
       
             {/* LOCATION */}
