@@ -41,7 +41,7 @@ export function DayCard({
         </View>
 
         {isToday && (
-          <Text style={styles.today}>
+          <Text style={styles.subtitle}>
             TODAY
           </Text>
         )}
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
 
-  today: {
+  subtitle: {
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
 

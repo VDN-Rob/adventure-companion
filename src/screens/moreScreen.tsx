@@ -1,6 +1,7 @@
 import { theme } from "@/app/theme";
 import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { MenuItem } from "@/components/MenuItem";
+import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function MoreScreen() {
@@ -20,9 +21,7 @@ export default function MoreScreen() {
                 icon="⚑"
                 title="Trips"
                 description="Your adventures"
-                onPress={() => {
-                console.log("Trips");
-                }}
+                onPress={() => { router.replace("/trips") }}
             />
 
             <MenuItem

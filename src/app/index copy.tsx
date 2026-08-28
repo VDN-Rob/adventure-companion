@@ -1,4 +1,4 @@
-import { TripCard } from "@/components/TripCard";
+import { TripCard } from "@/components/trips/TripCard";
 import { OfflineMap } from "@/models/OfflineMap";
 import { Trip } from "@/models/Trip";
 import { MapBounds } from "@/utils/combineMapBounds";
