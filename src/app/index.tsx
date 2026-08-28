@@ -35,14 +35,7 @@ export default function HomeScreen() {
           day={day}
           pois={pois}
           isToday
-          onPress={() => {
-            router.push({
-              pathname: "/detailsDay",
-              params: {
-                dayId: day.id,
-              },
-            });
-          }}
+          onPress={() => openDayDetails(day.id)}
         />
       </View>
 
@@ -60,14 +53,7 @@ export default function HomeScreen() {
 
       <BottomNavigation
         activeTab="today"
-        onTodayPress={() => {
-          router.push({
-            pathname: "/detailsDay",
-            params: {
-              dayId: day.id,
-            },
-          });
-        }}
+        onTodayPress={() => openDayDetails(day.id)}
         onMapPress={() => {
           router.push("/map")
         }}
@@ -78,6 +64,13 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+function openDayDetails(dayId: string) {
+  router.push({
+    pathname: "/detailsDay",
+    params: {dayId},
+  });
+};
 
 const styles = StyleSheet.create({
   container: {

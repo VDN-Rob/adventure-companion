@@ -75,7 +75,12 @@ export default function DayDetailsScreen() {
 
         <Button
         title="Edit day"
-        onPress={() => {editDay(dayId)}}
+        onPress={() => {
+          router.push({
+            pathname: "/editDay",
+            params: {dayId}
+          })
+        }}
         />
 
 
@@ -95,42 +100,32 @@ export default function DayDetailsScreen() {
         />
         <Button
         title="Add new POI"
-        onPress={() => {handleAddPoi(dayId)}}
+        onPress={() => {
+          router.push({
+            pathname: "/createPoi",
+            params: {dayId}
+          })
+        }}
         />
 
         <Button
         title="Show map"
-        onPress={() => handleOpenMap(dayId)}
+        onPress={() => {
+          router.push({
+            pathname: "/map",
+            params: { dayId }
+          })
+        }}
         />
         
         </SafeAreaView>
     );
 }
 
-function handleAddPoi(dayId: string){
-  router.push({
-    pathname: "/createPoi",
-    params: {dayId}
-  })
-}
 
 function editPOI(poiId: string){
   router.push({
     pathname: "/editPOI",
     params: {poiId}
-  })
-}
-
-function editDay(dayId: string){
-  router.push({
-    pathname: "/editDay",
-    params: {dayId}
-  })
-}
-
-function handleOpenMap(dayId: string){
-  router.push({
-    pathname: "/map",
-    params: {dayId}
   })
 }
