@@ -1,5 +1,6 @@
 import { DayCard } from "@/components/DayCard";
 import { AppHeader } from "@/components/homescreen/AppHeader";
+import { QuickActions } from "@/components/homescreen/QuickActions";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { StyleSheet, View } from 'react-native';
@@ -36,6 +37,18 @@ export default function HomeScreen() {
           }}
         />
       </View>
+
+      <QuickActions
+        onExpensePress={() => {
+          console.log("Expense pressed");
+        }}
+        onDayPress={() => {
+          console.log("Day details pressed");
+        }}
+        onDiaryPress={() => {
+          console.log("Diary pressed");
+        }}
+      />
     </View>
   );
 }
