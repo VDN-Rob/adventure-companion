@@ -57,9 +57,7 @@ export default function HomeScreen() {
         onMapPress={() => {
           router.push("/map")
         }}
-        onMorePress={() => {
-          console.log("More");
-        }}
+        onMorePress={() => { router.push("/more"); }}
       />
     </View>
   );

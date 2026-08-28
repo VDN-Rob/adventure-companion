@@ -72,7 +72,7 @@ const fontSize = {
     lg: 18,
     xl: 24,
     xxl: 32,
-    huge: 42,
+    xxxl: 42,
 };
 
 
