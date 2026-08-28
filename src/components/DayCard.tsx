@@ -7,18 +7,20 @@ import { DayMapPreview } from "./homescreen/DayMapPreview";
 
 type DayCardProps = {
   day: Day;
-  route?: Route;
   pois: POI[];
   isToday?: boolean;
   onPress: () => void;
+  route?: Route;
+  dayNumber?: number;
 };
 
 export function DayCard({
   day,
-  route,
   pois,
   isToday = false,
   onPress,
+  route,
+  dayNumber,
 }: DayCardProps) {
   return (
     <Pressable
