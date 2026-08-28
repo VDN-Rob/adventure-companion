@@ -7,6 +7,64 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
+const exampleDay: Day = {
+  id: "test-day-01",
+  tripId: "test-trip-01",
+  date: "2026-08-28",
+  title: "Through the Ardennes",
+  notes:
+    "A long climbing day through forest roads and small villages. Water is limited after the second climb.",
+  plannedElevation: 820,
+  plannedDistance: 68.5,
+};
+const examplePois: POI[] = [
+  {
+    id: "poi-00",
+    dayId: "test-day-01",
+    name: "Start in Oignies",
+    type: "other",
+    latitude: 50.023722,
+    longitude: 4.639699,
+    notes: "Starting point og the adventure",
+  },
+  {
+    id: "poi-01",
+    dayId: "test-day-01",
+    name: "Forest Spring",
+    type: "water",
+    latitude: 49.82,
+    longitude: 4.62,
+    notes: "Small spring beside the trail.",
+  },
+  {
+    id: "poi-02",
+    dayId: "test-day-01",
+    name: "La Petite Boulangerie",
+    type: "food",
+    latitude: 49.78,
+    longitude: 4.71,
+    notes: "Good place for breakfast and coffee.",
+  },
+  {
+    id: "poi-03",
+    dayId: "test-day-01",
+    name: "Intermarché",
+    type: "supermarket",
+    latitude: 49.75,
+    longitude: 4.83,
+    notes: "Last reliable resupply before the hills.",
+  },
+  {
+    id: "poi-04",
+    dayId: "test-day-01",
+    name: "Camping des Pins",
+    type: "accommodation",
+    latitude: 49.68,
+    longitude: 4.91,
+    notes: "Small campsite with showers.",
+  },
+];
+
 export default function DayDetailsScreen() {
     // Retrieve id from parameters
     const { dayId } = useLocalSearchParams<{ dayId: string }>();
@@ -53,7 +111,10 @@ export default function DayDetailsScreen() {
           }
         }
     
-        loadData();
+        // loadData(); // Replace the three sets hereunder. 
+        setDay(exampleDay);
+        setPois(examplePois);
+        setIsLoading(false);
       }, [dayId])
     );
     

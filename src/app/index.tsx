@@ -43,9 +43,7 @@ export default function HomeScreen() {
         onExpensePress={() => {
           console.log("Expense pressed");
         }}
-        onDayPress={() => {
-          console.log("Day details pressed");
-        }}
+        onDayPress={() => { openDayDetails(day.id) }}
         onDiaryPress={() => {
           console.log("Diary pressed");
         }}
