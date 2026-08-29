@@ -7,13 +7,8 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
-import adventureStyleJson from "@/assets/map/adventureStyle.json";
 import { MAP_STYLE } from "@/constants/map";
 import { Day } from "@/models/Day";
-import type { StyleSpecification } from "@maplibre/maplibre-react-native";
-
-const adventureStyle = adventureStyleJson as unknown as StyleSpecification;
-
 
 const exampleDay: Day = {
   id: "test-day-01",
@@ -85,54 +80,47 @@ export default function MapScreen() {
     // Load databank
     const { poiServices } = useAppServices();
     const [pois, setPois] = useState<POI[]>([]);
-    const [zoom, setZoom] = useState<number>(1);
     const [bounds, setBounds] = useState<{ minLat: number; maxLat: number; minLng: number; maxLng: number; }|null>(null)
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     
     
     useEffect(() => {
-        async function requestLocation() {
-          const { status } =
-            await Location.requestForegroundPermissionsAsync();
-      
-          if (status !== "granted") {
-            console.log("Location permission denied");
-            return;
-          }
-
-          try {
-            const location = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.High,
-            });
-    
-            console.log("LOCATION:", location.coords);
-    
-            setLocation(location);
-            } catch (error) {
-                console.error("Location error:", error);
-            }
-        }
-
         let subscription: Location.LocationSubscription | null = null;
 
-        async function startLocationTracking() {
+        async function setupLocationTracking() {
             const { status } =
-                await Location.requestForegroundPermissionsAsync();
-
+              await Location.requestForegroundPermissionsAsync();
+          
             if (status !== "granted") {
-                return;
+              console.log("Location permission denied");
+              return;
             }
-
-            subscription = await Location.watchPositionAsync(
+          
+            try {
+              const currentLocation =
+                await Location.getCurrentPositionAsync({
+                  accuracy: Location.Accuracy.High,
+                });
+          
+              console.log("LOCATION:", currentLocation.coords);
+          
+              // Set the initial position immediately
+              setLocation(currentLocation);
+          
+              // Then keep it updated
+              subscription = await Location.watchPositionAsync(
                 {
-                    accuracy: Location.Accuracy.High,
-                    distanceInterval: 10,
+                  accuracy: Location.Accuracy.High,
+                  distanceInterval: 10,
                 },
                 (location) => {
-                    setLocation(location);
+                  setLocation(location);
                 }
-            );
-        }
+              );
+            } catch (error) {
+              console.error("Location error:", error);
+            }
+          }
 
         async function loadElements() {
             // if (!dayId) return;
@@ -142,19 +130,24 @@ export default function MapScreen() {
 
             setPois(examplePois);
 
-            const coordinates = pois
-                .filter(poi => poi.latitude !== null && poi.longitude !== null)
-                .map(poi => ({
-                    latitude: poi.latitude!,
-                    longitude: poi.longitude!,
-                }));
+            const coordinates = examplePois
+            .filter(
+                (poi) =>
+                poi.latitude !== null &&
+                poi.longitude !== null
+            )
+            .map((poi) => ({
+                latitude: poi.latitude!,
+                longitude: poi.longitude!,
+            }));
+
+            setBounds(calculateBounds(coordinates));
 
             setBounds(calculateBounds(coordinates));
             console.log("bounds set");
         }
       
-        requestLocation();
-        startLocationTracking();
+        setupLocationTracking();
         loadElements()
 
         return () => {
