@@ -18,7 +18,7 @@ export type DiaryItem = {
   day: Day | null;
 };
 
-export default function DiaryScreen() {
+export default function DetailsDiaryScreen() {
   const { tripId } =
     useLocalSearchParams<{
       tripId: string;
@@ -36,57 +36,64 @@ export default function DiaryScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let cancelled = false;
+  
       async function loadDiary() {
         if (!tripId) {
           setError("No adventure was specified.");
           setIsLoading(false);
           return;
         }
-
+  
         try {
           setIsLoading(true);
           setError(null);
-
+  
           const entries =
-            await diaryEntryServices.getDiaryEntriesForTrip(
-              tripId
-            );
-
-          const diaryItems: DiaryItem[] = [];
-
-          for (const entry of entries) {
-            let day: Day | null = null;
-
-            if (entry.dayId) {
-              day =
-                await dayServices.getDay(entry.dayId);
-            }
-
-            diaryItems.push({
-              entry,
-              day: day ?? null,
-            });
-          }
-
+            await diaryEntryServices.getDiaryEntriesForTrip(tripId);
+  
+          const diaryItems = await Promise.all(
+            entries.map(async (entry) => {
+              let day: Day | null = null;
+  
+              if (entry.dayId) {
+                day = await dayServices.getDay(entry.dayId);
+              }
+  
+              return {
+                entry,
+                day,
+              };
+            })
+          );
+  
           diaryItems.sort((a, b) => {
-            const dateA =
-              a.day?.date ?? a.entry.createdAt;
-            const dateB =
-              b.day?.date ?? b.entry.createdAt;
-
+            const dateA = a.day?.date ?? a.entry.createdAt;
+            const dateB = b.day?.date ?? b.entry.createdAt;
+  
             return dateB.localeCompare(dateA);
           });
-
-          setItems(diaryItems);
-        } catch {
-          setError("Unable to load diary.");
+  
+          if (!cancelled) {
+            setItems(diaryItems);
+          }
+        } catch (e) {
+          if (!cancelled) {
+            setError("Unable to load diary.");
+          }
         } finally {
-          setIsLoading(false);
+          if (!cancelled) {
+            setIsLoading(false);
+          }
         }
       }
-
+  
       loadDiary();
-    }, [tripId])
+  
+      return () => {
+        cancelled = true;
+      };
+    }, [tripId, diaryEntryServices, dayServices])
   );
 
   function openEntry(item: DiaryItem) {

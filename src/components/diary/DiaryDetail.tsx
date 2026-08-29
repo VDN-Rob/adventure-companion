@@ -1,4 +1,4 @@
-import { DiaryItem } from "@/screens/diary/DiaryScreen";
+import { DiaryItem } from "@/screens/diary/detailsDiaryScreen";
 import { theme } from "@/styling/theme";
 import { formatDate } from "@/utils/date";
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";

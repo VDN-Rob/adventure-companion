@@ -18,26 +18,24 @@ export default function MoreScreen() {
 
         <View style={styles.menu}>
             <MenuItem
-                icon="⚑"
-                title="Trips"
-                description="Your adventures"
-                onPress={() => { router.replace("/trip/trips") }}
+              icon="⚑"
+              title="Trips"
+              description="Your adventures"
+              onPress={() => { router.push("/trip/trips") }}
             />
 
             <MenuItem
-                icon="◇"
-                title="Finances"
-                description="Money spent on the road"
-                onPress={() => { router.replace("/finance/finance")}}
+              icon="◇"
+              title="Finances"
+              description="Money spent on the road"
+              onPress={() => { router.push("/finance/finance")}}
             />
 
             <MenuItem
-                icon="✎"
-                title="Diary"
-                description="Your memories from the road"
-                onPress={() => {
-                console.log("Diary");
-                }}
+              icon="✎"
+              title="Diary"
+              description="Your memories from the road"
+              onPress={() => { router.push("/diary/detailsDiary") }}
             />
 
             <MenuItem
