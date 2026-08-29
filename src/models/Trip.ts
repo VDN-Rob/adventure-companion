@@ -4,4 +4,7 @@ export interface Trip {
     startDate: string;
     endDate: string | null;
     description: string | null;
+    
+    budget: number | null;
+    budgetCurrency: string;
 }

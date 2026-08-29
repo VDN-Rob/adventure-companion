@@ -7,15 +7,15 @@ import * as Crypto from "expo-crypto";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
 } from "react-native";
 
 
@@ -25,6 +25,9 @@ export default function CreateTripScreen() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [description, setDescription] = useState("");
+    const [budget, setBudget] = useState("");
+    const [budgetCurrency, setBudgetCurrency] = useState("");
+    
     
     // Access application layer
     const { tripServices } = useAppServices();
@@ -34,6 +37,8 @@ export default function CreateTripScreen() {
         const trimmedStartDate = startDate.trim();
         const trimmedEndDate = endDate.trim();
         const trimmedDescription = description.trim();
+        const checkedBudget = (budget === "" ? null : Number(budget));
+        const trimmedBudgetCurrency = budgetCurrency.trim()
       
         if (trimmedName === "") {
           Alert.alert(
@@ -68,6 +73,8 @@ export default function CreateTripScreen() {
           startDate: trimmedStartDate,
           endDate: trimmedEndDate === "" ? null : trimmedEndDate,
           description: trimmedDescription === "" ? null : trimmedDescription,
+          budget: checkedBudget,
+          budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
         };
       
         await tripServices.createTrip(newTrip);

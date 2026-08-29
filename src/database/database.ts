@@ -11,7 +11,9 @@ export async function setupDatabase(db: SQLiteDatabase) {
         name TEXT NOT NULL,
         start_date TEXT NOT NULL,
         end_date TEXT,
-        description TEXT 
+        description TEXT,
+        budget REAL,
+        budget_currency TEXT NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS days (
@@ -35,8 +37,6 @@ export async function setupDatabase(db: SQLiteDatabase) {
         notes TEXT,
         FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
       );
-
-      DROP TABLE IF EXISTS maps;
       
       CREATE TABLE IF NOT EXISTS maps (
         id TEXT PRIMARY KEY NOT NULL,
@@ -51,7 +51,18 @@ export async function setupDatabase(db: SQLiteDatabase) {
         creation_date TEXT NOT NULL
       );
 
-      
+      CREATE TABLE IF NOT EXISTS expenses (
+        id TEXT PRIMARY KEY NOT NULL,
+        trip_id TEXT NOT NULL,
+        day_id TEXT,
+        amount REAL NOT NULL,
+        currency TEXT NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT,
+        date TEXT NOT NULL,
+        FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
+        FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
+      );      
     `);
   }
 

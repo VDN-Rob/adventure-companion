@@ -14,6 +14,8 @@ const exampleTrip: Trip = {
   startDate: "2026-08-24",
   endDate: "2026-09-04",
   description: "A two-week cycling adventure through the Ardennes.",
+  budget: null,
+  budgetCurrency: "EUR"
 };
 
 const exampleDay: Day = {
@@ -35,6 +37,7 @@ const examplePois: POI[] = [
     latitude: 50.023722,
     longitude: 4.639699,
     notes: "Starting point og the adventure",
+    visitedAt: null
   },
   {
     id: "poi-01",
@@ -44,6 +47,7 @@ const examplePois: POI[] = [
     latitude: 49.82,
     longitude: 4.62,
     notes: "Small spring beside the trail.",
+    visitedAt: null
   },
   {
     id: "poi-02",
@@ -53,6 +57,7 @@ const examplePois: POI[] = [
     latitude: 49.78,
     longitude: 4.71,
     notes: "Good place for breakfast and coffee.",
+    visitedAt: null
   },
   {
     id: "poi-03",
@@ -62,6 +67,7 @@ const examplePois: POI[] = [
     latitude: 49.75,
     longitude: 4.83,
     notes: "Last reliable resupply before the hills.",
+    visitedAt: null
   },
   {
     id: "poi-04",
@@ -71,6 +77,7 @@ const examplePois: POI[] = [
     latitude: 49.68,
     longitude: 4.91,
     notes: "Small campsite with showers.",
+    visitedAt: null
   },
 ];
 

@@ -9,6 +9,8 @@ type TripRow = {
     start_date: string;
     end_date: string;
     description: string;
+    budget: number | null;
+    budget_currency: string;
   };
 
 export class TripsRepository {
@@ -45,19 +47,23 @@ export class TripsRepository {
           startDate: row.start_date,
           endDate: row.end_date,
           description: row.description,
+          budget: row.budget,
+          budgetCurrency: row.budget_currency,
         };
       }
 
     // Funtion to create a new trip
     async createTrip(trip: Trip) {
         return this.db.runAsync(
-            `INSERT INTO trips (id, name, start_date, end_date, description) 
-            VALUES (?, ?, ?, ?, ?)`,
+            `INSERT INTO trips (id, name, start_date, end_date, description, budget, budget_currency) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
             trip.id,
             trip.name,
             trip.startDate,
             trip.endDate,
-            trip.description ?? ""
+            trip.description ?? "",
+            trip.budget,
+            trip.budgetCurrency,
         );    
     }
 
@@ -65,12 +71,14 @@ export class TripsRepository {
     async updateTrip(trip: Trip) {
         return this.db.runAsync(
             `UPDATE trips
-             SET name = ?, start_date = ?, end_date = ?, description = ?
+             SET name = ?, start_date = ?, end_date = ?, description = ?, budget = ?, budget_currency = ?
              WHERE id = ?`,
             trip.name,
             trip.startDate,
             trip.endDate,
             trip.description ?? "",
+            trip.budget,
+            trip.budgetCurrency,
             trip.id
         );
     }
