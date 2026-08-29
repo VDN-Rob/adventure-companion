@@ -121,7 +121,7 @@ export default function CreatePoiScreen() {
           notes: notes.trim() === ""
             ? null
             : notes.trim(),
-          visitedAt: visitedAt.trim() === "" ? null : visitedAt.trim(), 
+          visitedAt: null, 
         };
       
         await poiServices.createPOI(newPoi);

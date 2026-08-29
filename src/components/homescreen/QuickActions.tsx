@@ -3,13 +3,13 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type QuickActionsProps = {
   onExpensePress: () => void;
-  onDayPress: () => void;
+  onCheckInPress: () => void;
   onDiaryPress: () => void;
 };
 
 export function QuickActions({
   onExpensePress,
-  onDayPress,
+  onCheckInPress,
   onDiaryPress,
 }: QuickActionsProps) {
   return (
@@ -22,8 +22,8 @@ export function QuickActions({
 
       <ActionButton
         icon="◇"
-        label="Day"
-        onPress={onDayPress}
+        label="Check POI"
+        onPress={onCheckInPress}
       />
 
       <ActionButton

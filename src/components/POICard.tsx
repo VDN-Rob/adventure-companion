@@ -17,18 +17,33 @@ const poiIcons: Record<POI["type"], string> = {
 };
 
 export function POICard({ poi, onPress }: POICardProps) {
+  function formatVisitedTime(value: string) {
+    return new Date(value).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
         styles.container,
+        poi.visitedAt !== null && styles.visitedContainer,
         pressed && styles.pressed,
       ]}
     >
       <View style={styles.iconContainer}>
-        <Text style={styles.icon}>
-          {poiIcons[poi.type]}
-        </Text>
+      <Text
+        style={[
+          styles.icon,
+          poi.visitedAt !== null && styles.visitedIcon,
+        ]}
+      >
+        {poi.visitedAt !== null
+          ? "✓"
+          : poiIcons[poi.type]}
+      </Text>
       </View>
 
       <View style={styles.content}>
@@ -36,6 +51,12 @@ export function POICard({ poi, onPress }: POICardProps) {
           <Text style={styles.type}>
             {poi.type.toUpperCase()}
           </Text>
+
+          {poi.visitedAt !== null && (
+            <Text>
+              REACHED
+            </Text>
+          )}
         </View>
 
         <Text
@@ -63,6 +84,12 @@ export function POICard({ poi, onPress }: POICardProps) {
           )}
       </View>
 
+      {poi.visitedAt !== null && (
+        <Text style={styles.visitedAt}>
+          REACHED {formatVisitedTime(poi.visitedAt)}
+        </Text>
+      )}
+
       <Text style={styles.arrow}>
         →
       </Text>
@@ -71,6 +98,24 @@ export function POICard({ poi, onPress }: POICardProps) {
 }
 
 const styles = StyleSheet.create({
+  visitedContainer: {
+    borderColor: theme.colours.accent,
+    opacity: 0.8,
+  },
+  
+  visitedIcon: {
+    color: theme.colours.accent,
+  },
+  
+  visitedAt: {
+    marginTop: 3,
+  
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: 9,
+  
+    color: theme.colours.accent,
+    letterSpacing: 1,
+  },
     container: {
       minHeight: 72,
   
