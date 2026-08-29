@@ -28,9 +28,7 @@ export default function MoreScreen() {
                 icon="◇"
                 title="Finances"
                 description="Money spent on the road"
-                onPress={() => {
-                console.log("Finances");
-                }}
+                onPress={() => { router.replace("/finance")}}
             />
 
             <MenuItem
