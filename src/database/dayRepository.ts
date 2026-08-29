@@ -14,6 +14,17 @@ type DayRow = {
 export class DaysRepository {
     constructor(private db: SQLiteDatabase) {}
 
+    async getDayByDate(date: string) {
+        const row = await this.db.getFirstAsync<DayRow>(
+            `SELECT * FROM days WHERE date = ?`,
+            date
+        )
+        
+        if (!row) return null;
+
+        return this.mapRowToDay(row);
+    }
+
     // Function to retrieve all days for a specific trip
     async getAllDayForTrip(tripId: string) {
         const rows = await this.db.getAllAsync<DayRow>(

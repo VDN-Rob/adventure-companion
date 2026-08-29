@@ -1,6 +1,6 @@
-import { theme } from "@/app/theme";
 import { DiaryItem } from "@/screens/diary/DiaryScreen";
-import { formatDate } from "@/utils/formatDate";
+import { theme } from "@/styling/theme";
+import { formatDate } from "@/utils/date";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 type DiaryCardProps = {

@@ -14,10 +14,10 @@ import {
   View,
 } from "react-native";
 
-import { theme } from "@/app/theme";
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { GameModal } from "@/components/GameModal";
+import { theme } from "@/styling/theme";
 
 export default function EditTripScreen() {
     // Retrieve id from parameters

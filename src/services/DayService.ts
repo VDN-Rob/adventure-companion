@@ -7,6 +7,10 @@ export class DayServices {
     ) {}
   
     // Queries
+    async getDayByDate(date: string) {
+      return this.daysRepository.getDayByDate(date);
+    }
+
     async getDay(dayId: string) {
       return this.daysRepository.getDayById(dayId);
     }

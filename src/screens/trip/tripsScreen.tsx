@@ -6,10 +6,10 @@ import {
   View,
 } from "react-native";
 
-import { theme } from "@/app/theme";
 import { ActiveTripCard } from "@/components/card/trips/ActiveTripCard";
 import { UpcomingTripCard } from "@/components/card/trips/UpcomingTripCard";
 import { Trip } from "@/models/Trip";
+import { theme } from "@/styling/theme";
 import { router } from "expo-router";
 
 const activeTrip: Trip = {
@@ -75,7 +75,7 @@ export default function TripsScreen() {
             totalDays={12}
             onPress={() => {
                 router.push({
-                pathname: "/detailsTrip",
+                pathname: "/trip/detailsTrip",
                 params: {
                     tripId: "1",
                 },
@@ -97,7 +97,7 @@ export default function TripsScreen() {
 
         <Pressable
             style={styles.newAdventure}
-            onPress={() => router.push("/createTrip")}
+            onPress={() => router.push("/trip/createTrip")}
             >
             <Text style={styles.newAdventureIcon}>+</Text>
             <Text style={styles.newAdventureText}>

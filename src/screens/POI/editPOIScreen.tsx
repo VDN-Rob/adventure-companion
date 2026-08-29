@@ -1,9 +1,9 @@
-import { theme } from "@/app/theme";
 import { InputField } from "@/components/forms/InputField";
 import { POITypeSelector } from "@/components/forms/POITypeSelector";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { GameModal } from "@/components/GameModal";
 import { POI, POIType } from "@/models/POI";
+import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";

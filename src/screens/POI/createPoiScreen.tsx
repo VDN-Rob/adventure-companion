@@ -14,10 +14,10 @@ import {
   View,
 } from "react-native";
 
-import { theme } from "@/app/theme";
 import { InputField } from "@/components/forms/InputField";
 import { POITypeSelector } from "@/components/forms/POITypeSelector";
 import { SectionLabel } from "@/components/forms/SectionLabel";
+import { theme } from "@/styling/theme";
 
 const POI_TYPES: {
   type: POIType;

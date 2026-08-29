@@ -29,16 +29,16 @@ export default function RootLayout() {
   if (!fontsLoaded) {
     return null;
   }
-  
+
   return (
-  <SQLiteProvider
-    databaseName="cycling.db"
-    onInit={setupDatabase}
-  >
-    
-    <AppServicesProvider>
-      <Stack />
-    </AppServicesProvider>
-  </SQLiteProvider>
+    <SQLiteProvider
+      databaseName="cycling.db"
+      onInit={setupDatabase}
+      >
+
+      <AppServicesProvider>
+        <Stack />
+      </AppServicesProvider>
+    </SQLiteProvider>
   );
 }

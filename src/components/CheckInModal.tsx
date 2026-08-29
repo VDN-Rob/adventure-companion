@@ -1,5 +1,5 @@
-import { theme } from "@/app/theme";
 import { POI } from "@/models/POI";
+import { theme } from "@/styling/theme";
 import {
     Modal,
     Pressable,

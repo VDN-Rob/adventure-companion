@@ -1,7 +1,7 @@
-import { theme } from "@/app/theme";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { Route } from "@/models/Route";
+import { theme } from "@/styling/theme";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { DayMapPreview } from "../homescreen/DayMapPreview";
 

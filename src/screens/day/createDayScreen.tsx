@@ -1,6 +1,6 @@
-import { theme } from "@/app/theme";
 import { InputField } from "@/components/forms/InputField";
 import { Day } from "@/models/Day";
+import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";

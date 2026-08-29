@@ -4,14 +4,14 @@ import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-    SafeAreaView,
-    StyleSheet,
-    Text
+  SafeAreaView,
+  StyleSheet,
+  Text
 } from "react-native";
 
-import { theme } from "@/app/theme";
 import { DiaryDetail } from "@/components/diary/DiaryDetail";
 import { DiaryOverview } from "@/components/diary/DiaryOverview";
+import { theme } from "@/styling/theme";
 
 export type DiaryItem = {
   entry: DiaryEntry;
@@ -99,7 +99,7 @@ export default function DiaryScreen() {
 
   function createEntry() {
     router.push({
-      pathname: "/createDiaryEntry",
+      pathname: "/diary/createDiaryEntry",
       params: {
         tripId,
       },
@@ -108,7 +108,7 @@ export default function DiaryScreen() {
 
   function editEntry(entry: DiaryEntry) {
     router.push({
-      pathname: "/editDiaryEntry",
+      pathname: "/diary/editDiaryEntry",
       params: {
         diaryEntryId: entry.id,
       },

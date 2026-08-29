@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { theme } from "@/app/theme";
 import { Trip } from "@/models/Trip";
+import { theme } from "@/styling/theme";
 
 type ActiveTripCardProps = {
   trip: Trip;

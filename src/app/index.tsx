@@ -4,20 +4,71 @@ import { AppHeader } from "@/components/homescreen/AppHeader";
 import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { QuickActions } from "@/components/homescreen/QuickActions";
 import { Day } from "@/models/Day";
+import { OfflineMap } from "@/models/OfflineMap";
 import { POI } from "@/models/POI";
+import { Trip } from "@/models/Trip";
+import { styles } from "@/styling/styles";
+import { getDayNumber, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router } from "expo-router";
-import { useState } from "react";
-import { StyleSheet, View } from 'react-native';
-import { theme } from "./theme";
+import { useEffect, useState } from "react";
+import { View } from 'react-native';
 
 export default function HomeScreen() {
+  // Memory
+  const {tripServices, dayServices, isOnline, mapServices, poiServices} = useAppServices();
 
-  
-  const {tripServices, isOnline, mapServices, poiServices} = useAppServices();
-
-  const [checkInVisible, setCheckInVisible] = useState(false);
+  // Temporary memory
+  const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
+  const [today, setToday] = useState<Day | null>(null);
   const [todayPois, setTodayPois] = useState<POI[]>([]);
+  const [currentDayNumber, setCurrentDayNumber] = useState<number | null>(null);
+  const [totalDayNumber, setTotalDayNumber] = useState<number | null>(null);
+
+  const [maps, setMaps] = useState<OfflineMap[]>([]);
+  const [checkInVisible, setCheckInVisible] = useState(false);
+
+  // When Index finishes loading, get the data to setup the homescreen
+  useEffect(() => {
+    async function loadToday() {
+      const today = await dayServices.getDayByDate(getTodayDate());
+    
+      setToday(today);
+    
+      if (today) {
+        const pois = await poiServices.getPOIsForDay(today.id);
+        setTodayPois(pois);
+      } else {
+        setTodayPois([]);
+      }
+    }
+
+    async function loadCurrentTrip() {
+      const today = getTodayDate();
+    
+      const trip = await tripServices.getTripForDate(today);
+    
+      setCurrentTrip(trip);
+    }
+
+    async function loadCurrentDay() {
+      if (today && currentTrip) {
+        setCurrentDayNumber(getDayNumber( currentTrip.startDate, today.date ));
+        setTotalDayNumber(currentTrip.endDate === null ? null : getDayNumber( currentTrip.startDate, today.date ));
+      }
+    }
+
+    async function loadMaps() {
+      const maps = await mapServices.getDownloadedMaps();
+      setMaps(maps);
+    }
+
+    loadToday()
+    // loadMaps();
+    loadCurrentTrip();
+    loadCurrentDay();
+
+  }, []);
 
 
   async function handleCheckIn(poi: POI) {
@@ -31,12 +82,12 @@ export default function HomeScreen() {
     setTodayPois((current) =>
       current.map((item) =>
         item.id === poi.id
-          ? { ...item, visitedAt }
-          : item
+        ? { ...item, visitedAt }
+        : item
       )
     );
 
-    setTodayPois(examplePois);
+    setTodayPois(todayPois);
   }
 
   async function handleUndoCheckIn(poi: POI) {
@@ -44,142 +95,66 @@ export default function HomeScreen() {
       ...poi,
       visitedAt: null,
     });
-  
+
     setTodayPois((current) =>
       current.map((item) =>
         item.id === poi.id
-          ? { ...item, visitedAt: null }
-          : item
+        ? { ...item, visitedAt: null }
+        : item
       )
     );
   }
 
-  const day: Day = {
-    id: "1",
-    tripId: "1",
-    date: "2026-08-27",
-    title: "Forest Road",
-    notes: null,
-    plannedElevation: 740,
-    plannedDistance: 32.4,
-  };
-  const examplePois: POI[] = [
-    {
-      id: "poi-00",
-      dayId: "test-day-01",
-      name: "Start in Oignies",
-      type: "other",
-      latitude: 50.023722,
-      longitude: 4.639699,
-      notes: "Starting point og the adventure",
-      visitedAt: null
-    },
-    {
-      id: "poi-01",
-      dayId: "test-day-01",
-      name: "Forest Spring",
-      type: "water",
-      latitude: 49.82,
-      longitude: 4.62,
-      notes: "Small spring beside the trail.",
-      visitedAt: null
-    },
-    {
-      id: "poi-02",
-      dayId: "test-day-01",
-      name: "La Petite Boulangerie",
-      type: "food",
-      latitude: 49.78,
-      longitude: 4.71,
-      notes: "Good place for breakfast and coffee.",
-      visitedAt: null
-    },
-    {
-      id: "poi-03",
-      dayId: "test-day-01",
-      name: "Intermarché",
-      type: "supermarket",
-      latitude: 49.75,
-      longitude: 4.83,
-      notes: "Last reliable resupply before the hills.",
-      visitedAt: null
-    },
-    {
-      id: "poi-04",
-      dayId: "test-day-01",
-      name: "Camping des Pins",
-      type: "accommodation",
-      latitude: 49.68,
-      longitude: 4.91,
-      notes: "Small campsite with showers.",
-      visitedAt: null
-    },
-  ];
-
   return (
     <View style={styles.container}>
       <AppHeader
-        appName="WANDER"
-        tripName="Ardennes Expedition"
-        currentDay={4}
-        totalDays={12}
-      />
+        appName="ELG WANDER"
+        tripName={currentTrip?.name ?? "No active adventure"}
+        currentDay={currentDayNumber ?? 0}
+        totalDays={totalDayNumber === null ? "To infity!" : totalDayNumber}
+        />
 
       <View style={styles.content}>
-        <DayCard
-          day={day}
-          pois={todayPois}
-          isToday
-          onPress={() => openDayDetails(day.id)}
-        />
-      </View>
+
+      {today !== null && (<DayCard
+        day={today}
+        pois={todayPois}
+        isToday
+        onPress={() => openDayDetails(today.id)}
+        />)}
+      
+        </View>
 
       <QuickActions
-        onExpensePress={() => { router.push("/createExpense"); }}
+        onExpensePress={() => { router.push("/finance/createExpense"); }}
         onCheckInPress={() => { setCheckInVisible(true) }}
         onDiaryPress={() => {
-          console.log("Diary pressed");
+        console.log("Diary pressed");
         }}
-      />
+        />
 
       <BottomNavigation
         activeTab="today"
-        onTodayPress={() => openDayDetails(day.id)}
+        onTodayPress={() => openDayDetails(today.id)}
         onMapPress={() => {
-          router.push("/map")
+        router.push("/map/map")
         }}
         onMorePress={() => { router.push("/more"); }}
-      />
+        />
+
       <CheckInModal
         visible={checkInVisible}
         pois={todayPois}
         onClose={() => setCheckInVisible(false)}
         onCheckIn={handleCheckIn}
-      />
+        />
     </View>
-    
   );
 }
 
 function openDayDetails(dayId: string) {
-  router.push({
-    pathname: "/detailsDay",
-    params: {dayId},
-  });
-};
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colours.background,
-  },
-
-  content: {
-    flex: 1,
-  
-    paddingHorizontal: theme.spacing.md,
-    paddingTop: theme.spacing.md,
-    paddingBottom: theme.spacing.lg,
-  },
+router.push({
+pathname: "/day/detailsDay",
+params: {dayId},
 });
+};

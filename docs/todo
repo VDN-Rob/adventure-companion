@@ -70,3 +70,8 @@ POIs
 ⚠ Unable to load POIs
 [Retry]
 
+
+
+
+
+- make getTodayDate() local-time based rather than UTC-based (no toISOString())

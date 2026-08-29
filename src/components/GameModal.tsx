@@ -1,6 +1,6 @@
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { theme } from "@/app/theme";
+import { theme } from "@/styling/theme";
 
 type GameModalProps = {
   visible: boolean;

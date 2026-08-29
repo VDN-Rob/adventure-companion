@@ -1,7 +1,7 @@
-import { theme } from "@/app/theme";
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Trip } from "@/models/Trip";
+import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import * as Crypto from "expo-crypto";
 import { router } from "expo-router";
@@ -79,7 +79,7 @@ export default function CreateTripScreen() {
       
         await tripServices.createTrip(newTrip);
       
-        router.replace("/trips");
+        router.replace("/trip/trips");
       }
     
       return (

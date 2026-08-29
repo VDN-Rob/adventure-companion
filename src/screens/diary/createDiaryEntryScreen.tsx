@@ -16,7 +16,7 @@ import {
     View,
 } from "react-native";
 
-import { theme } from "@/app/theme";
+import { theme } from "@/styling/theme";
 
 export default function CreateDiaryEntryScreen() {
   const { dayId } = useLocalSearchParams<{

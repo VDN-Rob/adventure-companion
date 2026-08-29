@@ -1,4 +1,4 @@
-import { theme } from '@/app/theme';
+import { theme } from '@/styling/theme';
 import { StyleSheet, Text, View } from 'react-native';
 
 type AppHeaderProps = {

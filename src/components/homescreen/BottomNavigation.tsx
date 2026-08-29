@@ -1,4 +1,4 @@
-import { theme } from "@/app/theme";
+import { theme } from "@/styling/theme";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type BottomNavigationProps = {

@@ -1,8 +1,8 @@
-import { theme } from "@/app/theme";
 import { POICard } from "@/components/card/POICard";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
+import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
@@ -270,7 +270,7 @@ export default function DayDetailsScreen() {
                 style={styles.addPoiButton}
                 onPress={() => {
                   router.push({
-                    pathname: "/createPoi",
+                    pathname: "/poi/createPoi",
                     params: { dayId },
                   });
                 }}
@@ -288,7 +288,7 @@ export default function DayDetailsScreen() {
                 style={styles.mapButton}
                 onPress={() => {
                   router.push({
-                    pathname: "/map",
+                    pathname: "/map/map",
                     params: { dayId },
                   });
                 }}
@@ -306,7 +306,7 @@ export default function DayDetailsScreen() {
                 style={styles.editButton}
                 onPress={() => {
                   router.push({
-                    pathname: "/editDay",
+                    pathname: "/day/editDay",
                     params: { dayId },
                   });
                 }}
@@ -324,7 +324,7 @@ export default function DayDetailsScreen() {
 
 function editPOI(poiId: string){
   router.push({
-    pathname: "/editPOI",
+    pathname: "/poi/editPOI",
     params: {poiId}
   })
 }

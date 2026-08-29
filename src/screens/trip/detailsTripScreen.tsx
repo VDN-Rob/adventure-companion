@@ -1,8 +1,8 @@
-import { theme } from "@/app/theme";
 import { DayCard } from "@/components/card/DayCard";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { Trip } from "@/models/Trip";
+import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
@@ -436,21 +436,21 @@ function SectionLabel({ title }: { title: string }) {
 
 function handleAddDay(tripId: string){
   router.push({
-    pathname: "/createDay",
+    pathname: "/day/createDay",
     params: {tripId}
   })
 }
 
 function handleDetailsDay(dayId: string){
   router.push({
-    pathname: "/detailsDay",
+    pathname: "/day/detailsDay",
     params: {dayId}
   })
 }
 
 function handleEditTrip(id: string){
   router.push({
-    pathname: "/editTrip",
+    pathname: "/trip/editTrip",
     params: {id}
   })
 }

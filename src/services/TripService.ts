@@ -10,6 +10,10 @@ export class TripServices {
     ) {}
 
     // Queries
+    async getTripForDate(date: string) {
+        return this.tripsRepository.getTripForDate(date);
+    }
+
     async getTrip(tripId: string) {
         return await this.tripsRepository.getTripById(tripId);
     }

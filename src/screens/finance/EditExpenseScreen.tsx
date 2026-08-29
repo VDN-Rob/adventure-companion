@@ -14,7 +14,7 @@ import {
     View,
 } from "react-native";
 
-import { theme } from "@/app/theme";
+import { theme } from "@/styling/theme";
 
 const categories: {
   value: ExpenseCategory;

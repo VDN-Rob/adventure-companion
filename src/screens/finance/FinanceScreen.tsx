@@ -4,16 +4,16 @@ import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    Pressable,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
-import { theme } from "@/app/theme";
+import { theme } from "@/styling/theme";
 
 export default function FinanceScreen() {
   const {
@@ -126,7 +126,7 @@ export default function FinanceScreen() {
             expense={item}
             onPress={() => {
               router.push({
-                pathname: "/editExpense",
+                pathname: "/finance/editExpense",
                 params: {
                   expenseId: item.id,
                 },
@@ -252,7 +252,7 @@ export default function FinanceScreen() {
       <Pressable
         onPress={() => {
           router.push({
-            pathname: "/createExpense",
+            pathname: "/finance/createExpense",
             params: {
               tripId: trip.id,
             },
