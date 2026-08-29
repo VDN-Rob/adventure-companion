@@ -15,6 +15,20 @@ type DiaryEntryRow = {
 
 export class DiaryEntriesRepository {
     constructor(private db: SQLiteDatabase) {}
+    
+    async getDiaryEntriesForTrip(tripId: string) {
+        const rows = await this.db.getAllAsync<DiaryEntryRow>(
+            `SELECT diary_entries.*
+                FROM diary_entries
+                JOIN days ON diary_entries.day_id = days.id
+                WHERE days.trip_id = ?
+                ORDER BY days.date ASC;
+                `,
+            tripId
+        );
+
+        return rows.map(row => this.mapRowToDiaryEntry(row));
+    }
 
     async getDiaryEntryForDay(dayId: string) {
         const rows = await this.db.getAllAsync<DiaryEntryRow>(

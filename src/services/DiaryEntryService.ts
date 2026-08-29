@@ -7,6 +7,9 @@ export class DiaryEntryServices {
     ) {}
   
     // Queries
+    async getDiaryEntriesForTrip(tripId: string) {
+      return this.diaryEntriesRepository.getDiaryEntriesForTrip(tripId);
+    }
     async getDiaryEntryForDay(dayId: string) {
       return this.diaryEntriesRepository.getDiaryEntryForDay(dayId);
     }
