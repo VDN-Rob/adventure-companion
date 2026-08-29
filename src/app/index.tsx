@@ -2,7 +2,9 @@ import { CheckInModal } from "@/components/CheckInModal";
 import { DayCard } from "@/components/card/DayCard";
 import { AppHeader } from "@/components/homescreen/AppHeader";
 import { BottomNavigation, NavigationItem } from "@/components/homescreen/BottomNavigation";
+import { NoActiveAdventure } from "@/components/homescreen/NoActiveAdventure";
 import { QuickActions } from "@/components/homescreen/QuickActions";
+import { RestDayState } from "@/components/homescreen/RestDayState";
 import { Day } from "@/models/Day";
 import { OfflineMap } from "@/models/OfflineMap";
 import { POI } from "@/models/POI";
@@ -24,6 +26,7 @@ export default function HomeScreen() {
   const [todayPois, setTodayPois] = useState<POI[]>([]);
   const [currentDayNumber, setCurrentDayNumber] = useState<number | null>(null);
   const [totalDayNumber, setTotalDayNumber] = useState<number | null>(null);
+  const [bottomItems, setBottomItems] = useState<NavigationItem[]>([]);
 
   const [maps, setMaps] = useState<OfflineMap[]>([]);
   const [checkInVisible, setCheckInVisible] = useState(false);
@@ -63,11 +66,42 @@ export default function HomeScreen() {
       setMaps(maps);
     }
 
+    async function setData() {
+      const items: NavigationItem[] = [];
+    
+      if (!currentTrip) {
+        items.push({
+          key: "adventures",
+          icon: "◇",
+          label: "Adventures",
+          onPress: () => router.push("/trip/trips"),
+        });
+      } else {
+        if (today) {
+          items.push({
+            key: "day",
+            icon: "●",
+            label: "Day",
+            onPress: () => openDayDetails(today.id),
+          });
+        }
+    
+        items.push({
+          key: "map",
+          icon: "◇",
+          label: "Map",
+          onPress: () => router.push("/map/map"),
+        });
+      }
+    
+      setBottomItems(items);
+    }
+
     loadToday()
     // loadMaps();
     loadCurrentTrip();
     loadCurrentDay();
-
+    setData()
   }, []);
 
 
@@ -112,26 +146,6 @@ export default function HomeScreen() {
     });
   };
 
-  const bottomItems: NavigationItem[] = [];
-
-  if (today) {
-    bottomItems.push({
-      key: "day",
-      icon: "●",
-      label: "Day",
-      onPress: () => openDayDetails(today.id),
-    });
-  }
-
-  bottomItems.push({
-    key: "map",
-    icon: "◇",
-    label: "Map",
-    onPress: () => {
-      router.push("/map/map");
-    },
-  });
-
   return (
     <View style={styles.container}>
       <AppHeader
@@ -142,23 +156,39 @@ export default function HomeScreen() {
       />
 
       <View style={styles.content}>
+        {!currentTrip ? (
+          <NoActiveAdventure />
+        ) : today ? (
+          <DayCard
+            day={today}
+            pois={todayPois}
+            isToday
+            onPress={() => openDayDetails(today.id)}
+          />
+        ) : (
+          <RestDayState />
+        )}
+      </View>
 
-      {today !== null && (<DayCard
-        day={today}
-        pois={todayPois}
-        isToday
-        onPress={() => openDayDetails(today.id)}
-        />)}
-      
-        </View>
-
-      <QuickActions
-        onExpensePress={() => { router.push("/finance/createExpense"); }}
-        onCheckInPress={() => { setCheckInVisible(true) }}
-        onDiaryPress={() => {
-        console.log("Diary pressed");
-        }}
+      {currentTrip && (
+        <QuickActions
+          onExpensePress={() => {
+            router.push({
+              pathname: "/finance/createExpense",
+              params: {
+                tripId: currentTrip.id,
+                dayId: today?.id,
+              },
+            });
+          }}
+          onCheckInPress={() => {
+            setCheckInVisible(true);
+          }}
+          onDiaryPress={() => {
+            console.log("Diary pressed");
+          }}
         />
+      )}
 
       <BottomNavigation
         activeTab={today ? "day" : ""}
@@ -168,12 +198,14 @@ export default function HomeScreen() {
         }}
       />
 
-      <CheckInModal
-        visible={checkInVisible}
-        pois={todayPois}
-        onClose={() => setCheckInVisible(false)}
-        onCheckIn={handleCheckIn}
-        />
+      {currentTrip && (
+        <CheckInModal
+          visible={checkInVisible}
+          pois={todayPois}
+          onClose={() => setCheckInVisible(false)}
+          onCheckIn={handleCheckIn}
+          />
+        )}
     </View>
   );
 }
