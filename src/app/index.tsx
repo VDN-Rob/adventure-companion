@@ -135,9 +135,7 @@ export default function HomeScreen() {
       </View>
 
       <QuickActions
-        onExpensePress={() => {
-          console.log("Expense pressed");
-        }}
+        onExpensePress={() => { router.push("/createExpense"); }}
         onCheckInPress={() => { setCheckInVisible(true) }}
         onDiaryPress={() => {
           console.log("Diary pressed");

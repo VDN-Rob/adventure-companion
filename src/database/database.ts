@@ -60,7 +60,7 @@ export async function setupDatabase(db: SQLiteDatabase) {
         category TEXT NOT NULL,
         description TEXT,
         date TEXT NOT NULL,
-        FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
+        FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE,
         FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
       );      
     `);

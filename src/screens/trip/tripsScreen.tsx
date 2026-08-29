@@ -13,12 +13,14 @@ import { Trip } from "@/models/Trip";
 import { router } from "expo-router";
 
 const activeTrip: Trip = {
-    id: "1",
-    name: "Ardennes Expedition",
-    startDate: "2026-08-24",
-    endDate: "2026-09-04",
-    description: "A two-week cycling adventure through the Ardennes.",
-  };
+  id: "1",
+  name: "Ardennes Expedition",
+  startDate: "2026-08-24",
+  endDate: "2026-09-04",
+  description: "A two-week cycling adventure through the Ardennes.",
+  budget: null,
+  budgetCurrency: "EUR"
+};
   
   const upcomingTrips: Trip[] = [
     {
@@ -27,6 +29,8 @@ const activeTrip: Trip = {
       startDate: "2026-09-12",
       endDate: "2026-09-20",
       description: null,
+      budget: null,
+      budgetCurrency: "EUR"
     },
     {
       id: "3",
@@ -34,6 +38,8 @@ const activeTrip: Trip = {
       startDate: "2026-10-03",
       endDate: "2026-10-08",
       description: null,
+      budget: null,
+      budgetCurrency: "EUR"
     },
   ];
   
@@ -44,6 +50,8 @@ const activeTrip: Trip = {
       startDate: "2026-05-14",
       endDate: "2026-05-18",
       description: null,
+      budget: null,
+      budgetCurrency: "EUR"
     },
     {
       id: "5",
@@ -51,6 +59,8 @@ const activeTrip: Trip = {
       startDate: "2026-04-03",
       endDate: "2026-04-06",
       description: null,
+      budget: null,
+      budgetCurrency: "EUR"
     },
   ];
 

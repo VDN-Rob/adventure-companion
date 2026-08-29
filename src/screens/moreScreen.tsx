@@ -1,6 +1,6 @@
 import { theme } from "@/app/theme";
+import { MenuItem } from "@/components/forms/MenuItem";
 import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
-import { MenuItem } from "@/components/MenuItem";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
