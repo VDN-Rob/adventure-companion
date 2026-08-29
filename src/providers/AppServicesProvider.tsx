@@ -1,4 +1,5 @@
 import { DayServices } from "@/services/DayService";
+import { DiaryEntryServices } from "@/services/DiaryEntryService";
 import { ExpenseServices } from "@/services/ExpenseService";
 import { MapServices } from "@/services/MapService";
 import { useNetworkStatus } from "@/services/NetworkServices";
@@ -6,6 +7,7 @@ import { POIServices } from "@/services/POIService";
 import { TripMapServices } from "@/services/tripMapService";
 import { TripServices } from "@/services/TripService";
 import { useDaysRepository } from "@/utils/useDaysRepository";
+import { useDiaryEntriesRepository } from "@/utils/useDiaryEntriesRepository";
 import { useExpensesRepository } from "@/utils/useExpensesRepository";
 import { useMapsRepository } from "@/utils/useMapsRepository";
 import { usePoisRepository } from "@/utils/usePoisRepository";
@@ -19,6 +21,7 @@ interface AppServices {
   mapServices: MapServices;
   tripMapServices: TripMapServices;
   expenseServices: ExpenseServices;
+  diaryEntryServices: DiaryEntryServices;
   isOnline: boolean | null;
 }
 export const AppServicesContext = createContext<AppServices | null>(null);
@@ -33,6 +36,7 @@ export function AppServicesProvider({
   const poisRepository = usePoisRepository();
   const mapsRepository = useMapsRepository();
   const expensesRepository = useExpensesRepository();
+  const diaryEntriesRepository = useDiaryEntriesRepository();
 
   const isOnline = useNetworkStatus();
 
@@ -75,6 +79,11 @@ export function AppServicesProvider({
     [mapsRepository]
   );
 
+  const diaryEntryServices = useMemo(
+    () => new DiaryEntryServices(diaryEntriesRepository),
+    [diaryEntriesRepository]
+  )
+
   return (
     <AppServicesContext.Provider value={{
       tripServices,
@@ -83,6 +92,7 @@ export function AppServicesProvider({
       mapServices,
       tripMapServices,
       expenseServices,
+      diaryEntryServices,
       isOnline,
     }}>
       {children}

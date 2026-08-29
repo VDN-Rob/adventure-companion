@@ -62,7 +62,20 @@ export async function setupDatabase(db: SQLiteDatabase) {
         date TEXT NOT NULL,
         FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE,
         FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
-      );      
+      );
+      
+      CREATE TABLE IF NOT EXISTS diary_entries (
+        id TEXT PRIMARY KEY NOT NULL,
+        day_id TEXT,
+        title TEXT NOT NULL,
+        text TEXT,
+        photo_one TEXT,
+        photo_two TEXT,
+        photo_three TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
+      );  
     `);
   }
 
