@@ -1,5 +1,5 @@
 import { CheckInModal } from "@/components/CheckInModal";
-import { DayCard } from "@/components/DayCard";
+import { DayCard } from "@/components/card/DayCard";
 import { AppHeader } from "@/components/homescreen/AppHeader";
 import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { QuickActions } from "@/components/homescreen/QuickActions";

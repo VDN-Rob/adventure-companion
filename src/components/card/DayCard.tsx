@@ -3,7 +3,7 @@ import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { Route } from "@/models/Route";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { DayMapPreview } from "./homescreen/DayMapPreview";
+import { DayMapPreview } from "../homescreen/DayMapPreview";
 
 type DayCardProps = {
   day: Day;

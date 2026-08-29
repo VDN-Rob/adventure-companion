@@ -1,5 +1,5 @@
 import { theme } from "@/app/theme";
-import { POICard } from "@/components/POICard";
+import { POICard } from "@/components/card/POICard";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";

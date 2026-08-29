@@ -7,8 +7,8 @@ import {
 } from "react-native";
 
 import { theme } from "@/app/theme";
-import { ActiveTripCard } from "@/components/trips/ActiveTripCard";
-import { UpcomingTripCard } from "@/components/trips/UpcomingTripCard";
+import { ActiveTripCard } from "@/components/card/trips/ActiveTripCard";
+import { UpcomingTripCard } from "@/components/card/trips/UpcomingTripCard";
 import { Trip } from "@/models/Trip";
 import { router } from "expo-router";
 

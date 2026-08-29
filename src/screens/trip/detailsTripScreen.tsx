@@ -1,5 +1,5 @@
 import { theme } from "@/app/theme";
-import { DayCard } from "@/components/DayCard";
+import { DayCard } from "@/components/card/DayCard";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { Trip } from "@/models/Trip";
