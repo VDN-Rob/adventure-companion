@@ -32,6 +32,29 @@ export class TripsRepository {
       return this.mapRowToTrip(row);
     }
 
+    async getFutureTrips(date: string) {
+      const rows = await this.db.getAllAsync<TripRow>(
+        `SELECT * FROM trips
+         WHERE start_date > ?
+         ORDER BY start_date ASC`,
+        date
+      );
+    
+      return rows.map(row => this.mapRowToTrip(row));
+    }
+    
+    async getPastTrips(date: string) {
+      const rows = await this.db.getAllAsync<TripRow>(
+        `SELECT * FROM trips
+         WHERE end_date IS NOT NULL
+           AND end_date < ?
+         ORDER BY end_date DESC`,
+        date
+      );
+    
+      return rows.map(row => this.mapRowToTrip(row));
+    }
+
     // Function to get all the trips
     async getTrips(): Promise<Trip[]> {
         const rows = await this.db.getAllAsync<TripRow>(

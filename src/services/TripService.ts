@@ -10,6 +10,14 @@ export class TripServices {
     ) {}
 
     // Queries
+    async getFutureTrips(date: string) {
+        return this.tripsRepository.getFutureTrips(date);
+    }
+    
+    async getPastTrips(date: string) {
+        return this.tripsRepository.getPastTrips(date);
+    }
+    
     async getTripForDate(date: string) {
         return this.tripsRepository.getTripForDate(date);
     }

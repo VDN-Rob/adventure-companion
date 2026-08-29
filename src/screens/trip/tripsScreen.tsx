@@ -3,89 +3,78 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 
 import { ActiveTripCard } from "@/components/card/trips/ActiveTripCard";
 import { UpcomingTripCard } from "@/components/card/trips/UpcomingTripCard";
 import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
+import { getDayNumber, getTodayDate } from "@/utils/date";
+import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router } from "expo-router";
-
-const activeTrip: Trip = {
-  id: "1",
-  name: "Ardennes Expedition",
-  startDate: "2026-08-24",
-  endDate: "2026-09-04",
-  description: "A two-week cycling adventure through the Ardennes.",
-  budget: null,
-  budgetCurrency: "EUR"
-};
-  
-  const upcomingTrips: Trip[] = [
-    {
-      id: "2",
-      name: "Alps 2026",
-      startDate: "2026-09-12",
-      endDate: "2026-09-20",
-      description: null,
-      budget: null,
-      budgetCurrency: "EUR"
-    },
-    {
-      id: "3",
-      name: "Coastal Bikepacking",
-      startDate: "2026-10-03",
-      endDate: "2026-10-08",
-      description: null,
-      budget: null,
-      budgetCurrency: "EUR"
-    },
-  ];
-  
-  const pastTrips: Trip[] = [
-    {
-      id: "4",
-      name: "The Ardennes Loop",
-      startDate: "2026-05-14",
-      endDate: "2026-05-18",
-      description: null,
-      budget: null,
-      budgetCurrency: "EUR"
-    },
-    {
-      id: "5",
-      name: "Veluwe Backpacking",
-      startDate: "2026-04-03",
-      endDate: "2026-04-06",
-      description: null,
-      budget: null,
-      budgetCurrency: "EUR"
-    },
-  ];
+import { useEffect, useState } from "react";
 
 export default function TripsScreen() {
+  
+  const {tripServices, dayServices, isOnline, mapServices, poiServices} = useAppServices();
+
+  const [activeTrip, setActiveTrip] = useState<Trip | null>(null);
+  const [futureTrips, setFutureTrips] = useState<Trip[]>([]);
+  const [pastTrips, setPastTrips] = useState<Trip[]>([]);
+
+
+  useEffect(() => {
+    async function loadTrips() {
+      const today = getTodayDate();
+
+      const [futureTrips, activeTrip, pastTrips] = await Promise.all([
+        tripServices.getFutureTrips(today),
+        tripServices.getTripForDate(today),
+        tripServices.getPastTrips(today),
+      ]);
+      
+      setFutureTrips(futureTrips);
+      setActiveTrip(activeTrip);
+      setPastTrips(pastTrips);
+
+    }
+
+    loadTrips()
+}, []);
   return (
     <View style={styles.content}>
-        <SectionHeader title="ACTIVE ADVENTURE" />
+      <SectionHeader title="ACTIVE ADVENTURE" />
 
-        <ActiveTripCard
+        {activeTrip ? (
+          <ActiveTripCard
             trip={activeTrip}
-            currentDay={4}
-            totalDays={12}
+            currentDay={getDayNumber( activeTrip.startDate, getTodayDate() )}
+            totalDays={activeTrip.endDate === null ? null : getDayNumber( activeTrip.startDate, getTodayDate() )}
             onPress={() => {
                 router.push({
-                pathname: "/trip/detailsTrip",
-                params: {
-                    tripId: "1",
-                },
+                  pathname: "/trip/detailsTrip",
+                  params: {
+                    tripId: activeTrip.id,
+                  },
                 });
             }}
-        />
+        />) : (
+          <View style={styles.noAdventure}>
+            <Text style={styles.noAdventureTitle}>
+              NO ACTIVE ADVENTURE
+            </Text>
+        
+            <Text style={styles.noAdventureText}>
+              You are currently between adventures.
+            </Text>
+          </View>
+        )}
+        
 
         <SectionHeader title="UPCOMING" />
 
-        {upcomingTrips.map((trip) => (
+        {futureTrips.map((trip) => (
             <UpcomingTripCard
                 key={trip.id}
                 trip={trip}
@@ -179,6 +168,36 @@ function PastTripItem({
     );
 }
 const styles = StyleSheet.create({
+  noAdventure: {
+    padding: theme.spacing.lg,
+  
+    backgroundColor: theme.colours.surface,
+    borderWidth: 1,
+    borderColor: theme.colours.border,
+    borderRadius: theme.radius.md,
+  
+    alignItems: "center",
+  },
+  
+  noAdventureTitle: {
+    fontFamily: theme.fonts.displayBold,
+    fontSize: theme.fontSize.md,
+  
+    color: theme.colours.text,
+    letterSpacing: 1.5,
+  },
+  
+  noAdventureText: {
+    marginTop: theme.spacing.xs,
+  
+    fontFamily: theme.fonts.body,
+    fontSize: theme.fontSize.sm,
+  
+    color: theme.colours.textSecondary,
+    textAlign: "center",
+  
+    marginBottom: theme.spacing.md,
+  },
     scroll: {
         flex: 1,
         marginTop: theme.spacing.xl,

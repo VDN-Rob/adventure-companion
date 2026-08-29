@@ -6,7 +6,7 @@ import { theme } from "@/styling/theme";
 type ActiveTripCardProps = {
   trip: Trip;
   currentDay: number;
-  totalDays: number;
+  totalDays: number | null;
   onPress: () => void;
 };
 
@@ -48,17 +48,19 @@ export function ActiveTripCard({
       )}
 
       <View style={styles.progressBackground}>
-        <View
-          style={[
-            styles.progress,
-            {
-              width: `${Math.min(
-                (currentDay / totalDays) * 100,
-                100
-              )}%`,
-            },
-          ]}
-        />
+        {totalDays !== null && totalDays > 0 && (
+          <View
+            style={[
+              styles.progress,
+              {
+                width: `${Math.min(
+                  (currentDay / totalDays) * 100,
+                  100
+                )}%`,
+              },
+            ]}
+          />
+        )}
       </View>
 
       <View style={styles.bottomRow}>
