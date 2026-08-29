@@ -1,58 +1,61 @@
 import { theme } from "@/styling/theme";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+export type NavigationItem = {
+  key: string;
+  icon: string;
+  label: string;
+  onPress: () => void;
+};
+
 type BottomNavigationProps = {
-  activeTab: "today" | "map" | "more";
-  onTodayPress: () => void;
-  onMapPress: () => void;
-  onMorePress: () => void;
+  items: NavigationItem[];
+  activeTab: string;
+  onMorePress?: () => void;
 };
 
 export function BottomNavigation({
+  items,
   activeTab,
-  onTodayPress,
-  onMapPress,
   onMorePress,
 }: BottomNavigationProps) {
   return (
     <View style={styles.container}>
-      <NavigationItem
-        icon="●"
-        label="Today"
-        active={activeTab === "today"}
-        onPress={onTodayPress}
-      />
+      {items.map((item) => (
+        <NavigationItemComponent
+          key={item.key}
+          icon={item.icon}
+          label={item.label}
+          active={activeTab === item.key}
+          onPress={item.onPress}
+        />
+      ))}
 
-      <NavigationItem
-        icon="◇"
-        label="Map"
-        active={activeTab === "map"}
-        onPress={onMapPress}
-      />
-
-      <NavigationItem
-        icon="☰"
-        label="More"
-        active={activeTab === "more"}
-        onPress={onMorePress}
-      />
+      {onMorePress && (
+        <NavigationItemComponent
+          icon="☰"
+          label="More"
+          active={activeTab === "more"}
+          onPress={onMorePress}
+        />
+      )}
     </View>
   );
 }
 
-type NavigationItemProps = {
+type NavigationItemComponentProps = {
   icon: string;
   label: string;
   active: boolean;
   onPress: () => void;
 };
 
-function NavigationItem({
+function NavigationItemComponent({
   icon,
   label,
   active,
   onPress,
-}: NavigationItemProps) {
+}: NavigationItemComponentProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -82,7 +85,6 @@ function NavigationItem({
     </Pressable>
   );
 }
-
 
 const styles = StyleSheet.create({
     container: {

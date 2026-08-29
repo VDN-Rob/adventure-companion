@@ -1,7 +1,7 @@
 import { CheckInModal } from "@/components/CheckInModal";
 import { DayCard } from "@/components/card/DayCard";
 import { AppHeader } from "@/components/homescreen/AppHeader";
-import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
+import { BottomNavigation, NavigationItem } from "@/components/homescreen/BottomNavigation";
 import { QuickActions } from "@/components/homescreen/QuickActions";
 import { Day } from "@/models/Day";
 import { OfflineMap } from "@/models/OfflineMap";
@@ -105,14 +105,41 @@ export default function HomeScreen() {
     );
   }
 
+  function openDayDetails(dayId: string) {
+    router.push({
+      pathname: "/day/detailsDay",
+      params: {dayId},
+    });
+  };
+
+  const bottomItems: NavigationItem[] = [];
+
+  if (today) {
+    bottomItems.push({
+      key: "day",
+      icon: "●",
+      label: "Day",
+      onPress: () => openDayDetails(today.id),
+    });
+  }
+
+  bottomItems.push({
+    key: "map",
+    icon: "◇",
+    label: "Map",
+    onPress: () => {
+      router.push("/map/map");
+    },
+  });
+
   return (
     <View style={styles.container}>
       <AppHeader
         appName="ELG WANDER"
         tripName={currentTrip?.name ?? "No active adventure"}
-        currentDay={currentDayNumber ?? 0}
-        totalDays={totalDayNumber === null ? "To infity!" : totalDayNumber}
-        />
+        currentDay={currentTrip ? currentDayNumber ?? undefined : undefined}
+        totalDays={currentTrip ? totalDayNumber ?? "TO INFINITY!" : undefined}
+      />
 
       <View style={styles.content}>
 
@@ -134,13 +161,12 @@ export default function HomeScreen() {
         />
 
       <BottomNavigation
-        activeTab="today"
-        onTodayPress={() => openDayDetails(today.id)}
-        onMapPress={() => {
-        router.push("/map/map")
+        activeTab={today ? "day" : ""}
+        items={bottomItems}
+        onMorePress={() => {
+          router.push("/more");
         }}
-        onMorePress={() => { router.push("/more"); }}
-        />
+      />
 
       <CheckInModal
         visible={checkInVisible}
@@ -151,10 +177,3 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-function openDayDetails(dayId: string) {
-router.push({
-pathname: "/day/detailsDay",
-params: {dayId},
-});
-};

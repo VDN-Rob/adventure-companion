@@ -4,8 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 type AppHeaderProps = {
   appName: string;
   tripName: string;
-  currentDay: number;
-  totalDays: number;
+  currentDay?: number;
+  totalDays?: number | string | null;
 };
 
 export function AppHeader({
@@ -23,19 +23,24 @@ export function AppHeader({
           <View style={styles.accentLine} />
         </View>
 
-        <View style={styles.dayContainer}>
-          <Text style={styles.dayLabel}>
-            DAY
-          </Text>
+        {currentDay !== undefined && (
+          <View style={styles.dayContainer}>
+            <Text style={styles.dayLabel}>
+              DAY
+            </Text>
 
-          <Text style={styles.dayNumber}>
-            {String(currentDay).padStart(2, '0')}
-          </Text>
+            <Text style={styles.dayNumber}>
+              {String(currentDay).padStart(2, "0")}
+            </Text>
 
-          <Text style={styles.dayTotal}>
-            / {String(totalDays).padStart(2, '0')}
-          </Text>
-        </View>
+            <Text style={styles.dayTotal}>
+              /{" "}
+              {typeof totalDays === "number"
+                ? String(totalDays).padStart(2, "0")
+                : totalDays}
+            </Text>
+          </View>
+        )}
       </View>
 
       <Text style={styles.tripName}>

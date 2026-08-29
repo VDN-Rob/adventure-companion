@@ -52,9 +52,20 @@ export default function MoreScreen() {
 
       <BottomNavigation
         activeTab="more"
-        onTodayPress={() => {}}
-        onMapPress={() => {}}
-        onMorePress={() => {}}
+        items={[
+          {
+            key: "day",
+            icon: "●",
+            label: "Home",
+            onPress: () => router.push("/"),
+          },
+          {
+            key: "map",
+            icon: "◇",
+            label: "Map",
+            onPress: () => router.push("/map/map"),
+          },
+        ]}
       />
     </View>
   );
