@@ -16,15 +16,15 @@ export class DiaryEntryServices {
     }
   
     // Scripts
-    async createDiaryEndry(entry: DiaryEntry) {
+    async createDiaryEntry(entry: DiaryEntry) {
         await this.diaryEntriesRepository.createDiaryEntry(entry);
     }
 
-    async updateDay(updatedDiaryEntry: DiaryEntry) {
+    async updateDiaryEntry(updatedDiaryEntry: DiaryEntry) {
         await this.diaryEntriesRepository.updateDiaryEntry(updatedDiaryEntry)
     }
 
-    async deleteDay(diaryEntryId: string) {
+    async deleteDiaryEntry(diaryEntryId: string) {
       return this.diaryEntriesRepository.deleteDiaryEntry(diaryEntryId);
     }
   }

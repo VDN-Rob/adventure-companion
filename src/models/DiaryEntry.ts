@@ -1,6 +1,6 @@
 export interface DiaryEntry {
     id: string;
-    dayId: string;
+    dayId: string | null;
   
     title: string;
     text: string | null;
