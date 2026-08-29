@@ -6,9 +6,10 @@ type PoiRow = {
     day_id: string;
     name: string;
     type: POIType;
-    latitude: number;
-    longitude: number;
+    latitude: number | null;
+    longitude: number | null;
     notes: string;
+    visited_at: string | null;
   };
 
 export class PoisRepository {
@@ -46,33 +47,36 @@ export class PoisRepository {
             latitude: row.latitude,
             longitude: row.longitude,
             notes: row.notes,
+            visitedAt: row.visited_at
         };
     }
 
     async createPOI(poi: POI) {
         return this.db.runAsync(
-            `INSERT INTO pois (id, day_id, name, type, latitude, longitude, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO pois (id, day_id, name, type, latitude, longitude, notes, visited_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             poi.id,
             poi.dayId,
             poi.name,
             poi.type,
-            poi.latitude ?? 0,
-            poi.longitude ?? 0,
-            poi.notes ?? "",
+            poi.latitude,
+            poi.longitude,
+            poi.notes,
+            poi.visitedAt
         );
     }
 
     async updatePOI(poi: POI) {
         return this.db.runAsync(
             `UPDATE pois
-            SET name = ?, type = ?, latitude = ?, longitude = ?,  notes = ?
+            SET name = ?, type = ?, latitude = ?, longitude = ?,  notes = ?, visited_at = ?
             WHERE id = ?`,
             poi.name,
             poi.type,
-            poi.latitude ?? 0,
-            poi.longitude ?? 0,
-            poi.notes ?? "",
+            poi.latitude,
+            poi.longitude,
+            poi.notes,
+            poi.visitedAt,
             poi.id
         );
     }

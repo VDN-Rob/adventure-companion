@@ -35,6 +35,7 @@ export async function setupDatabase(db: SQLiteDatabase) {
         latitude REAL,
         longitude REAL,
         notes TEXT,
+        visited_at TEXT,
         FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
       );
       
