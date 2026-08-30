@@ -57,7 +57,7 @@ export default function HomeScreen() {
     async function loadCurrentDay() {
       if (today && currentTrip) {
         setCurrentDayNumber(getDayNumber( currentTrip.startDate, today.date ));
-        setTotalDayNumber(currentTrip.endDate === null ? null : getDayNumber( currentTrip.startDate, today.date ));
+        setTotalDayNumber(currentTrip.endDate === null ? null : getDayNumber( currentTrip.startDate, currentTrip.endDate ));
       }
     }
 

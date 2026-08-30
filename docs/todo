@@ -71,7 +71,69 @@ POIs
 [Retry]
 
 
+## Full run:
+# Phase 1 : Launching application
+[BUG] warning: /index copy missing export
+
+[UI]  Very empty and dark -> feels weird.
+
+# Phase 2 : adventures
+=> creation should not be allowed unless required fields are filled (see poi/createPoi)
+// Step 3
+[BUG] Alert for end date < start date should be a modal
+[BUG] It is possible to enter a string in the date sections -> no errors
+[BUG] It is possible to create an adventure with a nonsensical date -> does not appear in list so lost in storage
+
+[MIS] tripsScreen: Pressing on upcoming/past adventure does nothing
+[MIS] Budget fields not visible
+
+[UX]  No overlapping dates possible
+[UX]  Inline errors for impossible elements
+[UX]  Need to reload to update index after creating a trip -> useFocusEffect
+[UX]  Dates should be with calendar or fixed input
+
+[UI]  tripsScreen: When empty, feels very loaded -> add a bit more spacing
 
 
+// Step 7
+[UX]  Need to reload to update index after deleting an adventure -> useFocusEffect
 
-- make getTodayDate() local-time based rather than UTC-based (no toISOString())
+# Phase 3: Days
+=> creation should not be allowed unless required fields are filled (see poi/createPoi)
+// Step 9
+[UX] Possibility of creating duplicate dates
+[UX] Possibility of creating dates outside of date range
+[UX]  Dates should be with calendar or fixed input
+
+[UI] Add Day counter on day card in tripDetailsScreen and day/detailsDay (day.date - trip.startdate) - does not seem to work currently
+[UI] day/editDay: alert for empty date is generic
+[UI] day/editDay: alert for negative distance is generic
+[UI] day/editDay: alert for negative elevation is generic
+
+# Phase 4: POIs
+// Step 15
+[MIS] POIS on map are still example POIs, not day POIs
+
+[UI] Danger zone POI is not as visible as on edit day/trip
+
+// Step 16 - createPoi
+[UX]  Invalid Latitude/Longitude just returns, does not raise alert 
+[UX]  Dates should be with calendar or fixed input
+
+// Step 18
+[UX]  Editing instead of seeing detail of POI => add detailsPOI screen
+
+# Phase 5: Check in
+// Step 23
+[UX]  Undoing check in should be doable from editPOI
+
+# Phase 6: Finance
+=> Not possible to test yet due to MIS
+// Step 26
+[MIS] Finance screen is not linked to database yet
+
+# Phase 7: Diary
+=> Not possible to test yet due to MIS
+// Step 33
+[MIS] Quick action diary is not linked
+[MIS] More menu diary is not linked to adventure
