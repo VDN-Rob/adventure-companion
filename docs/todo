@@ -94,32 +94,40 @@ SLOW:
 [UI]  Alert for end date < start date should be a modal
 
 # Phase 3: Days
-=> creation should not be allowed unless required fields are filled (see poi/createPoi)
-// Step 9
-[UX] Possibility of creating duplicate dates
+URGENT:
 [UX] Possibility of creating dates outside of date range
-[UX]  Dates should be with calendar or fixed input
+
+MEDIUM:
+[UX] Possibility of creating duplicate dates
+[UX] creation should not be allowed unless required fields are filled (see poi/createPoi)
 
 [UI] Add Day counter on day card in tripDetailsScreen and day/detailsDay (day.date - trip.startdate) - does not seem to work currently
+
+SLOW:
+// Step 9
+[UX]  Dates should be with calendar or fixed input
+
 [UI] day/editDay: alert for empty date is generic
 [UI] day/editDay: alert for negative distance is generic
 [UI] day/editDay: alert for negative elevation is generic
 
 # Phase 4: POIs
-// Step 15
+URGENT:
 [MIS] POIS on map are still example POIs, not day POIs
 
-[UI] Danger zone POI is not as visible as on edit day/trip
-
-// Step 16 - createPoi
 [UX]  Invalid Latitude/Longitude just returns, does not raise alert 
-[UX]  Dates should be with calendar or fixed input
 
-// Step 18
+MEDIUM:
 [UX]  Editing instead of seeing detail of POI => add detailsPOI screen
 
+SLOW:
+[UI] Danger zone POI is not as visible as on edit day/trip
+
+[UX]  Dates should be with calendar or fixed input
+
+
 # Phase 5: Check in
-// Step 23
+SLOW:
 [UX]  Undoing check in should be doable from editPOI
 
 # Phase 6: Finance
