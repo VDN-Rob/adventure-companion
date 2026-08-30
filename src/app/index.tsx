@@ -120,8 +120,6 @@ export default function HomeScreen() {
         : item
       )
     );
-
-    setTodayPois(todayPois);
   }
 
   async function handleUndoCheckIn(poi: POI) {
@@ -204,6 +202,7 @@ export default function HomeScreen() {
           pois={todayPois}
           onClose={() => setCheckInVisible(false)}
           onCheckIn={handleCheckIn}
+          onUndoCheckIn={handleUndoCheckIn}
           />
         )}
     </View>

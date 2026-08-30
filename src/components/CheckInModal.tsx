@@ -1,11 +1,11 @@
 import { POI } from "@/models/POI";
 import { theme } from "@/styling/theme";
 import {
-    Modal,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 type CheckInModalProps = {
@@ -13,6 +13,7 @@ type CheckInModalProps = {
   pois: POI[];
   onClose: () => void;
   onCheckIn: (poi: POI) => void;
+  onUndoCheckIn: (poi: POI) => void;
 };
 
 const poiIcons: Record<POI["type"], string> = {
@@ -28,6 +29,7 @@ export function CheckInModal({
   pois,
   onClose,
   onCheckIn,
+  onUndoCheckIn
 }: CheckInModalProps) {
   return (
     <Modal
@@ -71,8 +73,11 @@ export function CheckInModal({
               return (
                 <Pressable
                   key={poi.id}
-                  disabled={visited}
-                  onPress={() => onCheckIn(poi)}
+                  onPress={() =>
+                    visited
+                      ? onUndoCheckIn(poi)
+                      : onCheckIn(poi)
+                  }
                   style={({ pressed }) => [
                     styles.poi,
                     visited && styles.poiVisited,
@@ -108,14 +113,14 @@ export function CheckInModal({
                       ]}
                     >
                       {visited
-                        ? `REACHED · ${formatTime(poi.visitedAt!)}`
+                        ? `REACHED · ${formatTime(poi.visitedAt!)} · TAP TO UNDO`
                         : "TAP TO CHECK IN"}
                     </Text>
                   </View>
 
                   {!visited && (
                     <Text style={styles.arrow}>
-                      →
+                      {visited ? "↶" : "→"}
                     </Text>
                   )}
                 </Pressable>
