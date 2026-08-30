@@ -37,13 +37,18 @@ export default function EditTripScreen() {
     // Load the right trip when screen finishes loading
     useEffect(() => {
         async function loadTrip() {
-          if (trip) {
-            setTrip(trip);
-            setName(trip.name);
-            setStartDate(trip.startDate);
-            setEndDate(trip.endDate ?? "");
-            setDescription(trip.description ?? "");
-          }
+          if (!id) return;
+          
+          const trip = await tripServices.getTrip(id);
+
+          if (!trip) return;
+
+          setTrip(trip);
+          setName(trip.name);
+          setStartDate(trip.startDate);
+          setEndDate(trip.endDate ?? "");
+          setDescription(trip.description ?? "");
+          
         }
 
         loadTrip()
@@ -90,30 +95,6 @@ export default function EditTripScreen() {
       await tripServices.updateTrip(updatedTrip);
     
       router.back();
-    }
-
-    function handleDeleteTrip() {
-      Alert.alert(
-        "DELETE ADVENTURE?",
-        "All days, points of interest and other data belonging to this adventure will be deleted. This cannot be undone.",
-        [
-          {
-            text: "CANCEL",
-            style: "cancel",
-          },
-          {
-            text: "DELETE",
-            style: "destructive",
-            onPress: async () => {
-              if (!id) return;
-    
-              await tripServices.deleteTrip(id);
-    
-              router.dismiss(2);
-            },
-          },
-        ]
-      );
     }
     
     return (

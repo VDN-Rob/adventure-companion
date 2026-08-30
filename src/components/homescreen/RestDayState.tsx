@@ -9,7 +9,7 @@ export function RestDayState() {
         </Text>
   
         <Text style={styles.restDayText}>
-          No cycling day planned for today.
+          Nothing planned for today.
         </Text>
       </View>
     );

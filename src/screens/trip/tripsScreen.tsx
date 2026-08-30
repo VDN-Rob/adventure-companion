@@ -12,8 +12,8 @@ import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
 import { getDayNumber, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useAppServiceProvider";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 
 export default function TripsScreen() {
   
@@ -24,7 +24,8 @@ export default function TripsScreen() {
   const [pastTrips, setPastTrips] = useState<Trip[]>([]);
 
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     async function loadTrips() {
       const today = getTodayDate();
 
@@ -41,7 +42,8 @@ export default function TripsScreen() {
     }
 
     loadTrips()
-}, []);
+  }, []));
+  
   return (
     <View style={styles.content}>
       <SectionHeader title="ACTIVE ADVENTURE" />
@@ -50,12 +52,12 @@ export default function TripsScreen() {
           <ActiveTripCard
             trip={activeTrip}
             currentDay={getDayNumber( activeTrip.startDate, getTodayDate() )}
-            totalDays={activeTrip.endDate === null ? null : getDayNumber( activeTrip.startDate, getTodayDate() )}
+            totalDays={activeTrip.endDate === null ? null : getDayNumber( activeTrip.startDate, activeTrip.endDate )}
             onPress={() => {
                 router.push({
                   pathname: "/trip/detailsTrip",
                   params: {
-                    tripId: activeTrip.id,
+                    id: activeTrip.id,
                   },
                 });
             }}

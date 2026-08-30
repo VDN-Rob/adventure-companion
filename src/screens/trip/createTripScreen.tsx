@@ -79,7 +79,7 @@ export default function CreateTripScreen() {
       
         await tripServices.createTrip(newTrip);
       
-        router.replace("/trip/trips");
+        router.back();
       }
     
       return (

@@ -8,79 +8,6 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
-const exampleTrip: Trip = {
-  id: "test-trip-01",
-  name: "Ardennes Expedition",
-  startDate: "2026-08-24",
-  endDate: "2026-09-04",
-  description: "A two-week cycling adventure through the Ardennes.",
-  budget: null,
-  budgetCurrency: "EUR"
-};
-
-const exampleDay: Day = {
-  id: "test-day-01",
-  tripId: "test-trip-01",
-  date: "2026-08-28",
-  title: "Through the Ardennes",
-  notes:
-    "A long climbing day through forest roads and small villages. Water is limited after the second climb.",
-  plannedElevation: 820,
-  plannedDistance: 68.5,
-};
-const examplePois: POI[] = [
-  {
-    id: "poi-00",
-    dayId: "test-day-01",
-    name: "Start in Oignies",
-    type: "other",
-    latitude: 50.023722,
-    longitude: 4.639699,
-    notes: "Starting point og the adventure",
-    visitedAt: null
-  },
-  {
-    id: "poi-01",
-    dayId: "test-day-01",
-    name: "Forest Spring",
-    type: "water",
-    latitude: 49.82,
-    longitude: 4.62,
-    notes: "Small spring beside the trail.",
-    visitedAt: null
-  },
-  {
-    id: "poi-02",
-    dayId: "test-day-01",
-    name: "La Petite Boulangerie",
-    type: "food",
-    latitude: 49.78,
-    longitude: 4.71,
-    notes: "Good place for breakfast and coffee.",
-    visitedAt: null
-  },
-  {
-    id: "poi-03",
-    dayId: "test-day-01",
-    name: "Intermarché",
-    type: "supermarket",
-    latitude: 49.75,
-    longitude: 4.83,
-    notes: "Last reliable resupply before the hills.",
-    visitedAt: null
-  },
-  {
-    id: "poi-04",
-    dayId: "test-day-01",
-    name: "Camping des Pins",
-    type: "accommodation",
-    latitude: 49.68,
-    longitude: 4.91,
-    notes: "Small campsite with showers.",
-    visitedAt: null
-  },
-];
-
 export default function TripDetailsScreen() {
     // Retrieve id from parameters
     const { id: tripId } = useLocalSearchParams<{ id: string }>();
@@ -145,14 +72,8 @@ export default function TripDetailsScreen() {
           }
         }
   
-        // loadData();
+        loadData();
 
-        setTrip(exampleTrip);
-        setDays([exampleDay]);
-        const loadedPois: Record<string, POI[]> = {};
-        loadedPois[exampleDay.id] = examplePois;
-        setPoisByDay(loadedPois)
-        setIsLoading(false);
         
       }, [tripId])
     );
@@ -283,7 +204,7 @@ export default function TripDetailsScreen() {
                 <Text style={styles.dates}>
                   {trip.startDate}
                   {trip.endDate
-                    ? ` — ${trip.endDate}`
+                    ? ` to ${trip.endDate}`
                     : ""}
                 </Text>
               </View>
@@ -300,7 +221,7 @@ export default function TripDetailsScreen() {
                   </Text>
     
                   <Text style={styles.statLabel}>
-                    ADVENTURE
+                    OF ADVENTURE
                   </Text>
                 </View>
     
