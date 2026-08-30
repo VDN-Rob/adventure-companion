@@ -73,26 +73,25 @@ POIs
 
 ## Full run:
 # Phase 1 : Launching application
+SLOW:
 [UI]  Very empty and dark -> feels weird.
 
 # Phase 2 : adventures
-[UX]  If packed schedule -> long scroll to go down.
-=> creation should not be allowed unless required fields are filled (see poi/createPoi)
-// Step 3
+URGENT:
 [MIS] tripsScreen: Pressing on upcoming/past adventure does nothing
 
+MEDIUM: 
 [UX]  No overlapping dates possible
+[UX]  creation should not be allowed unless required fields are filled (see poi/createPoi)
+
+SLOW:
+[UX]  If packed schedule -> long scroll to go down.
 [UX]  Inline errors for impossible elements
-[UX]  Need to reload to update index after creating a trip -> useFocusEffect
 [UX]  Dates should be with calendar or fixed input
 [UX]  Budget currency should be a selection
 
 [UI]  tripsScreen: When empty, everything is packed at the top -> add a bit more spacing
 [UI]  Alert for end date < start date should be a modal
-
-
-// Step 7
-[UX]  Need to reload to update index after deleting an adventure -> useFocusEffect
 
 # Phase 3: Days
 => creation should not be allowed unless required fields are filled (see poi/createPoi)

@@ -12,8 +12,8 @@ import { Trip } from "@/models/Trip";
 import { styles } from "@/styling/styles";
 import { getDayNumber, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useAppServiceProvider";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { Alert, View } from 'react-native';
 
 export default function HomeScreen() {
@@ -32,112 +32,118 @@ export default function HomeScreen() {
   const [checkInVisible, setCheckInVisible] = useState(false);
 
   // When Index finishes loading, get the data to setup the homescreen
-  useEffect(() => {
-    async function loadToday() {
-      const today = await dayServices.getDayByDate(getTodayDate());
-    
-      setToday(today);
-    
-      if (today) {
-        const pois = await poiServices.getPOIsForDay(today.id);
-        setTodayPois(pois);
-      } else {
-        setTodayPois([]);
-      }
-    }
-
-    async function loadCurrentTrip() {
-      const today = getTodayDate();
-    
-      const trip = await tripServices.getTripForDate(today);
-    
-      setCurrentTrip(trip);
-    }
-
-    async function loadCurrentDay() {
-      if (today && currentTrip) {
-        setCurrentDayNumber(getDayNumber( currentTrip.startDate, today.date ));
-        setTotalDayNumber(currentTrip.endDate === null ? null : getDayNumber( currentTrip.startDate, currentTrip.endDate ));
-      }
-    }
-
-    async function loadMaps() {
-      const maps = await mapServices.getDownloadedMaps();
-      setMaps(maps);
-    }
-    async function handleDeleteMap(map: OfflineMap) {
-      Alert.alert(
-          "Delete map",
-          `Are you sure you want to delete "${map.name}"?`,
-          [
-              {
-                  text: "Cancel",
-                  style: "cancel",
-              },
-              {
-                  text: "Delete",
-                  style: "destructive",
-                  onPress: async () => {
-                      try {
-                          await mapServices.deleteRegion(map);
-
-                          // Remove it from the UI
-                          setMaps(currentMaps =>
-                              currentMaps.filter(
-                                  currentMap => currentMap.id !== map.id
-                              )
-                          );
-                      } catch (error) {
-                          console.error("Failed to delete map:", error);
-
-                          Alert.alert(
-                              "Error",
-                              "The map could not be deleted."
-                          );
-                      }
-                  },
-              },
-          ]
-      );
-    }
-
-    async function setData() {
-      const items: NavigationItem[] = [];
-    
-      if (!currentTrip) {
-        items.push({
-          key: "adventures",
-          icon: "◇",
-          label: "Adventures",
-          onPress: () => router.push("/trip/trips"),
-        });
-      } else {
-        if (today) {
+  useFocusEffect(
+    useCallback(() => {
+      async function loadData() {
+        const todayDate = getTodayDate();
+  
+        // Current trip
+        const trip = await tripServices.getTripForDate(todayDate);
+        setCurrentTrip(trip);
+  
+        // Today's scheduled day
+        const day = await dayServices.getDayByDate(todayDate);
+        setToday(day);
+  
+        // Today's POIs
+        if (day) {
+          const pois = await poiServices.getPOIsForDay(day.id);
+          setTodayPois(pois);
+        } else {
+          setTodayPois([]);
+        }
+  
+        // Day counter
+        if (trip) {
+          setCurrentDayNumber(
+            getDayNumber(trip.startDate, todayDate)
+          );
+  
+          setTotalDayNumber(
+            trip.endDate === null
+              ? null
+              : getDayNumber(trip.startDate, trip.endDate)
+          );
+        } else {
+          setCurrentDayNumber(null);
+          setTotalDayNumber(null);
+        }
+  
+        // Bottom navigation
+        const items: NavigationItem[] = [];
+  
+        if (!trip) {
           items.push({
-            key: "day",
-            icon: "●",
-            label: "Day",
-            onPress: () => openDayDetails(today.id),
+            key: "adventures",
+            icon: "◇",
+            label: "Adventures",
+            onPress: () => router.push("/trip/trips"),
+          });
+        } else {
+          if (day) {
+            items.push({
+              key: "day",
+              icon: "●",
+              label: "Day",
+              onPress: () => openDayDetails(day.id),
+            });
+          }
+  
+          items.push({
+            key: "map",
+            icon: "◇",
+            label: "Map",
+            onPress: () => router.push("/map/map"),
           });
         }
-    
-        items.push({
-          key: "map",
-          icon: "◇",
-          label: "Map",
-          onPress: () => router.push("/map/map"),
-        });
+  
+        setBottomItems(items);
       }
-    
-      setBottomItems(items);
-    }
+  
+      loadData();
+    }, [tripServices, dayServices, poiServices])
+  );
 
-    loadToday()
-    // loadMaps();
-    loadCurrentTrip();
-    loadCurrentDay();
-    setData()
-  }, []);
+  async function loadMaps() {
+    const maps = await mapServices.getDownloadedMaps();
+    setMaps(maps);
+  }
+  
+  async function handleDeleteMap(map: OfflineMap) {
+    Alert.alert(
+        "Delete map",
+        `Are you sure you want to delete "${map.name}"?`,
+        [
+            {
+                text: "Cancel",
+                style: "cancel",
+            },
+            {
+                text: "Delete",
+                style: "destructive",
+                onPress: async () => {
+                    try {
+                        await mapServices.deleteRegion(map);
+
+                        // Remove it from the UI
+                        setMaps(currentMaps =>
+                            currentMaps.filter(
+                                currentMap => currentMap.id !== map.id
+                            )
+                        );
+                    } catch (error) {
+                        console.error("Failed to delete map:", error);
+
+                        Alert.alert(
+                            "Error",
+                            "The map could not be deleted."
+                        );
+                    }
+                },
+            },
+        ]
+    );
+  }
 
 
   async function handleCheckIn(poi: POI) {
