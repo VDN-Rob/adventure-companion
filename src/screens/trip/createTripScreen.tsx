@@ -27,7 +27,7 @@ export default function CreateTripScreen() {
     const [endDate, setEndDate] = useState("");
     const [description, setDescription] = useState("");
     const [budget, setBudget] = useState("");
-    const [budgetCurrency, setBudgetCurrency] = useState("");
+    const [budgetCurrency, setBudgetCurrency] = useState("EUR");
     
     
     // Access application layer
@@ -76,6 +76,13 @@ export default function CreateTripScreen() {
             "The end date cannot be before the start date."
           );
           return;
+        }
+
+        if (checkedBudget && checkedBudget < 0) {
+          Alert.alert(
+            "Invalid budget",
+            "A budget must have a positive number"
+          )
         }
       
         const newTrip: Trip = {
@@ -192,6 +199,30 @@ export default function CreateTripScreen() {
                   styles.descriptionInput,
                 ]}
               />
+            </View>
+
+            {/* BUDGET */}
+            <View style={styles.row}>
+              <View style={styles.half}>
+                <InputField
+                  label="Budget"
+                  value={budget}
+                  onChangeText={setBudget}
+                  placeholder="0.00"
+                  keyboardType="numbers-and-punctuation"
+                />
+              </View>
+      
+              <View style={styles.rowGap} />
+      
+              <View style={styles.half}>
+                <InputField
+                  label="Budget Currency"
+                  value={budgetCurrency}
+                  onChangeText={setBudgetCurrency}
+                  placeholder="EUR"
+                />
+              </View>
             </View>
       
             {/* CREATE */}

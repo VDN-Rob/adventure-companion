@@ -32,6 +32,9 @@ export default function EditTripScreen() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [description, setDescription] = useState("");
+    const [budget, setBudget] = useState("");
+    const [budgetCurrency, setBudgetCurrency] = useState("EUR");
+
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
     // Load the right trip when screen finishes loading
@@ -56,6 +59,9 @@ export default function EditTripScreen() {
 
     async function handleSave() {
       if (!trip) return;
+
+      const checkedBudget = (budget === "" ? null : Number(budget));
+      const trimmedBudgetCurrency = budgetCurrency.trim()
     
       if (name.trim() === "") {
         Alert.alert(
@@ -83,6 +89,13 @@ export default function EditTripScreen() {
         );
         return;
       }
+
+      if (checkedBudget && checkedBudget < 0) {
+        Alert.alert(
+          "Invalid budget",
+          "A budget must have a positive number"
+        )
+      }
     
       const updatedTrip: Trip = {
         ...trip,
@@ -90,6 +103,8 @@ export default function EditTripScreen() {
         startDate: startDate.trim(),
         endDate: endDate.trim() === "" ? null : endDate.trim(),
         description: description.trim() === "" ? null : description.trim(),
+        budget: checkedBudget,
+        budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
       };
     
       await tripServices.updateTrip(updatedTrip);
@@ -191,6 +206,30 @@ export default function EditTripScreen() {
                 styles.descriptionInput,
               ]}
             />
+          </View>
+
+          {/* BUDGET */}
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <InputField
+                label="Budget"
+                value={budget}
+                onChangeText={setBudget}
+                placeholder="0.00"
+                keyboardType="numbers-and-punctuation"
+              />
+            </View>
+    
+            <View style={styles.rowGap} />
+    
+            <View style={styles.half}>
+              <InputField
+                label="Budget Currency"
+                value={budgetCurrency}
+                onChangeText={setBudgetCurrency}
+                placeholder="EUR"
+              />
+            </View>
           </View>
     
           {/* SAVE */}
