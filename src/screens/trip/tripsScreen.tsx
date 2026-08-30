@@ -74,7 +74,8 @@ export default function TripsScreen() {
 
         <SectionHeader title="UPCOMING" />
 
-        {futureTrips.map((trip) => (
+        {futureTrips.length > 0 ? (
+          futureTrips.map((trip) => (
             <UpcomingTripCard
                 key={trip.id}
                 trip={trip}
@@ -82,7 +83,19 @@ export default function TripsScreen() {
                 console.log("Open trip", trip.id);
                 }}
             />
-        ))}
+          ))
+          ) : (
+            <View style={styles.noAdventure}>
+              <Text style={styles.noAdventureTitle}>
+                NO UPCOMING ADVENTURE
+              </Text>
+          
+              <Text style={styles.noAdventureText}>
+                You have no pending adventures. So sad...
+              </Text>
+            </View>
+          )}
+        
 
         <Pressable
             style={styles.newAdventure}
@@ -96,22 +109,34 @@ export default function TripsScreen() {
 
         <SectionHeader title="PAST" />
 
-        {pastTrips.map((trip) => (
-        <PastTripItem
-            key={trip.id}
-            trip={trip}
-            onPress={() => {
-            console.log("Open past trip", trip.id);
-            }}
-        />
-        ))}
+        {pastTrips.length > 0 ? (
+          pastTrips.map((trip) => (
+            <PastTripItem
+                key={trip.id}
+                trip={trip}
+                onPress={() => {
+                console.log("Open past trip", trip.id);
+                }}
+            />
+            ))
+          ) : (
+            <View style={styles.noAdventure}>
+              <Text style={styles.noAdventureTitle}>
+                NO PAST ADVENTURES
+              </Text>
+          
+              <Text style={styles.noAdventureText}>
+                You have no past adventures. Time to set off!
+              </Text>
+            </View>
+          )}
+        
 
         <ScrollView
             style={styles.scroll}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
         >
-            {/* sections */}
         </ScrollView>
         </View>
   );
