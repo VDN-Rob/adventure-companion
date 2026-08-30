@@ -33,7 +33,6 @@ export default function EditPOIScreen() {
     useEffect(() => {
         async function loadPOI() {
             if (!poiId) {
-              console.log("no poi id");
               return;
             }
 
