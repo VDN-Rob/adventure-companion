@@ -9,59 +9,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
-const examplePois: POI[] = [
-  {
-    id: "poi-00",
-    dayId: "test-day-01",
-    name: "Start in Oignies",
-    type: "other",
-    latitude: 50.023722,
-    longitude: 4.639699,
-    notes: "Starting point og the adventure",
-    visitedAt: null
-  },
-  {
-    id: "poi-01",
-    dayId: "test-day-01",
-    name: "Forest Spring",
-    type: "water",
-    latitude: 49.82,
-    longitude: 4.62,
-    notes: "Small spring beside the trail.",
-    visitedAt: null
-  },
-  {
-    id: "poi-02",
-    dayId: "test-day-01",
-    name: "La Petite Boulangerie",
-    type: "food",
-    latitude: 49.78,
-    longitude: 4.71,
-    notes: "Good place for breakfast and coffee.",
-    visitedAt: null
-  },
-  {
-    id: "poi-03",
-    dayId: "test-day-01",
-    name: "Intermarché",
-    type: "supermarket",
-    latitude: 49.75,
-    longitude: 4.83,
-    notes: "Last reliable resupply before the hills.",
-    visitedAt: null
-  },
-  {
-    id: "poi-04",
-    dayId: "test-day-01",
-    name: "Camping des Pins",
-    type: "accommodation",
-    latitude: 49.68,
-    longitude: 4.91,
-    notes: "Small campsite with showers.",
-    visitedAt: null
-  },
-];
-
 export default function EditPOIScreen() {
     // Retrieve id from parameters
     const { poiId } = useLocalSearchParams<{ poiId: string }>();
@@ -85,7 +32,10 @@ export default function EditPOIScreen() {
     // Load the right Poi everytime the screen is loaded
     useEffect(() => {
         async function loadPOI() {
-            if (!poiId) return;
+            if (!poiId) {
+              console.log("no poi id");
+              return;
+            }
 
             const poi = await poiServices.getPOI(poiId);
 
@@ -111,27 +61,7 @@ export default function EditPOIScreen() {
             }
         }
 
-        // loadPOI();
-
-        setPoi(examplePois[0]);
-        if (poi) {
-          setName(poi.name);
-              setType(poi.type);
-            
-              setLatitude(
-                poi.latitude === null
-                  ? ""
-                  : String(poi.latitude)
-              );
-            
-              setLongitude(
-                poi.longitude === null
-                  ? ""
-                  : String(poi.longitude)
-              );
-            
-              setNotes(poi.notes ?? "");
-            }
+        loadPOI();
         }, [poiId]
     );
     
