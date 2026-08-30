@@ -78,10 +78,6 @@ POIs
 # Phase 2 : adventures
 => creation should not be allowed unless required fields are filled (see poi/createPoi)
 // Step 3
-[BUG] Alert for end date < start date should be a modal
-[BUG] It is possible to enter a string in the date sections -> no errors
-[BUG] It is possible to create an adventure with a nonsensical date -> does not appear in list so lost in storage
-
 [MIS] tripsScreen: Pressing on upcoming/past adventure does nothing
 [MIS] Budget fields not visible
 
@@ -91,6 +87,7 @@ POIs
 [UX]  Dates should be with calendar or fixed input
 
 [UI]  tripsScreen: When empty, feels very loaded -> add a bit more spacing
+[UI]  Alert for end date < start date should be a modal
 
 
 // Step 7

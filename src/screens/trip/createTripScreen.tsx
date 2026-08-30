@@ -2,6 +2,7 @@ import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
+import { isValidDateString } from "@/utils/date";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import * as Crypto from "expo-crypto";
 import { router } from "expo-router";
@@ -48,20 +49,30 @@ export default function CreateTripScreen() {
           return;
         }
       
-        if (trimmedStartDate === "") {
+        if (!isValidDateString(startDate)) {
           Alert.alert(
-            "Missing start date",
-            "Please enter a start date."
+            "Invalid start date",
+            "Please enter a valid date in the format YYYY-MM-DD."
           );
           return;
         }
       
+        if (endDate !== "" && !isValidDateString(endDate)) {
+          Alert.alert(
+            "Invalid end date",
+            "Please enter a valid date in the format YYYY-MM-DD."
+          );
+          return;
+        }
+
         if (
-          trimmedEndDate !== "" &&
-          trimmedEndDate < trimmedStartDate
+          endDate !== "" &&
+          isValidDateString(startDate) &&
+          isValidDateString(endDate) &&
+          endDate < startDate
         ) {
           Alert.alert(
-            "Invalid dates",
+            "Invalid trip dates",
             "The end date cannot be before the start date."
           );
           return;
