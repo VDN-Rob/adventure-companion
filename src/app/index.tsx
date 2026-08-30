@@ -14,7 +14,7 @@ import { getDayNumber, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useAppServiceProvider";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 export default function HomeScreen() {
   // Memory
@@ -64,6 +64,41 @@ export default function HomeScreen() {
     async function loadMaps() {
       const maps = await mapServices.getDownloadedMaps();
       setMaps(maps);
+    }
+    async function handleDeleteMap(map: OfflineMap) {
+      Alert.alert(
+          "Delete map",
+          `Are you sure you want to delete "${map.name}"?`,
+          [
+              {
+                  text: "Cancel",
+                  style: "cancel",
+              },
+              {
+                  text: "Delete",
+                  style: "destructive",
+                  onPress: async () => {
+                      try {
+                          await mapServices.deleteRegion(map);
+
+                          // Remove it from the UI
+                          setMaps(currentMaps =>
+                              currentMaps.filter(
+                                  currentMap => currentMap.id !== map.id
+                              )
+                          );
+                      } catch (error) {
+                          console.error("Failed to delete map:", error);
+
+                          Alert.alert(
+                              "Error",
+                              "The map could not be deleted."
+                          );
+                      }
+                  },
+              },
+          ]
+      );
     }
 
     async function setData() {
