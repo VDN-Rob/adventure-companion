@@ -40,13 +40,10 @@ export class DayServices {
     }
 
     // Check date range
-    const dateErrors = this.checkDateOverlap(day);
+    const dateResult = await this.checkDateOverlap(day);
 
-    if (Object.keys(dateErrors).length > 0) {
-      return {
-        success: false,
-        errors,
-      };
+    if (!dateResult.success) {
+      return dateResult;
     }
 
     // Check duplicates
@@ -63,7 +60,6 @@ export class DayServices {
         },
       };
     }
-
 
     await this.daysRepository.createDay(day);
 
@@ -124,7 +120,7 @@ export class DayServices {
   }
 
   // Helper functions
-  async checkDateOverlap(day: Day) {
+  async checkDateOverlap(day: Day): Promise<ServiceResult> {
     // Check that there is no duplicate date
     const existingDay = await this.daysRepository.getDayByTripAndDate(day.tripId, day.date);
     
@@ -166,6 +162,10 @@ export class DayServices {
           date: "The day falls after the end of the trip."
         }
       }
+    }
+
+    return {
+      success: true
     }
   }
 }

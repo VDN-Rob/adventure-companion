@@ -49,8 +49,8 @@ export function AppServicesProvider({
   );
 
   const dayServices = useMemo(
-    () => new DayServices(daysRepository),
-    [daysRepository]
+    () => new DayServices(daysRepository, tripsRepository),
+    [daysRepository, tripsRepository]
   );
 
   const poiServices = useMemo(

@@ -76,8 +76,6 @@ export default function HomeScreen() {
       }
   
       loadActiveTrips();
-      console.log("Active trips:", activeTrips);
-console.log("Selected trip:", selectedTrip);
   
       return () => {
         active = false;
