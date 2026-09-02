@@ -205,37 +205,47 @@ export default function HomeScreen() {
   }
 
 
-  async function handleCheckIn(poi: POI) {
+  const handleCheckIn = async (poi: POI) => {
+    const result = await poiServices.checkInPOI(poi.id);
+  
+    if (!result.success) {
+      Alert.alert(
+        "Check-in failed",
+        result.errors.poi ?? "Unable to check in."
+      );
+      return;
+    }
+  
     const visitedAt = new Date().toISOString();
-
-    await poiServices.updatePOI({
-      ...poi,
-      visitedAt,
-    });
-
+  
     setTodayPois((current) =>
       current.map((item) =>
         item.id === poi.id
-        ? { ...item, visitedAt }
-        : item
+          ? { ...item, visitedAt }
+          : item
       )
     );
-  }
+  };
 
-  async function handleUndoCheckIn(poi: POI) {
-    await poiServices.updatePOI({
-      ...poi,
-      visitedAt: null,
-    });
-
+  const handleUndoCheckIn = async (poi: POI) => {
+    const result = await poiServices.undoCheckInPOI(poi.id);
+  
+    if (!result.success) {
+      Alert.alert(
+        "Unable to undo check-in",
+        result.errors.poi ?? "Something went wrong."
+      );
+      return;
+    }
+  
     setTodayPois((current) =>
       current.map((item) =>
         item.id === poi.id
-        ? { ...item, visitedAt: null }
-        : item
+          ? { ...item, visitedAt: null }
+          : item
       )
     );
-  }
+  };
 
   function openDayDetails(dayId: string) {
     router.push({

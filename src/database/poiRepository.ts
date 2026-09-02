@@ -81,6 +81,19 @@ export class PoisRepository {
         );
     }
 
+    async updatePOIVisitedAt(poiId: string, visitedAt: string | null): Promise<void> {
+        await this.db.runAsync(
+            `
+            UPDATE pois
+            SET visited_at = ?
+            WHERE id = ?
+            `,
+            visitedAt,
+            poiId
+        );
+    }
+
+
     async deletePOI(id: string) {
         return this.db.runAsync(
             "DELETE FROM pois WHERE id = ?",

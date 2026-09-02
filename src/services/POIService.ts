@@ -62,6 +62,50 @@ export class POIServices {
       }
     }
 
+    async checkInPOI(poiId: string): Promise<ServiceResult> {
+      const poi = await this.poisRepository.getPOIById(poiId);
+    
+      if (!poi) {
+        return {
+          success: false,
+          errors: {
+            poi: "POI not found.",
+          },
+        };
+      }
+    
+      await this.poisRepository.updatePOIVisitedAt(
+        poiId,
+        new Date().toISOString()
+      );
+    
+      return {
+        success: true,
+      };
+    }
+
+    async undoCheckInPOI(poiId: string): Promise<ServiceResult> {
+      const poi = await this.poisRepository.getPOIById(poiId);
+    
+      if (!poi) {
+        return {
+          success: false,
+          errors: {
+            poi: "POI not found.",
+          },
+        };
+      }
+    
+      await this.poisRepository.updatePOIVisitedAt(
+        poiId,
+        null
+      );
+    
+      return {
+        success: true,
+      };
+    }
+
     async deletePOI(poiId: string) {
       return this.poisRepository.deletePOI(poiId);
     }
