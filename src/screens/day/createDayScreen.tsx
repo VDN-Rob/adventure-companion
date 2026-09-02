@@ -2,6 +2,7 @@ import { InputField } from "@/components/forms/InputField";
 import { Day } from "@/models/Day";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
+import { validateDayFields } from "@/utils/validation/dayValidation";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -30,64 +31,37 @@ export default function CreateDayScreen() {
     const { dayServices} = useAppServices();
 
     async function handleSaveDay() {
-        // Validation
-        if (date.trim() === "") {
-            Alert.alert(
-                "Invalid date",
-                "Please fill in date"
-            );
-            return;
-        }
+      const errors = validateDayFields({
+        title,
+        date,
+        plannedElevation,
+        plannedDistance
+      });
 
-        const elevation = (plannedElevation === "" ? null : Number(plannedElevation));
-        const distance = (plannedDistance === "" ? null : Number(plannedDistance));
+      const firstError = Object.values(errors)[0];
 
-        if (elevation !== null && Number.isNaN(elevation)) {
-            Alert.alert(
-              "Invalid elevation",
-              "Please enter a valid number."
-            );
-            return;
-        }
-    
-        if (distance !== null && Number.isNaN(distance)) {
-            Alert.alert(
-                "Invalid distance",
-                "Please enter a valid number."
-            );
-            return;
-        }
+      if (firstError) {
+        Alert.alert("Invalid day creation", firstError)
+        return;
+      }
 
-        if (elevation !== null && elevation < 0) {
-            Alert.alert(
-            "Invalid elevation",
-            "Elevation cannot be negative."
-            );
-            return;
-        }
+      const elevation = (plannedElevation === "" ? null : Number(plannedElevation));
+      const distance = (plannedDistance === "" ? null : Number(plannedDistance));
 
-        if (distance !== null && distance < 0) {
-            Alert.alert(
-            "Invalid distance",
-            "Distance cannot be negative."
-            );
-            return;
-        }
+      // Saving
+      const newDay: Day = {
+          id: Crypto.randomUUID(),
+          tripId: tripId,
+          date: date.trim(),
+          title: title.trim() || null,
+          notes: notes.trim() || null,
+          plannedElevation: elevation,
+          plannedDistance: distance,
+      };
 
-        // Saving
-        const newDay: Day = {
-            id: Crypto.randomUUID(),
-            tripId: tripId,
-            date: date.trim(),
-            title: title.trim() || null,
-            notes: notes.trim() || null,
-            plannedElevation: elevation,
-            plannedDistance: distance,
-        };
+      await dayServices.createDay(newDay);
 
-        await dayServices.createDay(newDay);
-
-        router.back()
+      router.back()
     }
     
     return (

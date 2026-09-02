@@ -95,7 +95,18 @@ export default function EditTripScreen() {
         budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
       };
     
-      await tripServices.updateTrip(updatedTrip);
+      const result = await tripServices.updateTrip(updatedTrip);
+      
+      if (!result.success) {
+        const firstServiceError = Object.values(result.errors)[0];
+    
+        Alert.alert(
+          "Could not save adventure",
+          firstServiceError ?? "The adventure contains invalid data."
+        );
+    
+        return;
+      }
     
       router.back();
     }

@@ -72,7 +72,7 @@ export class TripServices {
         };
     }
 
-    async updateTrip(updatedTrip: Trip) {
+    async updateTrip(updatedTrip: Trip): Promise<ServiceResult> {
         const errors = validateTripFields({
           name: updatedTrip.name,
           startDate: updatedTrip.startDate,
@@ -89,6 +89,10 @@ export class TripServices {
         }
 
         await this.tripsRepository.updateTrip(updatedTrip);
+      
+        return {
+          success: true,
+        };
     }
 
     async deleteTrip(tripId: string) {

@@ -18,6 +18,7 @@ import {
 } from "react-native";
 
 import { theme } from "@/styling/theme";
+import { validateDayFields } from "@/utils/validation/dayValidation";
 
 export default function EditDayScreen() {
     // Retrieve id from parameters
@@ -68,45 +69,45 @@ export default function EditDayScreen() {
       }, [dayId]);
 
     async function handleSave() {
-        // Validation
-        if (date === "") {
-            Alert.alert(
-                "Invalid date",
-                "Please fill in date"
-            );
-            return;
-        }
+      if (!day) return;
 
-        if (plannedElevation !== "" && Number(plannedElevation) < 0) {
-            Alert.alert(
-                "Invalid planned elevation",
-                "Elevation must be positive"
-            );
-            return;
-        }
+      const errors = validateDayFields({
+        title,
+        date,
+        plannedElevation,
+        plannedDistance
+      });
 
-        if (plannedDistance !== "" && Number(plannedDistance) < 0) {
-            Alert.alert(
-                "Invalid planned distance",
-                "Distance must be positive"
-            );
-            return;
-        }
+      const firstError = Object.values(errors)[0];
 
-        if (!day) return;
-        
-        const updatedDay: Day = {
-            ...day,
-            date: date,
-            title: title.trim() === "" ? null : title.trim(),
-            notes: notes.trim() == "" ? null : notes.trim(),
-            plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
-            plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
-        }
-        
-        await dayServices.updateDay(updatedDay);
+      if (firstError) {
+        Alert.alert("Invalid day change", firstError);
+        return;
+      }
 
-        router.back();
+      const updatedDay: Day = {
+          ...day,
+          date: date,
+          title: title.trim() === "" ? null : title.trim(),
+          notes: notes.trim() == "" ? null : notes.trim(),
+          plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
+          plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
+      }
+      
+      const result = await dayServices.updateDay(updatedDay);
+
+      if (!result.success) {
+        const firstServiceError = Object.values(result.errors)[0];
+    
+        Alert.alert(
+          "Could not save day",
+          firstServiceError ?? "The day contains invalid data."
+        );
+    
+        return;
+      }
+
+      router.back();
     }
 
     async function deleteDay() {
