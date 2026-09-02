@@ -93,13 +93,8 @@ SLOW:
 [UI]  Alert for end date < start date should be a modal
 
 # Phase 3: Days
-URGENT:
-[UX] Possibility of creating dates outside of date range
-
 MEDIUM:
-[UX] Possibility of creating duplicate dates
 [UX] creation should not be allowed unless required fields are filled (see poi/createPoi)
-
 [UI] Add Day counter on day card in tripDetailsScreen and day/detailsDay (day.date - trip.startdate) - does not seem to work currently
 
 SLOW:
@@ -113,8 +108,6 @@ SLOW:
 # Phase 4: POIs
 URGENT:
 [MIS] POIS on map are still example POIs, not day POIs
-
-[UX]  Invalid Latitude/Longitude just returns, does not raise alert 
 
 MEDIUM:
 [UX]  Editing instead of seeing detail of POI => add detailsPOI screen
