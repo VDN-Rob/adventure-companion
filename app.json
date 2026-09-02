@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "cycling-companion",
-    "slug": "cycling-companion",
+    "name": "adventure-companion",
+    "slug": "adventure-companion",
     "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cyclingcompanion",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.anonymous.cyclingcompanion"
     },
     "android": {
       "adaptiveIcon": {
