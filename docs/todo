@@ -81,7 +81,6 @@ URGENT:
 [MIS] tripsScreen: Pressing on upcoming/past adventure does nothing
 
 MEDIUM: 
-[UX]  No overlapping dates possible
 [UX]  creation should not be allowed unless required fields are filled (see poi/createPoi)
 
 SLOW:
