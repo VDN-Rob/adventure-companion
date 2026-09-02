@@ -107,7 +107,12 @@ export default function TripsScreen() {
                 key={trip.id}
                 trip={trip}
                 onPress={() => {
-                console.log("Open trip", trip.id);
+                  router.push({
+                    pathname: "/trip/detailsTrip",
+                    params: {
+                      id: trip.id,
+                    },
+                  });
                 }}
             />
           ))
@@ -142,7 +147,12 @@ export default function TripsScreen() {
                 key={trip.id}
                 trip={trip}
                 onPress={() => {
-                console.log("Open past trip", trip.id);
+                  router.push({
+                    pathname: "/trip/detailsTrip",
+                    params: {
+                      id: trip.id,
+                    },
+                  });
                 }}
             />
             ))
