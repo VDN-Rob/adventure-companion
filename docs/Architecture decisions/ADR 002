@@ -1,0 +1,7 @@
+Domain rules
+- Trips may overlap.
+- A trip can have only one Day for a given date.
+- A Day must belong to a Trip.
+- A Day's date must be inside its own Trip's date range.
+- When editing a Trip, you cannot change its dates so that an existing Day falls outside it.
+- If multiple Trips are active today, the user chooses which one is the current adventure.
