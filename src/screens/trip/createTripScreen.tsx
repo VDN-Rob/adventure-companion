@@ -2,7 +2,7 @@ import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { validateTripFields } from "@/utils/validation/tripValidation";
 import * as Crypto from "expo-crypto";
 import { router } from "expo-router";

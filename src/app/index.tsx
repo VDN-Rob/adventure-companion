@@ -11,7 +11,7 @@ import { POI } from "@/models/POI";
 import { Trip } from "@/models/Trip";
 import { styles } from "@/styling/styles";
 import { getDayNumber, getTodayDate } from "@/utils/date";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert, View } from 'react-native';

@@ -1,6 +1,6 @@
 import { Day } from "@/models/Day";
 import { DiaryEntry } from "@/models/DiaryEntry";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import {

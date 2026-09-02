@@ -1,5 +1,5 @@
 import { POI, POIType } from "@/models/POI";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";

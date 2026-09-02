@@ -11,7 +11,7 @@ import { UpcomingTripCard } from "@/components/card/trips/UpcomingTripCard";
 import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
 import { getDayNumber, getTodayDate } from "@/utils/date";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 

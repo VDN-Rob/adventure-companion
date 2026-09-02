@@ -6,12 +6,12 @@ import { useNetworkStatus } from "@/services/NetworkServices";
 import { POIServices } from "@/services/POIService";
 import { TripMapServices } from "@/services/tripMapService";
 import { TripServices } from "@/services/TripService";
-import { useDaysRepository } from "@/utils/useDaysRepository";
-import { useDiaryEntriesRepository } from "@/utils/useDiaryEntriesRepository";
-import { useExpensesRepository } from "@/utils/useExpensesRepository";
-import { useMapsRepository } from "@/utils/useMapsRepository";
-import { usePoisRepository } from "@/utils/usePoisRepository";
-import { useTripsRepository } from "@/utils/useTripsRepository";
+import { useDaysRepository } from "@/utils/useRepository/useDaysRepository";
+import { useDiaryEntriesRepository } from "@/utils/useRepository/useDiaryEntriesRepository";
+import { useExpensesRepository } from "@/utils/useRepository/useExpensesRepository";
+import { useMapsRepository } from "@/utils/useRepository/useMapsRepository";
+import { usePoisRepository } from "@/utils/useRepository/usePoisRepository";
+import { useTripsRepository } from "@/utils/useRepository/useTripsRepository";
 import { createContext, useMemo } from "react";
 
 interface AppServices {

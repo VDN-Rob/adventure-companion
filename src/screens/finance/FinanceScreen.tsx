@@ -1,6 +1,6 @@
 import { ExpenseCard } from "@/components/card/ExpenseCard";
 import { Trip } from "@/models/Trip";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {

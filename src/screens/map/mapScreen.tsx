@@ -1,6 +1,6 @@
 import { POI } from "@/models/POI";
 import { calculateBounds } from "@/utils/calculateMapBounds";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { Camera, Map, Marker } from "@maplibre/maplibre-react-native";
 import * as Location from "expo-location";
 import { useLocalSearchParams } from "expo-router";

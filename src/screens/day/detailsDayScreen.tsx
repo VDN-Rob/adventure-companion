@@ -3,7 +3,7 @@ import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { theme } from "@/styling/theme";
-import { useAppServices } from "@/utils/useAppServiceProvider";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
