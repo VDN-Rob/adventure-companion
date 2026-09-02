@@ -10,18 +10,23 @@ import { OfflineMap } from "@/models/OfflineMap";
 import { POI } from "@/models/POI";
 import { Trip } from "@/models/Trip";
 import { styles } from "@/styling/styles";
-import { getDayNumber, getTodayDate } from "@/utils/date";
+import { formatDate, getDayNumber, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
-import { Alert, View } from 'react-native';
+import { useCallback, useEffect, useState } from "react";
+import { Alert, Modal, Pressable, Text, View } from 'react-native';
 
 export default function HomeScreen() {
   // Memory
   const {tripServices, dayServices, isOnline, mapServices, poiServices} = useAppServices();
 
   // Temporary memory
-  const [currentTrip, setCurrentTrip] = useState<Trip | null>(null);
+  const [activeTrips, setActiveTrips] = useState<Trip[]>([]);
+  const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
+  const [selectorVisible, setSelectorVisible] = useState(false);
+
+  const selectedTrip = activeTrips.find((trip) => trip.id === selectedTripId) ?? null;
+
   const [today, setToday] = useState<Day | null>(null);
   const [todayPois, setTodayPois] = useState<POI[]>([]);
   const [currentDayNumber, setCurrentDayNumber] = useState<number | null>(null);
@@ -34,76 +39,132 @@ export default function HomeScreen() {
   // When Index finishes loading, get the data to setup the homescreen
   useFocusEffect(
     useCallback(() => {
-      async function loadData() {
+      let active = true;
+  
+      async function loadActiveTrips() {
         const todayDate = getTodayDate();
   
-        // Current trip
-        const trip = await tripServices.getTripForDate(todayDate);
-        setCurrentTrip(trip);
+        const trips = await tripServices.getTripsForDate(todayDate);
   
-        // Today's scheduled day
-        const day = await dayServices.getDayByDate(todayDate);
-        setToday(day);
+        if (!active) return;
   
-        // Today's POIs
-        if (day) {
-          const pois = await poiServices.getPOIsForDay(day.id);
-          setTodayPois(pois);
-        } else {
-          setTodayPois([]);
+        setActiveTrips(trips);
+  
+        // No active adventures
+        if (trips.length === 0) {
+          setSelectedTripId(null);
+          return;
         }
   
-        // Day counter
-        if (trip) {
-          setCurrentDayNumber(
-            getDayNumber(trip.startDate, todayDate)
-          );
-  
-          setTotalDayNumber(
-            trip.endDate === null
-              ? null
-              : getDayNumber(trip.startDate, trip.endDate)
-          );
-        } else {
-          setCurrentDayNumber(null);
-          setTotalDayNumber(null);
+        // Exactly one active adventure → select it automatically
+        if (trips.length === 1) {
+          setSelectedTripId(trips[0].id);
+          return;
         }
   
-        // Bottom navigation
-        const items: NavigationItem[] = [];
+        // Multiple active adventures.
+        // Keep the existing selection if it is still active.
+        if (
+          selectedTripId &&
+          trips.some((trip) => trip.id === selectedTripId)
+        ) {
+          return;
+        }
   
-        if (!trip) {
-          items.push({
+        // Multiple active adventures and no valid selection.
+        setSelectedTripId(null);
+      }
+  
+      loadActiveTrips();
+      console.log("Active trips:", activeTrips);
+console.log("Selected trip:", selectedTrip);
+  
+      return () => {
+        active = false;
+      };
+    }, [tripServices, selectedTripId])
+  );
+
+  useEffect(() => {
+    let active = true;
+  
+    async function loadSelectedTripData() {
+      if (!selectedTrip) {
+        setToday(null);
+        setTodayPois([]);
+        setCurrentDayNumber(null);
+        setTotalDayNumber(null);
+  
+        setBottomItems([
+          {
             key: "adventures",
             icon: "◇",
             label: "Adventures",
             onPress: () => router.push("/trip/trips"),
-          });
-        } else {
-          if (day) {
-            items.push({
-              key: "day",
-              icon: "●",
-              label: "Day",
-              onPress: () => openDayDetails(day.id),
-            });
-          }
+          },
+        ]);
   
-          items.push({
-            key: "map",
-            icon: "◇",
-            label: "Map",
-            onPress: () => router.push("/map/map"),
-          });
-        }
-  
-        setBottomItems(items);
+        return;
       }
   
-      loadData();
-    }, [tripServices, dayServices, poiServices])
-  );
-
+      const todayDate = getTodayDate();
+  
+      const day = await dayServices.getDayByTripAndDate(
+        selectedTrip.id,
+        todayDate
+      );
+  
+      if (!active) return;
+  
+      setToday(day);
+  
+      if (day) {
+        const pois = await poiServices.getPOIsForDay(day.id);
+  
+        if (!active) return;
+  
+        setTodayPois(pois);
+      } else {
+        setTodayPois([]);
+      }
+  
+      setCurrentDayNumber(getDayNumber(selectedTrip.startDate, todayDate));
+  
+      setTotalDayNumber(selectedTrip.endDate === null ? null : getDayNumber(selectedTrip.startDate, selectedTrip.endDate));
+  
+      const items: NavigationItem[] = [];
+  
+      if (day) {
+        items.push({
+          key: "day",
+          icon: "●",
+          label: "Day",
+          onPress: () => openDayDetails(day.id),
+        });
+      }
+  
+      items.push({
+        key: "map",
+        icon: "◇",
+        label: "Map",
+        onPress: () => router.push("/map/map"),
+      });
+  
+      setBottomItems(items);
+    }
+  
+    loadSelectedTripData();
+  
+    return () => {
+      active = false;
+    };
+  }, [
+    selectedTripId,
+    selectedTrip,
+    dayServices,
+    poiServices,
+  ]);
+  
   async function loadMaps() {
     const maps = await mapServices.getDownloadedMaps();
     setMaps(maps);
@@ -189,14 +250,46 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <AppHeader
         appName="ELG WANDER"
-        tripName={currentTrip?.name ?? "No active adventure"}
-        currentDay={currentTrip ? currentDayNumber ?? undefined : undefined}
-        totalDays={currentTrip ? totalDayNumber ?? "TO INFINITY!" : undefined}
+        tripName={selectedTrip?.name ?? "No active adventure"}
+        currentDay={selectedTrip ? currentDayNumber ?? undefined : undefined}
+        totalDays={selectedTrip ? totalDayNumber ?? "TO INFINITY!" : undefined}
       />
 
+      {activeTrips.length > 1 && (
+        <Pressable
+          style={styles.adventureSelector}
+          onPress={() => setSelectorVisible(true)}
+        >
+          <View>
+            <Text style={styles.selectorLabel}>
+              CURRENT ADVENTURE
+            </Text>
+
+            <Text style={styles.selectorValue}>
+              {selectedTrip?.name ?? "SELECT ADVENTURE"}
+            </Text>
+          </View>
+
+          <Text style={styles.selectorArrow}>▼</Text>
+        </Pressable>
+      )}
+
       <View style={styles.content}>
-        {!currentTrip ? (
+        {activeTrips.length === 0 ? (
           <NoActiveAdventure />
+        ) : !selectedTrip ? (
+          <Pressable
+            style={styles.chooseAdventureButton}
+            onPress={() => setSelectorVisible(true)}
+          >
+            <Text style={styles.chooseAdventureTitle}>
+              SELECT YOUR ADVENTURE
+            </Text>
+
+            <Text style={styles.chooseAdventureText}>
+              You have multiple active adventures today.
+            </Text>
+          </Pressable>
         ) : today ? (
           <DayCard
             day={today}
@@ -209,14 +302,14 @@ export default function HomeScreen() {
         )}
       </View>
 
-      {currentTrip && (
+      {selectedTrip && today &&(
         <QuickActions
           onExpensePress={() => {
             router.push({
               pathname: "/finance/createExpense",
               params: {
-                tripId: currentTrip.id,
-                dayId: today?.id,
+                tripId: selectedTrip.id,
+                dayId: today.id,
               },
             });
           }}
@@ -237,7 +330,7 @@ export default function HomeScreen() {
         }}
       />
 
-      {currentTrip && (
+      {selectedTrip && today && (
         <CheckInModal
           visible={checkInVisible}
           pois={todayPois}
@@ -246,6 +339,61 @@ export default function HomeScreen() {
           onUndoCheckIn={handleUndoCheckIn}
           />
         )}
+
+      <Modal
+        visible={selectorVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectorVisible(false)}
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setSelectorVisible(false)}
+        >
+          <Pressable
+            style={styles.selectorModal}
+            onPress={(event) => event.stopPropagation()}
+          >
+            <Text style={styles.modalTitle}>
+              SELECT ADVENTURE
+            </Text>
+
+            {activeTrips.map((trip) => {
+              const isSelected = trip.id === selectedTripId;
+
+              return (
+                <Pressable
+                  key={trip.id}
+                  style={[
+                    styles.tripOption,
+                    isSelected && styles.tripOptionSelected,
+                  ]}
+                  onPress={() => {
+                    setSelectedTripId(trip.id);
+                    setSelectorVisible(false);
+                  }}
+                >
+                  <Text style={styles.tripOptionIndicator}>
+                    {isSelected ? "●" : "○"}
+                  </Text>
+
+                  <View style={styles.tripOptionContent}>
+                    <Text style={styles.tripOptionName}>
+                      {trip.name}
+                    </Text>
+
+                    <Text style={styles.tripOptionDates}>
+                      {formatDate(trip.startDate)}
+                      {" → "}
+                      {trip.endDate ? formatDate(trip.endDate) : "∞"}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

@@ -1,16 +1,16 @@
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
 } from "react-native";
 
-import { ActiveTripCard } from "@/components/card/trips/ActiveTripCard";
+import { TripCard } from "@/components/card/trips/TripCard";
 import { UpcomingTripCard } from "@/components/card/trips/UpcomingTripCard";
 import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
-import { getDayNumber, getTodayDate } from "@/utils/date";
+import { getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -19,7 +19,7 @@ export default function TripsScreen() {
   
   const {tripServices, dayServices, isOnline, mapServices, poiServices} = useAppServices();
 
-  const [activeTrip, setActiveTrip] = useState<Trip | null>(null);
+  const [activeTrips, setActiveTrips] = useState<Trip[]>([]);
   const [futureTrips, setFutureTrips] = useState<Trip[]>([]);
   const [pastTrips, setPastTrips] = useState<Trip[]>([]);
 
@@ -36,32 +36,57 @@ export default function TripsScreen() {
       ]);
       
       setFutureTrips(futureTrips);
-      setActiveTrip(activeTrip);
+      setActiveTrips(activeTrip);
       setPastTrips(pastTrips);
 
     }
 
     loadTrips()
   }, []));
+
+  const todayDate = getTodayDate();
   
   return (
     <View style={styles.content}>
+      <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+    >
       <SectionHeader title="ACTIVE ADVENTURE" />
 
-        {activeTrip ? (
-          <ActiveTripCard
-            trip={activeTrip}
-            currentDay={getDayNumber( activeTrip.startDate, getTodayDate() )}
-            totalDays={activeTrip.endDate === null ? null : getDayNumber( activeTrip.startDate, activeTrip.endDate )}
+        {activeTrips.length > 0 ? (
+
+        activeTrips.map((trip) => (
+          <TripCard
+            key={trip.id}
+            trip={trip}
+            active={true}
             onPress={() => {
-                router.push({
-                  pathname: "/trip/detailsTrip",
-                  params: {
-                    id: activeTrip.id,
-                  },
-                });
+              router.push({
+                pathname: "/trip/detailsTrip",
+                params: {
+                  id: trip.id,
+                },
+              });
             }}
-        />) : (
+          />
+        //   <ActiveTripCard
+        //     key={trip.id}
+        //     trip={trip}
+        //     currentDay={getDayNumber( trip.startDate, todayDate )}
+        //     totalDays={trip.endDate === null ? null : getDayNumber( trip.startDate, trip.endDate )}
+        //     onPress={() => {
+        //         router.push({
+        //           pathname: "/trip/detailsTrip",
+        //           params: {
+        //             id: trip.id,
+        //           },
+        //         });
+        //     }}
+        // />
+        ))
+          ) : (
           <View style={styles.noAdventure}>
             <Text style={styles.noAdventureTitle}>
               NO ACTIVE ADVENTURE
@@ -132,13 +157,6 @@ export default function TripsScreen() {
               </Text>
             </View>
           )}
-        
-
-        <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-        >
         </ScrollView>
         </View>
   );
