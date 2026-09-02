@@ -4,6 +4,7 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -18,6 +19,7 @@ import { InputField } from "@/components/forms/InputField";
 import { POITypeSelector } from "@/components/forms/POITypeSelector";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { theme } from "@/styling/theme";
+import { validatePOIFields } from "@/utils/validation/poiValidation";
 
 const POI_TYPES: {
   type: POIType;
@@ -71,232 +73,223 @@ export default function CreatePoiScreen() {
     const { poiServices } = useAppServices();
 
     async function handleSavePOI() {
-        if (!dayId) {
-          return;
-        }
-      
-        if (name.trim() === "") {
-          return;
-        }
-      
-        const parsedLatitude =
-          latitude.trim() === ""
-            ? null
-            : Number(latitude);
-      
-        const parsedLongitude =
-          longitude.trim() === ""
-            ? null
-            : Number(longitude);
-      
-        if (
-          parsedLatitude !== null &&
-          (
-            Number.isNaN(parsedLatitude) ||
-            parsedLatitude < -90 ||
-            parsedLatitude > 90
-          )
-        ) {
-          return;
-        }
-      
-        if (
-          parsedLongitude !== null &&
-          (
-            Number.isNaN(parsedLongitude) ||
-            parsedLongitude < -180 ||
-            parsedLongitude > 180
-          )
-        ) {
-          return;
-        }
-      
-        const newPoi: POI = {
-          id: Crypto.randomUUID(),
-          dayId,
-          name: name.trim(),
-          type,
-          latitude: parsedLatitude,
-          longitude: parsedLongitude,
-          notes: notes.trim() === ""
-            ? null
-            : notes.trim(),
-          visitedAt: null, 
-        };
-      
-        await poiServices.createPOI(newPoi);
-      
-        router.back();
-      }
-    
       if (!dayId) {
-        return (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorTitle}>
-              NO DAY SELECTED
-            </Text>
+        return;
+      }
+          
+      const errors = validatePOIFields({
+        name,
+        latitude,
+        longitude,
+        visitedAt
+      });
+
+      const firstError = Object.values(errors)[0];
+          
+      if (firstError) {
+        Alert.alert("Invalid adventure", firstError);
+        return;
+      }
+
+      const parsedLatitude = latitude.trim() === "" ? null : Number(latitude);
+      const parsedLongitude = longitude.trim() === "" ? null : Number(longitude);
       
-            <Text style={styles.errorText}>
-              This point of interest cannot be created
-              without a day.
-            </Text>
       
+      const newPoi: POI = {
+        id: Crypto.randomUUID(),
+        dayId,
+        name: name.trim(),
+        type,
+        latitude: parsedLatitude,
+        longitude: parsedLongitude,
+        notes: notes.trim() === "" ? null : notes.trim(),
+        visitedAt: null, 
+      };
+    
+      const result = await poiServices.createPOI(newPoi);
+    
+      if (!result.success) {
+        const firstServiceError = Object.values(result.errors)[0];
+    
+        Alert.alert(
+          "Could not save adventure",
+          firstServiceError ?? "The adventure contains invalid data."
+        );
+    
+        return;
+      }
+
+      router.back();
+    }
+    
+    if (!dayId) {
+      return (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorTitle}>
+            NO DAY SELECTED
+          </Text>
+    
+          <Text style={styles.errorText}>
+            This point of interest cannot be created
+            without a day.
+          </Text>
+    
+          <Pressable
+            style={styles.backButtonLarge}
+            onPress={() => router.back()}
+          >
+            <Text style={styles.backButtonText}>
+              GO BACK
+            </Text>
+          </Pressable>
+        </View>
+      );
+    }
+    
+    return (
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* HEADER */}
+          <View style={styles.header}>
             <Pressable
-              style={styles.backButtonLarge}
+              style={styles.backButton}
               onPress={() => router.back()}
             >
-              <Text style={styles.backButtonText}>
-                GO BACK
+              <Text style={styles.backArrow}>
+                ←
               </Text>
             </Pressable>
+    
+            <View>
+              <Text style={styles.eyebrow}>
+                ADVENTURE PLANNER
+              </Text>
+    
+              <Text style={styles.headerTitle}>
+                NEW POI
+              </Text>
+            </View>
           </View>
-        );
-      }
-      
-      return (
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <ScrollView
-            contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* HEADER */}
-            <View style={styles.header}>
-              <Pressable
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backArrow}>
-                  ←
-                </Text>
-              </Pressable>
-      
-              <View>
-                <Text style={styles.eyebrow}>
-                  ADVENTURE PLANNER
-                </Text>
-      
-                <Text style={styles.headerTitle}>
-                  NEW POI
-                </Text>
-              </View>
-            </View>
-      
-            {/* INTRO */}
-            <View style={styles.intro}>
-              <Text style={styles.introTitle}>
-                MARK A WAYPOINT
-              </Text>
-      
-              <Text style={styles.introText}>
-                Add something worth remembering along
-                today's route.
-              </Text>
-            </View>
-      
-            {/* NAME */}
-            <SectionLabel title="WAYPOINT DETAILS" />
-      
-            <InputField
-              label="NAME"
-              value={name}
-              onChangeText={setName}
-              placeholder="Mountain café"
-            />
-      
-            {/* TYPE */}
-            <View style={styles.typeSection}>
-              <Text style={styles.label}>
-                TYPE
-              </Text>
-      
-              <POITypeSelector
-                value={type}
-                onChange={setType}
-              />
-            </View>
-      
-            {/* LOCATION */}
-            <SectionLabel title="LOCATION" />
-      
-            <View style={styles.row}>
-              <View style={styles.half}>
-                <InputField
-                  label="LATITUDE"
-                  value={latitude}
-                  onChangeText={setLatitude}
-                  placeholder="50.1234"
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
-      
-              <View style={styles.rowGap} />
-      
-              <View style={styles.half}>
-                <InputField
-                  label="LONGITUDE"
-                  value={longitude}
-                  onChangeText={setLongitude}
-                  placeholder="4.5678"
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
-            </View>
-      
-            <Text style={styles.locationHint}>
-              Coordinates are optional. You can add them
-              later when the route/map is ready.
+    
+          {/* INTRO */}
+          <View style={styles.intro}>
+            <Text style={styles.introTitle}>
+              MARK A WAYPOINT
             </Text>
-      
-            {/* NOTES */}
-            <View style={styles.notesContainer}>
-              <Text style={styles.label}>
-                NOTES
-              </Text>
-      
-              <TextInput
-                value={notes}
-                onChangeText={setNotes}
-                placeholder="What should you remember about this place?"
-                placeholderTextColor={theme.colours.textMuted}
-                multiline
-                textAlignVertical="top"
-                style={[
-                  styles.input,
-                  styles.notesInput,
-                ]}
+    
+            <Text style={styles.introText}>
+              Add something worth remembering along
+              today's route.
+            </Text>
+          </View>
+    
+          {/* NAME */}
+          <SectionLabel title="WAYPOINT DETAILS" />
+    
+          <InputField
+            label="NAME"
+            value={name}
+            onChangeText={setName}
+            placeholder="Mountain café"
+          />
+    
+          {/* TYPE */}
+          <View style={styles.typeSection}>
+            <Text style={styles.label}>
+              TYPE
+            </Text>
+    
+            <POITypeSelector
+              value={type}
+              onChange={setType}
+            />
+          </View>
+    
+          {/* LOCATION */}
+          <SectionLabel title="LOCATION" />
+    
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <InputField
+                label="LATITUDE"
+                value={latitude}
+                onChangeText={setLatitude}
+                placeholder="50.1234"
+                keyboardType="numbers-and-punctuation"
               />
             </View>
-      
-            {/* SAVE */}
-            <Pressable
+    
+            <View style={styles.rowGap} />
+    
+            <View style={styles.half}>
+              <InputField
+                label="LONGITUDE"
+                value={longitude}
+                onChangeText={setLongitude}
+                placeholder="4.5678"
+                keyboardType="numbers-and-punctuation"
+              />
+            </View>
+          </View>
+    
+          <Text style={styles.locationHint}>
+            Coordinates are optional. You can add them
+            later when the route/map is ready.
+          </Text>
+    
+          {/* NOTES */}
+          <View style={styles.notesContainer}>
+            <Text style={styles.label}>
+              NOTES
+            </Text>
+    
+            <TextInput
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="What should you remember about this place?"
+              placeholderTextColor={theme.colours.textMuted}
+              multiline
+              textAlignVertical="top"
               style={[
-                styles.saveButton,
-                name.trim() === "" && styles.saveButtonDisabled,
+                styles.input,
+                styles.notesInput,
               ]}
-              onPress={handleSavePOI}
-              disabled={name.trim() === ""}
-            >
-              <View>
-                <Text style={styles.saveEyebrow}>
-                  ADD TO TODAY
-                </Text>
-      
-                <Text style={styles.saveText}>
-                  MARK WAYPOINT
-                </Text>
-              </View>
-      
-              <Text style={styles.saveArrow}>
-                +
+            />
+          </View>
+    
+          {/* SAVE */}
+          <Pressable
+            style={[
+              styles.saveButton,
+              name.trim() === "" && styles.saveButtonDisabled,
+            ]}
+            onPress={handleSavePOI}
+            disabled={name.trim() === ""}
+          >
+            <View>
+              <Text style={styles.saveEyebrow}>
+                ADD TO TODAY
               </Text>
-            </Pressable>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      );
+    
+              <Text style={styles.saveText}>
+                MARK WAYPOINT
+              </Text>
+            </View>
+    
+            <Text style={styles.saveArrow}>
+              +
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    );
 }
 
 const styles = StyleSheet.create({

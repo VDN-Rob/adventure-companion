@@ -5,9 +5,10 @@ import { GameModal } from "@/components/GameModal";
 import { POI, POIType } from "@/models/POI";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
+import { validatePOIFields } from "@/utils/validation/poiValidation";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function EditPOIScreen() {
     // Retrieve id from parameters
@@ -67,42 +68,24 @@ export default function EditPOIScreen() {
     async function handleSave() {
       if (!poi) return;
     
-      if (name.trim() === "") {
+      const errors = validatePOIFields({
+        name,
+        latitude,
+        longitude,
+        visitedAt: ""
+      });
+
+      const firstError = Object.values(errors)[0];
+          
+      if (firstError) {
+        Alert.alert("Invalid adventure", firstError);
         return;
       }
-    
-      const parsedLatitude =
-        latitude.trim() === ""
-          ? null
-          : Number(latitude);
-    
-      const parsedLongitude =
-        longitude.trim() === ""
-          ? null
-          : Number(longitude);
-    
-      if (
-        parsedLatitude !== null &&
-        (
-          Number.isNaN(parsedLatitude) ||
-          parsedLatitude < -90 ||
-          parsedLatitude > 90
-        )
-      ) {
-        return;
-      }
-    
-      if (
-        parsedLongitude !== null &&
-        (
-          Number.isNaN(parsedLongitude) ||
-          parsedLongitude < -180 ||
-          parsedLongitude > 180
-        )
-      ) {
-        return;
-      }
-    
+
+      const parsedLatitude = latitude.trim() === "" ? null : Number(latitude);
+      const parsedLongitude = longitude.trim() === "" ? null : Number(longitude);
+      
+      
       const updatedPOI: POI = {
         ...poi,
         name: name.trim(),
@@ -111,14 +94,22 @@ export default function EditPOIScreen() {
         latitude: parsedLatitude,
         longitude: parsedLongitude,
     
-        notes:
-          notes.trim() === ""
-            ? null
-            : notes.trim(),
+        notes: notes.trim() === "" ? null : notes.trim(),
       };
     
-      await poiServices.updatePOI(updatedPOI);
+      const result = await poiServices.updatePOI(updatedPOI);
     
+      if (!result.success) {
+        const firstServiceError = Object.values(result.errors)[0];
+    
+        Alert.alert(
+          "Could not save adventure",
+          firstServiceError ?? "The adventure contains invalid data."
+        );
+    
+        return;
+      }
+
       router.back();
     }
 
