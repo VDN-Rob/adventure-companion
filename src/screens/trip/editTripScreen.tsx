@@ -18,6 +18,7 @@ import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { GameModal } from "@/components/GameModal";
 import { theme } from "@/styling/theme";
+import { validateTripFields } from "@/utils/validation/tripValidation";
 
 export default function EditTripScreen() {
     // Retrieve id from parameters
@@ -60,49 +61,36 @@ export default function EditTripScreen() {
     async function handleSave() {
       if (!trip) return;
 
-      const checkedBudget = (budget === "" ? null : Number(budget));
-      const trimmedBudgetCurrency = budgetCurrency.trim()
+
+      const errors = validateTripFields({
+        name,
+        startDate,
+        endDate,
+        budget,
+        budgetCurrency,
+      });
     
-      if (name.trim() === "") {
-        Alert.alert(
-          "Missing adventure name",
-          "Your adventure needs a name."
-        );
-        return;
-      }
+      const firstError = Object.values(errors)[0];
     
-      if (startDate.trim() === "") {
-        Alert.alert(
-          "Missing start date",
-          "Please enter a start date."
-        );
-        return;
-      }
-    
-      if (
-        endDate.trim() !== "" &&
-        endDate.trim() < startDate.trim()
-      ) {
-        Alert.alert(
-          "Invalid dates",
-          "The end date cannot be before the start date."
-        );
+      if (firstError) {
+        Alert.alert("Invalid adventure", firstError);
         return;
       }
 
-      if (checkedBudget && checkedBudget < 0) {
-        Alert.alert(
-          "Invalid budget",
-          "A budget must have a positive number"
-        )
-      }
+      const trimmedName = name.trim();
+      const trimmedStartDate = startDate.trim();
+      const trimmedEndDate = endDate.trim();
+      const trimmedDescription = description.trim();
+      const trimmedBudgetCurrency = budgetCurrency.trim();
+    
+      const checkedBudget = budget.trim() === "" ? null : Number(budget);
     
       const updatedTrip: Trip = {
         ...trip,
-        name: name.trim(),
-        startDate: startDate.trim(),
-        endDate: endDate.trim() === "" ? null : endDate.trim(),
-        description: description.trim() === "" ? null : description.trim(),
+        name: trimmedName,
+        startDate: trimmedStartDate,
+        endDate: trimmedEndDate === "" ? null : trimmedEndDate,
+        description: trimmedDescription === "" ? null : trimmedDescription,
         budget: checkedBudget,
         budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
       };

@@ -70,9 +70,24 @@ export class TripServices {
         return {
           success: true,
         };
-      }
+    }
 
     async updateTrip(updatedTrip: Trip) {
+        const errors = validateTripFields({
+          name: updatedTrip.name,
+          startDate: updatedTrip.startDate,
+          endDate: updatedTrip.endDate ?? "",
+          budget: updatedTrip.budget === null ? "" : String(updatedTrip.budget),
+          budgetCurrency: updatedTrip.budgetCurrency,
+        });
+      
+        if (Object.keys(errors).length > 0) {
+          return {
+            success: false,
+            errors,
+          };
+        }
+
         await this.tripsRepository.updateTrip(updatedTrip);
     }
 
