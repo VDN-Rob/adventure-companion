@@ -14,22 +14,20 @@ type TripRow = {
   };
 
 export class TripsRepository {
+
     constructor(private db: SQLiteDatabase) {}
-    async getTripForDate(date: string) {
-      const row = await this.db.getFirstAsync<TripRow>(
+    async getTripsForDate(date: string) {
+      const rows = await this.db.getAllAsync<TripRow>(
         `SELECT *
          FROM trips
          WHERE start_date <= ?
            AND (end_date IS NULL OR end_date >= ?)
-         ORDER BY start_date DESC
-         LIMIT 1`,
+         ORDER BY start_date DESC`,
         date,
         date
       );
-    
-      if (!row) return null;
-    
-      return this.mapRowToTrip(row);
+        
+      return rows.map(row => this.mapRowToTrip(row));
     }
 
     async getFutureTrips(date: string) {

@@ -13,16 +13,68 @@ type DayRow = {
 
 export class DaysRepository {
     constructor(private db: SQLiteDatabase) {}
-
-    async getDayByDate(date: string) {
+        
+    async getDayByTripAndDate(tripId: string, date: string) {
         const row = await this.db.getFirstAsync<DayRow>(
-            `SELECT * FROM days WHERE date = ?`,
-            date
+            `SELECT * FROM days WHERE date = ? AND trip_id = ?`,
+            date,
+            tripId
         )
         
         if (!row) return null;
 
         return this.mapRowToDay(row);
+    }
+
+    async hasDayOnDate( tripId: string, date: string, excludeDayId?: string ): Promise<boolean> {
+        let query = `
+          SELECT 1
+          FROM days
+          WHERE trip_id = ?
+          AND date = ?
+        `;
+      
+        const params: string[] = [tripId, date];
+      
+        if (excludeDayId) {
+          query += ` AND id != ?`;
+          params.push(excludeDayId);
+        }
+      
+        query += ` LIMIT 1`;
+      
+        const row = await this.db.getFirstAsync<{ "1": number }>(
+          query,
+          ...params
+        );
+      
+        return row !== null;
+    }
+
+    async getDaysOutsideTrip(
+        tripId: string,
+        startDate: string,
+        endDate: string | null
+      ): Promise<Day[]> {
+        const effectiveEndDate = endDate ?? "9999-12-31";
+      
+        const rows = await this.db.getAllAsync<DayRow>(
+          `
+            SELECT *
+            FROM days
+            WHERE trip_id = ?
+            AND (
+              date < ?
+              OR date > ?
+            )
+            ORDER BY date ASC
+          `,
+          tripId,
+          startDate,
+          effectiveEndDate
+        );
+      
+        return rows.map(row => this.mapRowToDay(row));
     }
 
     // Function to retrieve all days for a specific trip

@@ -20,8 +20,8 @@ export class TripServices {
         return this.tripsRepository.getPastTrips(date);
     }
     
-    async getTripForDate(date: string) {
-        return this.tripsRepository.getTripForDate(date);
+    async getTripsForDate(date: string): Promise<Trip[]> {
+        return this.tripsRepository.getTripsForDate(date);
     }
 
     async getTrip(tripId: string) {
@@ -88,6 +88,25 @@ export class TripServices {
           };
         }
 
+        const daysOutsideTrip =
+        await this.daysRepository.getDaysOutsideTrip(
+          updatedTrip.id,
+          updatedTrip.startDate,
+          updatedTrip.endDate
+        );
+
+      if (daysOutsideTrip.length > 0) {
+        return {
+          success: false,
+          errors: {
+            startDate:
+              "The new adventure dates would leave planned days outside the adventure.",
+            endDate:
+              "The new adventure dates would leave planned days outside the adventure.",
+          },
+        };
+      }
+      
         await this.tripsRepository.updateTrip(updatedTrip);
       
         return {

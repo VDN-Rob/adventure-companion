@@ -27,6 +27,8 @@ export async function setupDatabase(db: SQLiteDatabase) {
         FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
       );
 
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_days_trip_date ON days (trip_id, date);
+
       CREATE TABLE IF NOT EXISTS pois (
         id TEXT PRIMARY KEY NOT NULL,
         day_id TEXT NOT NULL,

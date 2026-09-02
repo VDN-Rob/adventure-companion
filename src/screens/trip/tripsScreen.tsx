@@ -1,9 +1,9 @@
 import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View
 } from "react-native";
 
 import { ActiveTripCard } from "@/components/card/trips/ActiveTripCard";
@@ -31,7 +31,7 @@ export default function TripsScreen() {
 
       const [futureTrips, activeTrip, pastTrips] = await Promise.all([
         tripServices.getFutureTrips(today),
-        tripServices.getTripForDate(today),
+        tripServices.getTripsForDate(today),
         tripServices.getPastTrips(today),
       ]);
       
