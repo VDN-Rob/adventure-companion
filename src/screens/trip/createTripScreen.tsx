@@ -2,8 +2,8 @@ import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
-import { isValidDateString } from "@/utils/date";
 import { useAppServices } from "@/utils/useAppServiceProvider";
+import { validateTripFields } from "@/utils/validation/tripValidation";
 import * as Crypto from "expo-crypto";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -34,71 +34,54 @@ export default function CreateTripScreen() {
     const { tripServices } = useAppServices();
 
     async function handleSaveTrip() {
-        const trimmedName = name.trim();
-        const trimmedStartDate = startDate.trim();
-        const trimmedEndDate = endDate.trim();
-        const trimmedDescription = description.trim();
-        const checkedBudget = (budget === "" ? null : Number(budget));
-        const trimmedBudgetCurrency = budgetCurrency.trim()
-      
-        if (trimmedName === "") {
-          Alert.alert(
-            "Missing adventure name",
-            "Give your adventure a name before saving it."
-          );
-          return;
-        }
-      
-        if (!isValidDateString(startDate)) {
-          Alert.alert(
-            "Invalid start date",
-            "Please enter a valid date in the format YYYY-MM-DD."
-          );
-          return;
-        }
-      
-        if (endDate !== "" && !isValidDateString(endDate)) {
-          Alert.alert(
-            "Invalid end date",
-            "Please enter a valid date in the format YYYY-MM-DD."
-          );
-          return;
-        }
-
-        if (
-          endDate !== "" &&
-          isValidDateString(startDate) &&
-          isValidDateString(endDate) &&
-          endDate < startDate
-        ) {
-          Alert.alert(
-            "Invalid trip dates",
-            "The end date cannot be before the start date."
-          );
-          return;
-        }
-
-        if (checkedBudget && checkedBudget < 0) {
-          Alert.alert(
-            "Invalid budget",
-            "A budget must have a positive number"
-          )
-        }
-      
-        const newTrip: Trip = {
-          id: Crypto.randomUUID(),
-          name: trimmedName,
-          startDate: trimmedStartDate,
-          endDate: trimmedEndDate === "" ? null : trimmedEndDate,
-          description: trimmedDescription === "" ? null : trimmedDescription,
-          budget: checkedBudget,
-          budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
-        };
-      
-        await tripServices.createTrip(newTrip);
-      
-        router.back();
+      const errors = validateTripFields({
+        name,
+        startDate,
+        endDate,
+        budget,
+        budgetCurrency,
+      });
+    
+      const firstError = Object.values(errors)[0];
+    
+      if (firstError) {
+        Alert.alert("Invalid adventure", firstError);
+        return;
       }
+    
+      const trimmedName = name.trim();
+      const trimmedStartDate = startDate.trim();
+      const trimmedEndDate = endDate.trim();
+      const trimmedDescription = description.trim();
+      const trimmedBudgetCurrency = budgetCurrency.trim();
+    
+      const checkedBudget = budget.trim() === "" ? null : Number(budget);
+    
+      const newTrip: Trip = {
+        id: Crypto.randomUUID(),
+        name: trimmedName,
+        startDate: trimmedStartDate,
+        endDate: trimmedEndDate === "" ? null : trimmedEndDate,
+        description: trimmedDescription === "" ? null : trimmedDescription,
+        budget: checkedBudget,
+        budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
+      };
+    
+      const result = await tripServices.createTrip(newTrip);
+    
+      if (!result.success) {
+        const firstServiceError = Object.values(result.errors)[0];
+    
+        Alert.alert(
+          "Could not save adventure",
+          firstServiceError ?? "The adventure contains invalid data."
+        );
+    
+        return;
+      }
+    
+      router.back();
+    }
     
       return (
         <KeyboardAvoidingView

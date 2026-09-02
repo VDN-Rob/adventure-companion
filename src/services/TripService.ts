@@ -1,6 +1,8 @@
 import { DaysRepository } from "@/database/dayRepository";
 import { TripsRepository } from "@/database/tripRepository";
 import { Trip } from "@/models/Trip";
+import { ServiceResult } from "@/types/serviceResult";
+import { validateTripFields } from "@/utils/validation/tripValidation";
 
 
 export class TripServices {
@@ -47,9 +49,28 @@ export class TripServices {
     }
 
     // Scripts
-    async createTrip(trip: Trip) {
+    async createTrip(trip: Trip): Promise<ServiceResult> {
+        const errors = validateTripFields({
+          name: trip.name,
+          startDate: trip.startDate,
+          endDate: trip.endDate ?? "",
+          budget: trip.budget === null ? "" : String(trip.budget),
+          budgetCurrency: trip.budgetCurrency,
+        });
+      
+        if (Object.keys(errors).length > 0) {
+          return {
+            success: false,
+            errors,
+          };
+        }
+      
         await this.tripsRepository.createTrip(trip);
-    }
+      
+        return {
+          success: true,
+        };
+      }
 
     async updateTrip(updatedTrip: Trip) {
         await this.tripsRepository.updateTrip(updatedTrip);
