@@ -77,10 +77,8 @@ SLOW:
 [UI]  Very empty and dark -> feels weird.
 
 # Phase 2 : adventures
-MEDIUM: 
-[UX]  creation should not be allowed unless required fields are filled (see poi/createPoi)
-
 SLOW:
+[UX]  creation should not be allowed unless required fields are filled (see poi/createPoi)
 [UX]  If packed schedule -> long scroll to go down.
 [UX]  Inline errors for impossible elements
 [UX]  Dates should be with calendar or fixed input
@@ -90,11 +88,10 @@ SLOW:
 [UI]  Alert for end date < start date should be a modal
 
 # Phase 3: Days
-MEDIUM:
+SLOW:
 [UX] creation should not be allowed unless required fields are filled (see poi/createPoi)
 [UI] Add Day counter on day card in tripDetailsScreen and day/detailsDay (day.date - trip.startdate) - does not seem to work currently
 
-SLOW:
 // Step 9
 [UX]  Dates should be with calendar or fixed input
 
