@@ -117,12 +117,17 @@ SLOW:
 [UX]  Undoing check in should be doable from editPOI
 
 # Phase 6: Finance
-=> Not possible to test yet due to MIS
-// Step 26
-[MIS] Finance screen is not linked to database yet
 
 # Phase 7: Diary
 => Not possible to test yet due to MIS
 // Step 33
 [MIS] Quick action diary is not linked
 [MIS] More menu diary is not linked to adventure
+
+
+
+[ ] Adding a currency type or constrained type: "export type CurrencyCode = string;" or "export type CurrencyCode = 
+  | "EUR"
+  | "USD"
+  | "GBP"
+  // ..."

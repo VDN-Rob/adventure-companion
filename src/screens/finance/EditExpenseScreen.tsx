@@ -5,13 +5,13 @@ import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Alert,
+    Pressable,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 import { theme } from "@/styling/theme";
@@ -48,7 +48,7 @@ export default function EditExpenseScreen() {
       if (!expenseId) return;
 
       const result =
-        await expenseServices.getExpense(expenseId);
+        await expenseServices.getExpenseById(expenseId);
 
       if (!result) return;
 

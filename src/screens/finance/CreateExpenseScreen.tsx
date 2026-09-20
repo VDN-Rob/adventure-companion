@@ -48,13 +48,6 @@ export default function CreateExpenseScreen() {
   );
 
   async function handleSave() {
-    if (!tripId) {
-      Alert.alert(
-        "No adventure",
-        "This expense is not associated with an adventure."
-      );
-      return;
-    }
 
     const numericAmount = Number(amount);
 

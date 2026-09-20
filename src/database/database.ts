@@ -56,15 +56,15 @@ export async function setupDatabase(db: SQLiteDatabase) {
 
       CREATE TABLE IF NOT EXISTS expenses (
         id TEXT PRIMARY KEY NOT NULL,
-        trip_id TEXT NOT NULL,
+        trip_id TEXT,
         day_id TEXT,
         amount REAL NOT NULL,
         currency TEXT NOT NULL,
         category TEXT NOT NULL,
         description TEXT,
         date TEXT NOT NULL,
-        FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE,
-        FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
+        FOREIGN KEY (day_id) REFERENCES days(id),
+        FOREIGN KEY (trip_id) REFERENCES trips(id)
       );
       
       CREATE TABLE IF NOT EXISTS diary_entries (
@@ -79,6 +79,17 @@ export async function setupDatabase(db: SQLiteDatabase) {
         updated_at TEXT NOT NULL,
         FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
       );  
+
+      CREATE TABLE IF NOT EXISTS exchange_rates (
+        id TEXT PRIMARY KEY NOT NULL,
+        date TEXT NOT NULL,
+        base_currency TEXT NOT NULL,
+        target_currency TEXT NOT NULL,
+        rate_date TEXT NOT NULL,
+        rate REAL NOT NULL,
+
+        UNIQUE(date, base_currency, target_currency)
+      );
     `);
   }
 

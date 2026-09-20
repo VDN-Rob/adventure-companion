@@ -8,14 +8,19 @@ export type ExpenseCategory =
 
 export interface Expense {
   id: string;
-  tripId: string;
+  tripId: string | null;
   dayId: string | null;
 
   amount: number;
-  currency: string;
+  currency: string; // Original currency
 
   category: ExpenseCategory;
   description: string | null;
 
   date: string;
+}
+
+export interface ExpenseWithConversion extends Expense {
+  convertedAmount: number;
+  convertedCurrency: string;
 }

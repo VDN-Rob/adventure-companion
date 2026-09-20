@@ -2,6 +2,7 @@ import { DaysRepository } from "@/database/dayRepository";
 import { TripsRepository } from "@/database/tripRepository";
 import { Trip } from "@/models/Trip";
 import { ServiceResult } from "@/types/serviceResult";
+import { getTodayDate } from "@/utils/date";
 import { validateTripFields } from "@/utils/validation/tripValidation";
 
 
@@ -22,6 +23,10 @@ export class TripServices {
     
     async getTripsForDate(date: string): Promise<Trip[]> {
         return this.tripsRepository.getTripsForDate(date);
+    }
+
+    async getActiveTrips(): Promise<Trip[]> {
+      return this.tripsRepository.getTripsForDate(getTodayDate())
     }
 
     async getTrip(tripId: string) {

@@ -1,5 +1,6 @@
 import { DayServices } from "@/services/DayService";
 import { DiaryEntryServices } from "@/services/DiaryEntryService";
+import { ExchangeRateService } from "@/services/ExchangeRateService";
 import { ExpenseServices } from "@/services/ExpenseService";
 import { MapServices } from "@/services/MapService";
 import { useNetworkStatus } from "@/services/NetworkServices";
@@ -8,6 +9,7 @@ import { TripMapServices } from "@/services/tripMapService";
 import { TripServices } from "@/services/TripService";
 import { useDaysRepository } from "@/utils/useRepository/useDaysRepository";
 import { useDiaryEntriesRepository } from "@/utils/useRepository/useDiaryEntriesRepository";
+import { useExchangeRateRepository } from "@/utils/useRepository/useExchangeRateRepository";
 import { useExpensesRepository } from "@/utils/useRepository/useExpensesRepository";
 import { useMapsRepository } from "@/utils/useRepository/useMapsRepository";
 import { usePoisRepository } from "@/utils/useRepository/usePoisRepository";
@@ -35,6 +37,7 @@ export function AppServicesProvider({
   const daysRepository = useDaysRepository();
   const poisRepository = usePoisRepository();
   const mapsRepository = useMapsRepository();
+  const exchangeRateRepository = useExchangeRateRepository();
   const expensesRepository = useExpensesRepository();
   const diaryEntriesRepository = useDiaryEntriesRepository();
 
@@ -74,9 +77,14 @@ export function AppServicesProvider({
     [tripsRepository, daysRepository, poisRepository]
   );
 
+  const exchangeRateServices = useMemo(
+    () => new ExchangeRateService(exchangeRateRepository),
+    [exchangeRateRepository]
+  );
+
   const expenseServices = useMemo(
-    () => new ExpenseServices(expensesRepository),
-    [mapsRepository]
+    () => new ExpenseServices(expensesRepository, exchangeRateServices),
+    [expensesRepository, exchangeRateServices]
   );
 
   const diaryEntryServices = useMemo(

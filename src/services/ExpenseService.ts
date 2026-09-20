@@ -1,13 +1,33 @@
 import { ExpensesRepository } from "@/database/expenseRepository";
 import { Expense } from "@/models/Expense";
+import { ExchangeRateService } from "./ExchangeRateService";
 
+export type ExpenseStatistics = {
+    total: number;
+    byCategory: Record<string, number>;
+    byDate: Record<string, number>;
+    conversionPendingCount: number;
+};
+
+export type ExpenseFilter = {
+    tripId?: string;
+    startDate?: string;
+    endDate?: string;
+};
+
+/**
+ * retrieve expenses
+ * ask ExchangeRateService to convert them
+ * calculate totals/categories/daily spending
+ */
 export class ExpenseServices {
     constructor(
-      private expenseRepository: ExpensesRepository
+        private readonly expenseRepository: ExpensesRepository,
+        private readonly exchangeRateService: ExchangeRateService
     ) {}
   
     // Queries
-    async getExpense(id: string) {
+    async getExpenseById(id: string) {
         return this.expenseRepository.getExpenseById(id);
     }
 
@@ -18,42 +38,103 @@ export class ExpenseServices {
     async getExpensesForTrip(tripId: string) {
       return this.expenseRepository.getAllExpensesForTrip(tripId);
     }
+    
+    async getExpenses(
+        filter: ExpenseFilter
+      ): Promise<Expense[]> {
+        return this.expenseRepository.getExpenses(filter);
+      }
   
     // Scripts
     async createExpense(newExpense: Expense) {
         await this.expenseRepository.createExpense(newExpense);
     }
 
-    async updateExpense(updatedDay: Expense) {
-        await this.expenseRepository.updateExpense(updatedDay)
+    async updateExpense(updatedExpense: Expense) {
+        await this.expenseRepository.updateExpense(updatedExpense)
     }
 
     async deleteExpense(id: string) {
       return this.expenseRepository.deleteExpense(id);
     }
 
-    async getTripStatistics(tripId: string) {
+    async getTripStatistics(
+        tripId: string,
+        targetCurrency: string
+    ): Promise<ExpenseStatistics> {
         const expenses =
             await this.expenseRepository.getAllExpensesForTrip(tripId);
     
-        const total = expenses.reduce(
-            (sum, expense) => sum + expense.amount,
-            0
+        return this.calculateStatistics(
+            expenses,
+            targetCurrency
         );
+    }
     
-        const byCategory = expenses.reduce<Record<string, number>>(
-            (result, expense) => {
-                result[expense.category] =
-                    (result[expense.category] ?? 0) + expense.amount;
+    async getDayStatistics(
+        dayId: string,
+        targetCurrency: string
+    ): Promise<ExpenseStatistics> {
+        const expenses =
+            await this.expenseRepository.getAllExpensesForDay(dayId);
     
-                return result;
-            },
-            {}
+        return this.calculateStatistics(
+            expenses,
+            targetCurrency
         );
+    }
     
-        return {
-            total,
-            byCategory,
+    async getExpenseStatistics(
+        filter: ExpenseFilter,
+        targetCurrency: string
+    ): Promise<ExpenseStatistics> {
+        const expenses =
+            await this.expenseRepository.getExpenses(filter);
+    
+        return this.calculateStatistics(
+            expenses,
+            targetCurrency
+        );
+    }
+
+    private async calculateStatistics(
+        expenses: Expense[],
+        targetCurrency: string
+    ): Promise<ExpenseStatistics> {
+        const statistics: ExpenseStatistics = {
+            total: 0,
+            byCategory: {},
+            byDate: {},
+            conversionPendingCount: 0,
         };
+    
+        const currency = targetCurrency.toUpperCase();
+    
+        for (const expense of expenses) {
+            const convertedAmount =
+                await this.exchangeRateService.convert(
+                    expense.amount,
+                    expense.currency,
+                    currency,
+                    expense.date
+                );
+    
+            if (convertedAmount === null) {
+                statistics.conversionPendingCount += 1;
+                continue;
+            }
+    
+            statistics.total += convertedAmount;
+    
+            statistics.byCategory[expense.category] =
+                (statistics.byCategory[expense.category] ?? 0) +
+                convertedAmount;
+    
+            statistics.byDate[expense.date] =
+                (statistics.byDate[expense.date] ?? 0) +
+                convertedAmount;
+        }
+    
+        return statistics;
     }
   }

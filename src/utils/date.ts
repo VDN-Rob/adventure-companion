@@ -1,3 +1,5 @@
+import { Trip } from "@/models/Trip";
+
 export function formatDate(dateString: string) {
   const date = new Date(dateString);
 
@@ -38,4 +40,60 @@ export function getDayNumber(
   return Math.floor(
     difference / (1000 * 60 * 60 * 24)
   ) + 1;
+}
+
+
+export function getDateDaysAgo(
+  date: string,
+  days: number
+): string {
+  const result = new Date(
+    `${date}T00:00:00Z`
+  );
+
+  result.setUTCDate(
+    result.getUTCDate() - days
+  );
+
+  return result
+    .toISOString()
+    .slice(0, 10);
+}
+
+export function getTripDuration(
+  trip: Trip
+): number {
+  const effectiveEnd =
+    trip.endDate ??
+    getTodayDate();
+
+  return (
+    getDayNumber(
+      trip.startDate,
+      effectiveEnd
+    ) + 1
+  );
+}
+
+export function getElapsedTripDays(
+  trip: Trip
+): number {
+  const today = getTodayDate();
+
+  if (today < trip.startDate) {
+    return 0;
+  }
+
+  const effectiveEnd =
+    trip.endDate !== null &&
+    trip.endDate < today
+      ? trip.endDate
+      : today;
+
+  return (
+    getDayNumber(
+      trip.startDate,
+      effectiveEnd
+    ) + 1
+  );
 }
