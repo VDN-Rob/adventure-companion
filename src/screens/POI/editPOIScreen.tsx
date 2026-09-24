@@ -78,7 +78,7 @@ export default function EditPOIScreen() {
       const firstError = Object.values(errors)[0];
           
       if (firstError) {
-        Alert.alert("Invalid adventure", firstError);
+        Alert.alert("Invalid poi", firstError);
         return;
       }
 

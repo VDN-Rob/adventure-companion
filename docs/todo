@@ -102,6 +102,7 @@ SLOW:
 # Phase 4: POIs
 URGENT:
 [MIS] POIS on map are still example POIs, not day POIs
+[BUG] Validation of POI: visitedAt time is currently not the right format
 
 MEDIUM:
 [UX]  Editing instead of seeing detail of POI => add detailsPOI screen
