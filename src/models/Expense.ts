@@ -1,3 +1,6 @@
+/**
+ * Categories available for trip expenses.
+ */
 export type ExpenseCategory =
   | "food"
   | "accommodation"
@@ -6,13 +9,17 @@ export type ExpenseCategory =
   | "activity"
   | "other";
 
+
+/**
+ * Represents an expense associated with a trip or a specific day.
+ */
 export interface Expense {
   id: string;
   tripId: string | null;
   dayId: string | null;
 
   amount: number;
-  currency: string; // Original currency
+  currency: string;
 
   category: ExpenseCategory;
   description: string | null;
@@ -20,6 +27,9 @@ export interface Expense {
   date: string;
 }
 
+/**
+ * Represents an expense after conversion to the requested currency.
+ */
 export interface ExpenseWithConversion extends Expense {
   convertedAmount: number;
   convertedCurrency: string;

@@ -1,6 +1,9 @@
+/**
+ * Represents a diary entry associated with a trip day.
+ */
 export interface DiaryEntry {
     id: string;
-    dayId: string | null;
+    dayId: string;
   
     title: string;
     text: string | null;

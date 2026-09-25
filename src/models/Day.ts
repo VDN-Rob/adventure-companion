@@ -1,9 +1,15 @@
+/**
+ * Represents a single day within a trip.
+ */
 export interface Day {
     id: string;
-    tripId: string; // trip 1-N days
+    tripId: string;
+
     date: string;
+    
     title: string | null;
     notes: string | null;
+    
     plannedElevation: number | null;
     plannedDistance: number | null;
 }

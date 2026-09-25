@@ -1,6 +1,10 @@
+/**
+ * Represents a locally available offline map region.
+ */
 export interface OfflineMap {
     id: string;
     offlineRegionId: string;
+    
     name: string | null;
 
     minZoom: number;
