@@ -2,168 +2,179 @@ import { StyleSheet } from "react-native";
 import { theme } from "./theme";
 
 export const styles = StyleSheet.create({
-    adventureSelector: {
-        marginHorizontal: 16,
-        marginTop: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderRadius: 12,
-        backgroundColor: theme.colours.surface,
-        borderWidth: 1,
-        borderColor: theme.colours.border,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-      },
-      
-      selectorLabel: {
-        fontSize: 11,
-        fontWeight: "700",
-        letterSpacing: 1,
-        color: theme.colours.textSecondary,
-        marginBottom: 3,
-      },
-      
-      selectorValue: {
-        fontSize: 16,
-        fontWeight: "700",
-        color: theme.colours.text,
-      },
-      
-      selectorArrow: {
-        fontSize: 16,
-        color: theme.colours.textSecondary,
-      },
-      
-      chooseAdventureButton: {
-        marginHorizontal: 16,
-        paddingHorizontal: 20,
-        paddingVertical: 24,
-        borderRadius: 14,
-        backgroundColor: theme.colours.surface,
-        borderWidth: 1,
-        borderColor: theme.colours.border,
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      
-      chooseAdventureTitle: {
-        fontSize: 16,
-        fontWeight: "800",
-        letterSpacing: 0.5,
-        color: theme.colours.text,
-        marginBottom: 6,
-      },
-      
-      chooseAdventureText: {
-        fontSize: 14,
-        color: theme.colours.textSecondary,
-        textAlign: "center",
-      },
-      
-      modalBackdrop: {
-        flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        justifyContent: "center",
-        paddingHorizontal: 20,
-      },
-      
-      selectorModal: {
-        backgroundColor: theme.colours.background,
-        borderRadius: 16,
-        padding: 20,
-      },
-      
-      modalTitle: {
-        fontSize: 18,
-        fontWeight: "800",
-        letterSpacing: 0.5,
-        color: theme.colours.text,
-        marginBottom: 16,
-      },
-      
-      tripOption: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 14,
-        paddingHorizontal: 12,
-        borderRadius: 10,
-        marginBottom: 8,
-      },
-      
-      tripOptionSelected: {
-        backgroundColor: theme.colours.surface,
-      },
-      
-      tripOptionIndicator: {
-        width: 28,
-        fontSize: 18,
-        color: theme.colours.text,
-      },
-      
-      tripOptionContent: {
-        flex: 1,
-      },
-      
-      tripOptionName: {
-        fontSize: 16,
-        fontWeight: "700",
-        color: theme.colours.text,
-        marginBottom: 3,
-      },
-      
-      tripOptionDates: {
-        fontSize: 13,
-        color: theme.colours.textSecondary,
-      },
+  adventureSelector: {
+    marginHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.radius.lg,
+    backgroundColor: theme.colours.surface,
+    borderWidth: theme.borders.thin,
+    borderColor: theme.colours.border,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
 
-    container: {
-        flex: 1,
-        backgroundColor: theme.colours.background,
-    },
+  selectorLabel: {
+    marginBottom: theme.spacing.xs,
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.xs,
+    letterSpacing: 1,
+    color: theme.colours.textSecondary,
+  },
 
-    content: {
-        flex: 1,
+  selectorValue: {
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.md,
+    color: theme.colours.text,
+  },
 
-        paddingHorizontal: theme.spacing.md,
-        paddingTop: theme.spacing.md,
-        paddingBottom: theme.spacing.lg,
-    },
+  selectorArrow: {
+    fontSize: theme.fontSize.md,
+    color: theme.colours.textSecondary,
+  },
 
-    restDay: {
-        marginTop: theme.spacing.md,
-        padding: theme.spacing.lg,
-        
-        backgroundColor: theme.colours.surface,
-        borderWidth: 1,
-        borderColor: theme.colours.border,
-        borderRadius: theme.radius.md,
-        
-        alignItems: "center",
-    },
-    
-    restDayTitle: {
-        fontFamily: theme.fonts.displayBold,
-        fontSize: theme.fontSize.lg,
-        
-        color: theme.colours.accent,
-        
-        letterSpacing: 1.5,
-    },
-    
-    restDayText: {
-        marginTop: theme.spacing.xs,
-        
-        fontFamily: theme.fonts.body,
-        fontSize: theme.fontSize.sm,
-        
-        color: theme.colours.textSecondary,
-        textAlign: "center",
-    },
-    }
-  );
+  chooseAdventureButton: {
+    marginHorizontal: theme.spacing.lg,
+    paddingHorizontal: 20,
+    paddingVertical: theme.spacing.xl,
+    borderRadius: theme.radius.lg,
+    backgroundColor: theme.colours.surface,
+    borderWidth: theme.borders.thin,
+    borderColor: theme.colours.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
+  chooseAdventureTitle: {
+    marginBottom: theme.spacing.xs,
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.md,
+    letterSpacing: 0.5,
+    color: theme.colours.text,
+  },
 
+  chooseAdventureText: {
+    fontFamily: theme.fonts.body,
+    fontSize: theme.fontSize.sm,
+    color: theme.colours.textSecondary,
+    textAlign: "center",
+  },
 
-  
-  
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+
+  selectorModal: {
+    backgroundColor: theme.colours.background,
+    borderRadius: theme.radius.lg,
+    padding: theme.spacing.lg,
+  },
+
+  modalTitle: {
+    marginBottom: theme.spacing.lg,
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.lg,
+    letterSpacing: 0.5,
+    color: theme.colours.text,
+  },
+
+  tripOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.radius.lg,
+    marginBottom: theme.spacing.sm,
+  },
+
+  tripOptionSelected: {
+    backgroundColor: theme.colours.surface,
+  },
+
+  tripOptionIndicator: {
+    width: 28,
+    fontSize: theme.fontSize.lg,
+    color: theme.colours.text,
+  },
+
+  tripOptionContent: {
+    flex: 1,
+  },
+
+  tripOptionName: {
+    marginBottom: theme.spacing.xs,
+    fontFamily: theme.fonts.bodyBold,
+    fontSize: theme.fontSize.md,
+    color: theme.colours.text,
+  },
+
+  tripOptionDates: {
+    fontFamily: theme.fonts.body,
+    fontSize: theme.fontSize.sm,
+    color: theme.colours.textSecondary,
+  },
+
+  container: {
+    flex: 1,
+    backgroundColor: theme.colours.background,
+  },
+
+  content: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.lg,
+  },
+
+  restDay: {
+    marginTop: theme.spacing.md,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colours.surface,
+    borderWidth: theme.borders.thin,
+    borderColor: theme.colours.border,
+    borderRadius: theme.radius.md,
+    alignItems: "center",
+  },
+
+  restDayTitle: {
+    fontFamily: theme.fonts.displayBold,
+    fontSize: theme.fontSize.lg,
+    color: theme.colours.accent,
+    letterSpacing: 1.5,
+  },
+
+  restDayText: {
+    marginTop: theme.spacing.xs,
+    fontFamily: theme.fonts.body,
+    fontSize: theme.fontSize.sm,
+    color: theme.colours.textSecondary,
+    textAlign: "center",
+  },
+
+  // Shared styles
+
+  surfaceCard: {
+    backgroundColor: theme.colours.surface,
+    borderWidth: theme.borders.thin,
+    borderColor: theme.colours.border,
+    borderRadius: theme.radius.lg,
+  },
+
+  centered: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  textSecondary: {
+    color: theme.colours.textSecondary,
+  },
+
+  textMuted: {
+    color: theme.colours.textMuted,
+  },
+});
