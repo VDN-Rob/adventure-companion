@@ -30,13 +30,17 @@ export class DiaryEntriesRepository {
         return rows.map(row => this.mapRowToDiaryEntry(row));
     }
 
-    async getDiaryEntryForDay(dayId: string) {
-        const rows = await this.db.getAllAsync<DiaryEntryRow>(
-            "SELECT * FROM diary_entries WHERE day_id = ? ORDER BY date DESC",
+    async getDiaryEntryForDay(dayId: string): Promise<DiaryEntry | null> {
+        const row = await this.db.getFirstAsync<DiaryEntryRow>(
+            "SELECT * FROM diary_entries WHERE day_id = ?",
             dayId
         );
-        
-        return rows.map(row => this.mapRowToDiaryEntry(row));
+
+        if (!row) {
+            return null
+        }
+
+        return this.mapRowToDiaryEntry(row);
     }
 
     async getDiaryEntryById(id: string) {

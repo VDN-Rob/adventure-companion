@@ -16,9 +16,10 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, Modal, Pressable, Text, View } from 'react-native';
 
+
 export default function HomeScreen() {
   // Memory
-  const {tripServices, dayServices, isOnline, mapServices, poiServices} = useAppServices();
+  const {tripServices, dayServices, isOnline, mapServices, poiServices, diaryEntryServices} = useAppServices();
 
   // Temporary memory
   const [activeTrips, setActiveTrips] = useState<Trip[]>([]);
@@ -204,6 +205,72 @@ export default function HomeScreen() {
     );
   }
 
+  async function handleDiaryPress() {
+    if (!selectedTripId) {
+      router.push("/diary/diary");
+      return;
+    }
+  
+    const todayDate = getTodayDate();
+  
+    try {
+      const todayDay =
+        await dayServices.getDayByTripAndDate(
+          selectedTripId,
+          todayDate
+        );
+  
+      // No Day exists for today yet.
+      // The create screen will create it when saving.
+      if (!todayDay) {
+        router.push({
+          pathname: "/diary/createDiaryEntry",
+          params: {
+            tripId: selectedTripId,
+            date: todayDate,
+          },
+        });
+  
+        return;
+      }
+  
+      const todayEntry =
+        await diaryEntryServices.getDiaryEntryForDay(
+          todayDay.id
+        );
+  
+      // No diary entry for today.
+      if (!todayEntry) {
+        router.push({
+          pathname: "/diary/createDiaryEntry",
+          params: {
+            tripId: selectedTripId,
+            date: todayDate,
+          },
+        });
+  
+        return;
+      }
+  
+      // Today's diary entry already exists.
+      router.push({
+        pathname: "/diary/editDiaryEntry",
+        params: {
+          diaryEntryId: todayEntry.id,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Failed to open today's diary entry:",
+        error
+      );
+  
+      Alert.alert(
+        "Could not open diary",
+        "Something went wrong while opening today's diary entry."
+      );
+    }
+  }
 
   const handleCheckIn = async (poi: POI) => {
     const result = await poiServices.checkInPOI(poi.id);
@@ -324,9 +391,7 @@ export default function HomeScreen() {
           onCheckInPress={() => {
             setCheckInVisible(true);
           }}
-          onDiaryPress={() => {
-            console.log("Diary pressed");
-          }}
+          onDiaryPress={handleDiaryPress}
         />
       )}
 

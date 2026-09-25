@@ -88,8 +88,8 @@ export function AppServicesProvider({
   );
 
   const diaryEntryServices = useMemo(
-    () => new DiaryEntryServices(diaryEntriesRepository),
-    [diaryEntriesRepository]
+    () => new DiaryEntryServices(diaryEntriesRepository, dayServices),
+    [diaryEntriesRepository, dayServices]
   )
 
   return (

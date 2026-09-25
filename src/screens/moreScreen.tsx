@@ -35,7 +35,7 @@ export default function MoreScreen() {
               icon="✎"
               title="Diary"
               description="Your memories from the road"
-              onPress={() => { router.push("/diary/detailsDiary") }}
+              onPress={() => { router.push("/diary/diary") }}
             />
 
             <MenuItem

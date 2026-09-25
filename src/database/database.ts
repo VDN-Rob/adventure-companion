@@ -69,7 +69,7 @@ export async function setupDatabase(db: SQLiteDatabase) {
       
       CREATE TABLE IF NOT EXISTS diary_entries (
         id TEXT PRIMARY KEY NOT NULL,
-        day_id TEXT,
+        day_id TEXT NOT NULL,
         title TEXT NOT NULL,
         text TEXT,
         photo_one TEXT,
@@ -79,6 +79,8 @@ export async function setupDatabase(db: SQLiteDatabase) {
         updated_at TEXT NOT NULL,
         FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
       );  
+      
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_diary_entries_day ON diary_entries (day_id);
 
       CREATE TABLE IF NOT EXISTS exchange_rates (
         id TEXT PRIMARY KEY NOT NULL,
