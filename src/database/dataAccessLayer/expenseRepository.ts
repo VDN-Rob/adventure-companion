@@ -1,4 +1,5 @@
 import { Expense, ExpenseCategory } from "@/models/Expense";
+import { ExpenseFilter } from "@/types/expenseFilter";
 import { SQLiteDatabase } from "expo-sqlite";
 
 type ExpenseRow = {
@@ -13,12 +14,6 @@ type ExpenseRow = {
 
     description: string | null;
     date: string;
-};
-
-export type ExpenseFilter = {
-    tripId?: string;
-    startDate?: string;
-    endDate?: string;
 };
 
 /**

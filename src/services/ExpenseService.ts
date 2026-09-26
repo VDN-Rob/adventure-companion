@@ -1,5 +1,6 @@
-import { ExpenseFilter, ExpensesRepository } from "@/database/dataAccessLayer/expenseRepository";
+import { ExpensesRepository } from "@/database/dataAccessLayer/expenseRepository";
 import { Expense } from "@/models/Expense";
+import { ExpenseFilter } from "@/types/expenseFilter";
 import { ExchangeRateService } from "./ExchangeRateService";
 
 export type ExpenseStatistics = {
@@ -10,91 +11,64 @@ export type ExpenseStatistics = {
 };
 
 /**
- * retrieve expenses
- * ask ExchangeRateService to convert them
- * calculate totals/categories/daily spending
+ * Coordinates expense persistence and currency conversion.
+ *
+ * The service delegates database operations to the expense repository and
+ * applies currency conversion when calculating expense statistics.
  */
-export class ExpenseServices {
+export class ExpenseService {
     constructor(
         private readonly expenseRepository: ExpensesRepository,
         private readonly exchangeRateService: ExchangeRateService
     ) {}
   
-    // Queries
-    async getExpenseById(id: string) {
+    async getExpenseById(id: string): Promise<Expense | null> {
         return this.expenseRepository.getExpenseById(id);
     }
 
-    async getExpensesForDay(dayId: string) {
-      return this.expenseRepository.getAllExpensesForDay(dayId);
+    async getExpensesForDay(dayId: string): Promise<Expense[]> {
+        return this.expenseRepository.getAllExpensesForDay(dayId);
     }
   
-    async getExpensesForTrip(tripId: string) {
-      return this.expenseRepository.getAllExpensesForTrip(tripId);
+    async getExpensesForTrip(tripId: string): Promise<Expense[]> {
+        return this.expenseRepository.getAllExpensesForTrip(tripId);
     }
     
-    async getExpenses(
-        filter: ExpenseFilter
-      ): Promise<Expense[]> {
+    async getExpenses(filter: ExpenseFilter): Promise<Expense[]> {
         return this.expenseRepository.getExpenses(filter);
-      }
+    }
   
-    // Scripts
-    async createExpense(newExpense: Expense) {
+    async createExpense(newExpense: Expense): Promise<void> {
         await this.expenseRepository.createExpense(newExpense);
     }
 
-    async updateExpense(updatedExpense: Expense) {
+    async updateExpense(updatedExpense: Expense): Promise<void> {
         await this.expenseRepository.updateExpense(updatedExpense)
     }
 
     async deleteExpense(id: string) {
-      return this.expenseRepository.deleteExpense(id);
+        return this.expenseRepository.deleteExpense(id);
     }
 
-    async getTripStatistics(
-        tripId: string,
-        targetCurrency: string
-    ): Promise<ExpenseStatistics> {
-        const expenses =
-            await this.expenseRepository.getAllExpensesForTrip(tripId);
+    async getTripStatistics(tripId: string, targetCurrency: string): Promise<ExpenseStatistics> {
+        const expenses = await this.expenseRepository.getAllExpensesForTrip(tripId);
     
-        return this.calculateStatistics(
-            expenses,
-            targetCurrency
-        );
+        return this.calculateStatistics(expenses, targetCurrency);
     }
     
-    async getDayStatistics(
-        dayId: string,
-        targetCurrency: string
-    ): Promise<ExpenseStatistics> {
-        const expenses =
-            await this.expenseRepository.getAllExpensesForDay(dayId);
+    async getDayStatistics(dayId: string, targetCurrency: string): Promise<ExpenseStatistics> {
+        const expenses = await this.expenseRepository.getAllExpensesForDay(dayId);
     
-        return this.calculateStatistics(
-            expenses,
-            targetCurrency
-        );
+        return this.calculateStatistics(expenses, targetCurrency);
     }
     
-    async getExpenseStatistics(
-        filter: ExpenseFilter,
-        targetCurrency: string
-    ): Promise<ExpenseStatistics> {
-        const expenses =
-            await this.expenseRepository.getExpenses(filter);
+    async getExpenseStatistics(filter: ExpenseFilter, targetCurrency: string): Promise<ExpenseStatistics> {
+        const expenses = await this.expenseRepository.getExpenses(filter);
     
-        return this.calculateStatistics(
-            expenses,
-            targetCurrency
-        );
+        return this.calculateStatistics(expenses, targetCurrency);
     }
 
-    private async calculateStatistics(
-        expenses: Expense[],
-        targetCurrency: string
-    ): Promise<ExpenseStatistics> {
+    private async calculateStatistics(expenses: Expense[], targetCurrency: string): Promise<ExpenseStatistics> {
         const statistics: ExpenseStatistics = {
             total: 0,
             byCategory: {},
@@ -120,15 +94,11 @@ export class ExpenseServices {
     
             statistics.total += convertedAmount;
     
-            statistics.byCategory[expense.category] =
-                (statistics.byCategory[expense.category] ?? 0) +
-                convertedAmount;
+            statistics.byCategory[expense.category] = (statistics.byCategory[expense.category] ?? 0) + convertedAmount;
     
-            statistics.byDate[expense.date] =
-                (statistics.byDate[expense.date] ?? 0) +
-                convertedAmount;
+            statistics.byDate[expense.date] = (statistics.byDate[expense.date] ?? 0) + convertedAmount;
         }
     
         return statistics;
     }
-  }
+}

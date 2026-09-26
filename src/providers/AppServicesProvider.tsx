@@ -1,7 +1,7 @@
 import { DayServices } from "@/services/DayService";
 import { DiaryEntryServices } from "@/services/DiaryEntryService";
 import { ExchangeRateService } from "@/services/ExchangeRateService";
-import { ExpenseServices } from "@/services/ExpenseService";
+import { ExpenseService } from "@/services/ExpenseService";
 import { MapServices } from "@/services/MapService";
 import { useNetworkStatus } from "@/services/NetworkServices";
 import { POIServices } from "@/services/POIService";
@@ -22,7 +22,7 @@ interface AppServices {
   poiServices: POIServices;
   mapServices: MapServices;
   tripMapServices: TripMapServices;
-  expenseServices: ExpenseServices;
+  expenseServices: ExpenseService;
   diaryEntryServices: DiaryEntryServices;
   isOnline: boolean | null;
 }
@@ -83,7 +83,7 @@ export function AppServicesProvider({
   );
 
   const expenseServices = useMemo(
-    () => new ExpenseServices(expensesRepository, exchangeRateServices),
+    () => new ExpenseService(expensesRepository, exchangeRateServices),
     [expensesRepository, exchangeRateServices]
   );
 
