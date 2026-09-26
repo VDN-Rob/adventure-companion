@@ -1,22 +1,31 @@
 import { Trip } from "@/models/Trip";
 
-export function formatDate(dateString: string) {
+/**
+ * Formats an ISO date string for display.
+ *
+ * Invalid dates are returned unchanged so callers do not lose the original
+ * value when formatting fails.
+ */
+export function formatDate(dateString: string): string {
   const date = new Date(dateString);
 
   if (Number.isNaN(date.getTime())) {
     return dateString;
   }
 
-  return date.toLocaleDateString(
-    undefined,
-    {
+  return date
+    .toLocaleDateString(undefined, {
       day: "numeric",
       month: "short",
       year: "numeric",
-    }
-  ).toUpperCase();
+    })
+    .toUpperCase();
 }
 
+
+/**
+ * Returns today's date in YYYY-MM-DD format using the local timezone.
+ */
 export function getTodayDate(): string {
   const now = new Date();
 
@@ -27,57 +36,55 @@ export function getTodayDate(): string {
   return `${year}-${month}-${day}`;
 }
 
-export function getDayNumber(
-  startDate: string,
-  currentDate: string
-): number {
+
+/**
+ * Returns the one-based day number for a date within a trip.
+ *
+ * For example, if startDate and currentDate are the same date, the result
+ * is 1.
+ */
+export function getDayNumber(startDate: string, currentDate: string): number {
   const start = new Date(`${startDate}T00:00:00`);
   const current = new Date(`${currentDate}T00:00:00`);
 
-  const difference =
-    current.getTime() - start.getTime();
+  const difference = current.getTime() - start.getTime();
 
-  return Math.floor(
-    difference / (1000 * 60 * 60 * 24)
-  ) + 1;
+  return Math.floor(difference / (1000 * 60 * 60 * 24)) + 1;
 }
 
 
-export function getDateDaysAgo(
-  date: string,
-  days: number
-): string {
-  const result = new Date(
-    `${date}T00:00:00Z`
-  );
+/**
+ * Returns a date in YYYY-MM-DD format after subtracting the specified number
+ * of days.
+ */
+export function getDateDaysAgo(date: string, days: number): string {
+  const result = new Date(`${date}T00:00:00Z`);
 
-  result.setUTCDate(
-    result.getUTCDate() - days
-  );
+  result.setUTCDate(result.getUTCDate() - days);
 
-  return result
-    .toISOString()
-    .slice(0, 10);
+  return result.toISOString().slice(0, 10);
 }
 
-export function getTripDuration(
-  trip: Trip
-): number {
-  const effectiveEnd =
-    trip.endDate ??
-    getTodayDate();
 
-  return (
-    getDayNumber(
-      trip.startDate,
-      effectiveEnd
-    ) + 1
-  );
+/**
+ * Returns the total number of days in a trip.
+ *
+ * Open-ended trips use today's date as their effective end date.
+ */
+export function getTripDuration(trip: Trip): number {
+  const effectiveEnd = trip.endDate ?? getTodayDate();
+
+  return getDayNumber(trip.startDate, effectiveEnd);
 }
 
-export function getElapsedTripDays(
-  trip: Trip
-): number {
+
+/**
+ * Returns the number of trip days that have elapsed up to today.
+ *
+ * Future trips return 0, while completed trips stop counting at their
+ * configured end date.
+ */
+export function getElapsedTripDays(trip: Trip): number {
   const today = getTodayDate();
 
   if (today < trip.startDate) {
@@ -85,15 +92,9 @@ export function getElapsedTripDays(
   }
 
   const effectiveEnd =
-    trip.endDate !== null &&
-    trip.endDate < today
+    trip.endDate !== null && trip.endDate < today
       ? trip.endDate
       : today;
 
-  return (
-    getDayNumber(
-      trip.startDate,
-      effectiveEnd
-    ) + 1
-  );
+  return getDayNumber(trip.startDate, effectiveEnd);
 }

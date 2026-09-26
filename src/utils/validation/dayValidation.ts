@@ -14,13 +14,19 @@ type DayFields = {
     plannedDistance: string;
 }
 
+
+/**
+ * Validates the editable fields of a trip day.
+ *
+ * Optional numeric fields accept zero and must otherwise contain finite
+ * non-negative numbers.
+ */
 export function validateDayFields(fields: DayFields): DayValidationErrors {
     const errors: DayValidationErrors = {};
 
     if (!isValidDateString(fields.date.trim())) {
         errors.date = "Please enter a valid date in the format YYYY-MM-DD.";
     }
-
 
     if (fields.plannedElevation.trim() !== "") {
         const elevation = Number(fields.plannedElevation);
@@ -29,7 +35,6 @@ export function validateDayFields(fields: DayFields): DayValidationErrors {
             errors.plannedElevation = "Elevation must be a positive or zero number.";
         }
     }
-
 
     if (fields.plannedDistance.trim() !== "") {
         const distance = Number(fields.plannedDistance);

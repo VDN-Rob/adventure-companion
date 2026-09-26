@@ -3,13 +3,20 @@ type Coordinate = {
     longitude: number;
 };
 
+
+/**
+ * Calculates the geographic bounds containing all provided coordinates.
+ *
+ * A small area is added around a single latitude or longitude so that a
+ * single-point result can still be displayed meaningfully on a map.
+ */
 export function calculateBounds(coordinates: Coordinate[]) {
     if (coordinates.length === 0) {
         return null;
     }
 
-    const latitudes = coordinates.map(c => c.latitude);
-    const longitudes = coordinates.map(c => c.longitude);
+    const latitudes = coordinates.map((coordinate) => coordinate.latitude);
+    const longitudes = coordinates.map((coordinate) => coordinate.longitude);
 
 
     let minLat = Math.min(...latitudes);

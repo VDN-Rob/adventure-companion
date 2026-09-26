@@ -5,10 +5,13 @@ export type MapBounds = [
     number  // north
 ];
 
-export function combineBounds(
-    boundsList: MapBounds[]
-): MapBounds | null {
 
+/**
+ * Combines multiple map bounds into a single bounding box containing them all.
+ *
+ * Returns null when no bounds are provided.
+ */
+export function combineBounds(boundsList: MapBounds[]): MapBounds | null {
     if (boundsList.length === 0) {
         return null;
     }

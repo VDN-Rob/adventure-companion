@@ -1,7 +1,7 @@
 import { MAP_STYLE } from "@/constants/map";
 import { MapsRepository } from "@/database/mapsRepository";
 import { OfflineMap } from "@/models/OfflineMap";
-import { MapBounds } from "@/utils/combineMapBounds";
+import { MapBounds } from "@/utils/map/combineMapBounds";
 import { OfflineManager } from "@maplibre/maplibre-react-native";
 import * as Crypto from "expo-crypto";
 

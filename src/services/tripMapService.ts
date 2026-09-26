@@ -1,8 +1,8 @@
 import { DaysRepository } from "@/database/dayRepository";
 import { PoisRepository } from "@/database/poiRepository";
 import { TripsRepository } from "@/database/tripRepository";
-import { calculateBounds } from "@/utils/calculateMapBounds";
-import { combineBounds, MapBounds } from "@/utils/combineMapBounds";
+import { calculateBounds } from "@/utils/map/calculateMapBounds";
+import { combineBounds, MapBounds } from "@/utils/map/combineMapBounds";
 
 interface MapRegion {
     name: string;
