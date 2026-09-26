@@ -23,8 +23,7 @@ export function AdventureSelector({
 }: AdventureSelectorProps) {
 	const [visible, setVisible] = useState(false);
 
-	const selectedTrip =
-		trips.find((trip) => trip.id === selectedTripId) ?? null;
+	const selectedTrip = trips.find((trip) => trip.id === selectedTripId) ?? null;
 
 	function handleSelect(tripId: string) {
 		onSelect(tripId);

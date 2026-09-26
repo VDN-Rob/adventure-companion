@@ -73,59 +73,59 @@ function ActionButton({icon, label, onPress,}: ActionButtonProps) {
 
 const styles = StyleSheet.create({
 	container: {
-	  flexDirection: "row",
-	  gap: theme.spacing.sm,
-  
-	  marginTop: theme.spacing.xl,
-	  marginBottom: theme.spacing.sm,
+		flexDirection: "row",
+		gap: theme.spacing.sm,
+
+		marginTop: theme.spacing.xl,
+		marginBottom: theme.spacing.sm,
 	},
-  
+
 	button: {
-	  flex: 1,
-  
-	  minHeight: 86,
-  
-	  alignItems: "center",
-	  justifyContent: "center",
-  
-	  paddingVertical: theme.spacing.md,
-  
-	  backgroundColor: theme.colours.surface,
-  
-	  borderWidth: 1,
-	  borderColor: theme.colours.border,
-  
-	  borderRadius: theme.radius.md,
+		flex: 1,
+
+		minHeight: 86,
+
+		alignItems: "center",
+		justifyContent: "center",
+
+		paddingVertical: theme.spacing.md,
+
+		backgroundColor: theme.colours.surface,
+
+		borderWidth: 1,
+		borderColor: theme.colours.border,
+
+		borderRadius: theme.radius.md,
 	},
-  
+
 	buttonPressed: {
-	  backgroundColor: theme.colours.surfaceRaised,
-  
-	  borderColor: theme.colours.accent,
-  
-	  transform: [
+		backgroundColor: theme.colours.surfaceRaised,
+
+		borderColor: theme.colours.accent,
+
+		transform: [
 		{
-		  translateY: 2,
+			translateY: 2,
 		},
-	  ],
+		],
 	},
-  
+
 	icon: {
-	  fontFamily: theme.fonts.displayBold,
-	  fontSize: theme.fontSize.xl,
-  
-	  color: theme.colours.accent,
-  
-	  marginBottom: theme.spacing.xs,
+		fontFamily: theme.fonts.displayBold,
+		fontSize: theme.fontSize.xl,
+
+		color: theme.colours.accent,
+
+		marginBottom: theme.spacing.xs,
 	},
-  
+
 	label: {
-	  fontFamily: theme.fonts.bodyBold,
-	  fontSize: theme.fontSize.xs,
-  
-	  color: theme.colours.text,
-  
-	  letterSpacing: 1.2,
-	  textTransform: "uppercase",
+		fontFamily: theme.fonts.bodyBold,
+		fontSize: theme.fontSize.xs,
+
+		color: theme.colours.text,
+
+		letterSpacing: 1.2,
+		textTransform: "uppercase",
 	},
-  });
+});
