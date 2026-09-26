@@ -1,4 +1,4 @@
-import { ExpensesRepository } from "@/database/expenseRepository";
+import { ExpensesRepository } from "@/database/dataAccessLayer/expenseRepository";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 

@@ -1,6 +1,6 @@
-import { DaysRepository } from "@/database/dayRepository";
-import { PoisRepository } from "@/database/poiRepository";
-import { TripsRepository } from "@/database/tripRepository";
+import { DaysRepository } from "@/database/dataAccessLayer/dayRepository";
+import { PoisRepository } from "@/database/dataAccessLayer/poiRepository";
+import { TripsRepository } from "@/database/dataAccessLayer/tripRepository";
 import { calculateBounds } from "@/utils/map/calculateMapBounds";
 import { combineBounds, MapBounds } from "@/utils/map/combineMapBounds";
 

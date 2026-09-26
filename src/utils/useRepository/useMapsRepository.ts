@@ -1,4 +1,4 @@
-import { MapsRepository } from "@/database/mapsRepository";
+import { MapsRepository } from "@/database/dataAccessLayer/mapsRepository";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 

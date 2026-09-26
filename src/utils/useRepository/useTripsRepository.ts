@@ -1,4 +1,4 @@
-import { TripsRepository } from "@/database/tripRepository";
+import { TripsRepository } from "@/database/dataAccessLayer/tripRepository";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 

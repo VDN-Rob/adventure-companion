@@ -1,4 +1,4 @@
-import { DiaryEntriesRepository } from "@/database/diaryEntryRepository";
+import { DiaryEntriesRepository } from "@/database/dataAccessLayer/diaryEntryRepository";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 

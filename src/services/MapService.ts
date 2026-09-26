@@ -1,5 +1,5 @@
 import { MAP_STYLE } from "@/constants/map";
-import { MapsRepository } from "@/database/mapsRepository";
+import { MapsRepository } from "@/database/dataAccessLayer/mapsRepository";
 import { OfflineMap } from "@/models/OfflineMap";
 import { MapBounds } from "@/utils/map/combineMapBounds";
 import { OfflineManager } from "@maplibre/maplibre-react-native";

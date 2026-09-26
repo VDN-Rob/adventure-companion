@@ -1,4 +1,4 @@
-import { ExchangeRateRepository } from "@/database/exchangeRateRepository";
+import { ExchangeRateRepository } from "@/database/dataAccessLayer/exchangeRateRepository";
 import { ExchangeRate } from "@/models/ExchangeRate";
 
 type FrankfurterRateResponse = {

@@ -1,4 +1,4 @@
-import { DaysRepository } from "@/database/dayRepository";
+import { DaysRepository } from "@/database/dataAccessLayer/dayRepository";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 

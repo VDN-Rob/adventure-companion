@@ -1,4 +1,4 @@
-import { ExchangeRateRepository } from "@/database/exchangeRateRepository";
+import { ExchangeRateRepository } from "@/database/dataAccessLayer/exchangeRateRepository";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 

@@ -1,4 +1,4 @@
-import { PoisRepository } from "@/database/poiRepository";
+import { PoisRepository } from "@/database/dataAccessLayer/poiRepository";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 

@@ -1,4 +1,4 @@
-import { ExpensesRepository } from "@/database/expenseRepository";
+import { ExpensesRepository } from "@/database/dataAccessLayer/expenseRepository";
 import { Expense } from "@/models/Expense";
 import { ExchangeRateService } from "./ExchangeRateService";
 

@@ -1,5 +1,5 @@
-import { DaysRepository } from "@/database/dayRepository";
-import { TripsRepository } from "@/database/tripRepository";
+import { DaysRepository } from "@/database/dataAccessLayer/dayRepository";
+import { TripsRepository } from "@/database/dataAccessLayer/tripRepository";
 import { Trip } from "@/models/Trip";
 import { ServiceResult } from "@/types/serviceResult";
 import { getTodayDate } from "@/utils/date";

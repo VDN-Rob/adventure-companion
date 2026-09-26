@@ -1,4 +1,4 @@
-import { DiaryEntriesRepository } from "@/database/diaryEntryRepository";
+import { DiaryEntriesRepository } from "@/database/dataAccessLayer/diaryEntryRepository";
 import { DiaryEntry } from "@/models/DiaryEntry";
 import * as Crypto from "expo-crypto";
 import { DayServices } from "./DayService";
