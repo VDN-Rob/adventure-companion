@@ -18,7 +18,7 @@ type PoiRow = {
 /**
  * Provides SQLite persistence operations for points of interest.
  */
-export class PoisRepository {
+export class POIsRepository {
     constructor(private db: SQLiteDatabase) {}
 
 
@@ -31,7 +31,7 @@ export class PoisRepository {
             dayId
         );
         
-        return rows.map(row => this.mapRowToPOI(row));
+        return rows.map((row) => this.mapRowToPOI(row));
     }
 
 

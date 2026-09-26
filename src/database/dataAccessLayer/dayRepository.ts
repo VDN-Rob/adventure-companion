@@ -88,20 +88,20 @@ export class DaysRepository {
             effectiveEndDate
         );
       
-        return rows.map(row => this.mapRowToDay(row));
+        return rows.map((row) => this.mapRowToDay(row));
     }
 
 
     /**
      * Returns all days belonging to a trip in chronological order.
      */
-    async getAllDayForTrip(tripId: string): Promise<Day[]> {
+    async getAllDaysForTrip(tripId: string): Promise<Day[]> {
         const rows = await this.db.getAllAsync<DayRow>(
             "SELECT * FROM days WHERE trip_id = ? ORDER BY date ASC",
             tripId
         );
         
-        return rows.map(row => this.mapRowToDay(row));
+        return rows.map((row) => this.mapRowToDay(row));
     }
 
 

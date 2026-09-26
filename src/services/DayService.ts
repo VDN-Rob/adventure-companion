@@ -20,7 +20,7 @@ export class DayServices {
   }
 
   async getDaysForTrip(tripId: string) {
-    return this.daysRepository.getAllDayForTrip(tripId);
+    return this.daysRepository.getAllDaysForTrip(tripId);
   }
 
   // Scripts

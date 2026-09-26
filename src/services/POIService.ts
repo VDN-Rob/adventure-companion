@@ -1,11 +1,11 @@
-import { PoisRepository } from "@/database/dataAccessLayer/poiRepository";
+import { POIsRepository } from "@/database/dataAccessLayer/poiRepository";
 import { POI } from "@/models/POI";
 import { ServiceResult } from "@/types/serviceResult";
 import { validatePOIFields } from "@/utils/validation/poiValidation";
 
 export class POIServices {
     constructor(
-      private poisRepository: PoisRepository
+      private poisRepository: POIsRepository
     ) {}
   
     // Queries

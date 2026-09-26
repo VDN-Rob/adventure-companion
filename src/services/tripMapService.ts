@@ -1,5 +1,5 @@
 import { DaysRepository } from "@/database/dataAccessLayer/dayRepository";
-import { PoisRepository } from "@/database/dataAccessLayer/poiRepository";
+import { POIsRepository } from "@/database/dataAccessLayer/poiRepository";
 import { TripsRepository } from "@/database/dataAccessLayer/tripRepository";
 import { calculateBounds } from "@/utils/map/calculateMapBounds";
 import { combineBounds, MapBounds } from "@/utils/map/combineMapBounds";
@@ -13,7 +13,7 @@ export class TripMapServices {
     constructor (
         private tripsRepository: TripsRepository,
         private daysRepository: DaysRepository,
-        private poisRepository: PoisRepository,
+        private poisRepository: POIsRepository,
     ) {}
     // Queries
     async getTripMapRegions(
@@ -21,7 +21,7 @@ export class TripMapServices {
         mode: "trip" | "day"
     ): Promise<MapRegion[]> {
     
-        const days = await this.daysRepository.getAllDayForTrip(tripId);
+        const days = await this.daysRepository.getAllDaysForTrip(tripId);
     
         const regions: MapRegion[] = [];
     

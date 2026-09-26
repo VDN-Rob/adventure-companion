@@ -40,7 +40,7 @@ export class TripServices {
           return null;
         }
     
-        const days = await this.daysRepository.getAllDayForTrip(tripId);
+        const days = await this.daysRepository.getAllDaysForTrip(tripId);
     
         return {
           trip,
@@ -129,7 +129,7 @@ export class TripServices {
             totalElevation: 0
         };
 
-        const days = await this.daysRepository.getAllDayForTrip(tripId);
+        const days = await this.daysRepository.getAllDaysForTrip(tripId);
 
         for (var day of days) {
             if (day.plannedDistance !== null) {

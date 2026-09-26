@@ -39,7 +39,7 @@ export class TripsRepository {
         date
       );
         
-      return rows.map(row => this.mapRowToTrip(row));
+      return rows.map((row) => this.mapRowToTrip(row));
     }
 
 
@@ -56,7 +56,7 @@ export class TripsRepository {
         date
       );
     
-      return rows.map(row => this.mapRowToTrip(row));
+      return rows.map((row) => this.mapRowToTrip(row));
     }
     
 
@@ -74,7 +74,7 @@ export class TripsRepository {
         date
       );
     
-      return rows.map(row => this.mapRowToTrip(row));
+      return rows.map((row) => this.mapRowToTrip(row));
     }
 
 
@@ -86,7 +86,7 @@ export class TripsRepository {
           	"SELECT * FROM trips ORDER BY start_date"
         );
       
-        return rows.map(row => this.mapRowToTrip(row));
+        return rows.map((row) => this.mapRowToTrip(row));
       }
 
 
