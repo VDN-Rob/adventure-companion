@@ -5,9 +5,9 @@ import { MapBounds } from "@/utils/map/combineMapBounds";
 import { OfflineManager } from "@maplibre/maplibre-react-native";
 import * as Crypto from "expo-crypto";
 
-export class MapServices {
+export class MapService {
     constructor (
-        private mapsRepository: OfflineMapsRepository
+        private readonly mapsRepository: OfflineMapsRepository
     ) {}
 
     // Queries

@@ -6,15 +6,15 @@ import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
 import { theme } from "@/styling/theme";
@@ -41,7 +41,7 @@ export default function EditDayScreen() {
         async function loadDay() {
           if (!dayId) return;
       
-          const day = await dayServices.getDay(dayId);
+          const day = await dayServices.getDayById(dayId);
       
           if (day) {
             setDay(day);

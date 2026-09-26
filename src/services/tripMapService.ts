@@ -15,12 +15,8 @@ export class TripMapServices {
         private daysRepository: DaysRepository,
         private poisRepository: POIsRepository,
     ) {}
-    // Queries
-    async getTripMapRegions(
-        tripId: string,
-        mode: "trip" | "day"
-    ): Promise<MapRegion[]> {
-    
+
+    async getTripMapRegions(tripId: string, mode: "trip" | "day"): Promise<MapRegion[]> {
         const days = await this.daysRepository.getAllDaysForTrip(tripId);
     
         const regions: MapRegion[] = [];
@@ -81,13 +77,7 @@ export class TripMapServices {
         ];
     }
 
-    // Scripts
     calculateRegions() {}
     expandRegions() {}
     mergeRegions() {}
-}
-
-interface TripStatistics {
-    totalDistance: number,
-    totalElevation: number
 }

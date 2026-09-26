@@ -3,110 +3,102 @@ import { POI } from "@/models/POI";
 import { ServiceResult } from "@/types/serviceResult";
 import { validatePOIFields } from "@/utils/validation/poiValidation";
 
-export class POIServices {
-    constructor(
-      private poisRepository: POIsRepository
-    ) {}
-  
-    // Queries
-    async getPOI(poiId: string) {
-      return this.poisRepository.getPOIById(poiId);
-    }
-  
-    async getPOIsForDay(dayId: string) {
-      return this.poisRepository.getAllPOIsForDay(dayId);
-    }
-  
-    // Scripts
-    async createPOI(poi: POI): Promise<ServiceResult> {
-      const errors = validatePOIFields({
-        name: poi.name,
-        latitude: poi.latitude === null ? "" : String(poi.latitude),
-        longitude: poi.longitude === null ? "" : String(poi.longitude),
-        visitedAt: poi.visitedAt ?? ""
-      })
+export class POIService {
+	constructor(
+		private readonly poisRepository: POIsRepository
+	) {}
 
-      if (Object.keys(errors).length > 0) {
-        return {
-          success: false,
-          errors,
-        };
-      }
+	async getPOIById(poiId: string): Promise<POI | null> {
+		return this.poisRepository.getPOIById(poiId);
+	}
 
-      await this.poisRepository.createPOI(poi);
+	async getPOIsForDay(dayId: string): Promise<POI[]> {
+		return this.poisRepository.getAllPOIsForDay(dayId);
+	}
 
-      return {
-        success: true,
-      }
-    }
+	async createPOI(poi: POI): Promise<ServiceResult> {
+		const errors = validatePOIFields({
+			name: poi.name,
+			latitude: poi.latitude === null ? "" : String(poi.latitude),
+			longitude: poi.longitude === null ? "" : String(poi.longitude),
+			visitedAt: poi.visitedAt ?? "",
+		});
 
-    async updatePOI(updatedPOI: POI): Promise<ServiceResult> {
-      const errors = validatePOIFields({
-        name: updatedPOI.name,
-        latitude: updatedPOI.latitude === null ? "" : String(updatedPOI.latitude),
-        longitude: updatedPOI.longitude === null ? "" : String(updatedPOI.longitude),
-        visitedAt: updatedPOI.visitedAt ?? ""
-      })
+		if (Object.keys(errors).length > 0) {
+			return {
+				success: false,
+				errors,
+			};
+		}
 
-      if (Object.keys(errors).length > 0) {
-        return {
-          success: false,
-          errors,
-        };
-      }
+		await this.poisRepository.createPOI(poi);
 
-      await this.poisRepository.updatePOI(updatedPOI);
+		return {
+			success: true,
+		}
+	}
 
-      return {
-        success: true,
-      }
-    }
+	async updatePOI(updatedPOI: POI): Promise<ServiceResult> {
+		const errors = validatePOIFields({
+			name: updatedPOI.name,
+			latitude: updatedPOI.latitude === null ? "" : String(updatedPOI.latitude),
+			longitude: updatedPOI.longitude === null ? "" : String(updatedPOI.longitude),
+			visitedAt: updatedPOI.visitedAt ?? "",
+		});
 
-    async checkInPOI(poiId: string): Promise<ServiceResult> {
-      const poi = await this.poisRepository.getPOIById(poiId);
-    
-      if (!poi) {
-        return {
-          success: false,
-          errors: {
-            poi: "POI not found.",
-          },
-        };
-      }
-    
-      await this.poisRepository.updatePOIVisitedAt(
-        poiId,
-        new Date().toISOString()
-      );
-    
-      return {
-        success: true,
-      };
-    }
+		if (Object.keys(errors).length > 0) {
+			return {
+				success: false,
+				errors,
+			};
+		}
 
-    async undoCheckInPOI(poiId: string): Promise<ServiceResult> {
-      const poi = await this.poisRepository.getPOIById(poiId);
-    
-      if (!poi) {
-        return {
-          success: false,
-          errors: {
-            poi: "POI not found.",
-          },
-        };
-      }
-    
-      await this.poisRepository.updatePOIVisitedAt(
-        poiId,
-        null
-      );
-    
-      return {
-        success: true,
-      };
-    }
+		await this.poisRepository.updatePOI(updatedPOI);
 
-    async deletePOI(poiId: string) {
-      return this.poisRepository.deletePOI(poiId);
-    }
-  }
+		return {
+			success: true,
+		}
+	}
+
+	async checkInPOI(poiId: string): Promise<ServiceResult> {
+		const poi = await this.poisRepository.getPOIById(poiId);
+
+		if (!poi) {
+			return {
+				success: false,
+				errors: {
+				poi: "POI not found.",
+				},
+			};
+		}
+
+		await this.poisRepository.updatePOIVisitedAt(poiId, new Date().toISOString());
+
+		return {
+			success: true,
+		};
+	}
+
+	async undoCheckInPOI(poiId: string): Promise<ServiceResult> {
+		const poi = await this.poisRepository.getPOIById(poiId);
+
+		if (!poi) {
+			return {
+				success: false,
+				errors: {
+					poi: "POI not found.",
+				},
+			};
+		}
+
+		await this.poisRepository.updatePOIVisitedAt(poiId, null);
+
+		return {
+			success: true,
+		};
+	}
+
+	async deletePOI(poiId: string) {
+		return this.poisRepository.deletePOI(poiId);
+	}
+}

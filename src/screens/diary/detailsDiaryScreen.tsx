@@ -2,17 +2,17 @@ import { Day } from "@/models/Day";
 import { DiaryEntry } from "@/models/DiaryEntry";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import {
-  router,
-  useFocusEffect,
-  useLocalSearchParams,
+    router,
+    useFocusEffect,
+    useLocalSearchParams,
 } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 import { DiaryDetail } from "@/components/diary/DiaryDetail";
@@ -68,7 +68,7 @@ export default function DetailsDiaryScreen() {
             let day: Day | null = null;
 
             if (entry.dayId) {
-              day = await dayServices.getDay(
+              day = await dayServices.getDayById(
                 entry.dayId
               );
             }

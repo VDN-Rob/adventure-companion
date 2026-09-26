@@ -3,15 +3,15 @@ import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
 import { InputField } from "@/components/forms/InputField";
@@ -43,7 +43,7 @@ export default function EditTripScreen() {
         async function loadTrip() {
           if (!id) return;
           
-          const trip = await tripServices.getTrip(id);
+          const trip = await tripServices.getTripById(id);
 
           if (!trip) return;
 

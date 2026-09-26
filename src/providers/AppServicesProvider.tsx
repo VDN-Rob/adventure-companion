@@ -1,12 +1,12 @@
-import { DayServices } from "@/services/DayService";
-import { DiaryEntryServices } from "@/services/DiaryEntryService";
+import { DayService } from "@/services/DayService";
+import { DiaryEntryService } from "@/services/DiaryEntryService";
 import { ExchangeRateService } from "@/services/ExchangeRateService";
 import { ExpenseService } from "@/services/ExpenseService";
-import { MapServices } from "@/services/MapService";
+import { MapService } from "@/services/MapService";
 import { useNetworkStatus } from "@/services/NetworkServices";
-import { POIServices } from "@/services/POIService";
+import { POIService } from "@/services/POIService";
 import { TripMapServices } from "@/services/tripMapService";
-import { TripServices } from "@/services/TripService";
+import { TripService } from "@/services/TripService";
 import { useDaysRepository } from "@/utils/useRepository/useDaysRepository";
 import { useDiaryEntriesRepository } from "@/utils/useRepository/useDiaryEntriesRepository";
 import { useExchangeRateRepository } from "@/utils/useRepository/useExchangeRateRepository";
@@ -17,13 +17,13 @@ import { useTripsRepository } from "@/utils/useRepository/useTripsRepository";
 import { createContext, useMemo } from "react";
 
 interface AppServices {
-  tripServices: TripServices;
-  dayServices: DayServices;
-  poiServices: POIServices;
-  mapServices: MapServices;
+  tripServices: TripService;
+  dayServices: DayService;
+  poiServices: POIService;
+  mapServices: MapService;
   tripMapServices: TripMapServices;
   expenseServices: ExpenseService;
-  diaryEntryServices: DiaryEntryServices;
+  diaryEntryServices: DiaryEntryService;
   isOnline: boolean | null;
 }
 export const AppServicesContext = createContext<AppServices | null>(null);
@@ -44,7 +44,7 @@ export function AppServicesProvider({
   const isOnline = useNetworkStatus();
 
   const tripServices = useMemo(
-    () => new TripServices(
+    () => new TripService(
       tripsRepository,
       daysRepository
     ),
@@ -52,19 +52,19 @@ export function AppServicesProvider({
   );
 
   const dayServices = useMemo(
-    () => new DayServices(daysRepository, tripsRepository),
+    () => new DayService(daysRepository, tripsRepository),
     [daysRepository, tripsRepository]
   );
 
   const poiServices = useMemo(
-    () => new POIServices(
+    () => new POIService(
       poisRepository
     ),
     [poisRepository]
   );
 
   const mapServices = useMemo(
-    () => new MapServices(mapsRepository),
+    () => new MapService(mapsRepository),
     [mapsRepository]
   );
 
@@ -88,7 +88,7 @@ export function AppServicesProvider({
   );
 
   const diaryEntryServices = useMemo(
-    () => new DiaryEntryServices(diaryEntriesRepository, dayServices),
+    () => new DiaryEntryService(diaryEntriesRepository, dayServices),
     [diaryEntriesRepository, dayServices]
   )
 

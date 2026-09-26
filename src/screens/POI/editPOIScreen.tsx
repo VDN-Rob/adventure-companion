@@ -37,7 +37,7 @@ export default function EditPOIScreen() {
               return;
             }
 
-            const poi = await poiServices.getPOI(poiId);
+            const poi = await poiServices.getPOIById(poiId);
 
             if (poi) {
               setPoi(poi);

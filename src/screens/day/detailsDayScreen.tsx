@@ -36,7 +36,7 @@ export default function DayDetailsScreen() {
             setIsLoading(true);
             setError(null);
 
-            const day = await dayServices.getDay(dayId);
+            const day = await dayServices.getDayById(dayId);
       
             if (!day) {
               setError("Day not Found");

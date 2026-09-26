@@ -9,125 +9,125 @@ type FrankfurterRateResponse = {
 };
 
 export class ExchangeRateService {
-  constructor(
-    private readonly exchangeRateRepository: ExchangeRateRepository
-  ) {}
+	constructor(
+		private readonly exchangeRateRepository: ExchangeRateRepository
+	) {}
 
-  async getRate(
-    fromCurrency: string,
-    toCurrency: string,
-    date: string
-  ): Promise<number | null> {
-    const from = fromCurrency.toUpperCase();
-    const to = toCurrency.toUpperCase();
+	async getRate(
+		fromCurrency: string,
+		toCurrency: string,
+		date: string
+	): Promise<number | null> {
+		const from = fromCurrency.toUpperCase();
+		const to = toCurrency.toUpperCase();
 
-    if (from === to) {
-      return 1;
-    }
+		if (from === to) {
+		return 1;
+		}
 
-    const cachedRate =
-      await this.exchangeRateRepository.getRate(
-        date,
-        from,
-        to
-      );
+		const cachedRate =
+		await this.exchangeRateRepository.getRate(
+			date,
+			from,
+			to
+		);
 
-    if (cachedRate !== null) {
-      return cachedRate.rate;
-    }
+		if (cachedRate !== null) {
+		return cachedRate.rate;
+		}
 
-    const result = await this.fetchHistoricalRate(
-      from,
-      to,
-      date
-    );
+		const result = await this.fetchHistoricalRate(
+		from,
+		to,
+		date
+		);
 
-    if (result === null) {
-      return null;
-    }
+		if (result === null) {
+		return null;
+		}
 
-    const exchangeRate: ExchangeRate = {
-        id: crypto.randomUUID(),
-        date,
-        baseCurrency: from,
-        targetCurrency: to,
-        rateDate: result.date,
-        rate: result.rate,
-    };
+		const exchangeRate: ExchangeRate = {
+			id: crypto.randomUUID(),
+			date,
+			baseCurrency: from,
+			targetCurrency: to,
+			rateDate: result.date,
+			rate: result.rate,
+		};
 
-    await this.exchangeRateRepository.saveRate(
-      exchangeRate
-    );
+		await this.exchangeRateRepository.saveRate(
+		exchangeRate
+		);
 
-    return result.rate;
-  }
+		return result.rate;
+	}
 
-  async convert(
-    amount: number,
-    fromCurrency: string,
-    toCurrency: string,
-    date: string
-  ): Promise<number | null> {
-    const rate = await this.getRate(
-      fromCurrency,
-      toCurrency,
-      date
-    );
+	async convert(
+		amount: number,
+		fromCurrency: string,
+		toCurrency: string,
+		date: string
+	): Promise<number | null> {
+		const rate = await this.getRate(
+		fromCurrency,
+		toCurrency,
+		date
+		);
 
-    if (rate === null) {
-      return null;
-    }
+		if (rate === null) {
+		return null;
+		}
 
-    return amount * rate;
-  }
+		return amount * rate;
+	}
 
-  private async fetchHistoricalRate(
-    fromCurrency: string,
-    toCurrency: string,
-    date: string
-  ): Promise<FrankfurterRateResponse | null> {
-    const startDate = this.getDateDaysAgo(date, 7);
+	private async fetchHistoricalRate(
+		fromCurrency: string,
+		toCurrency: string,
+		date: string
+	): Promise<FrankfurterRateResponse | null> {
+		const startDate = this.getDateDaysAgo(date, 7);
 
-    const url =
-      `https://api.frankfurter.dev/v2/rates` +
-      `?from=${startDate}` +
-      `&to=${date}` +
-      `&base=${fromCurrency}` +
-      `&quotes=${toCurrency}` +
-      `&providers=ecb`;
+		const url =
+		`https://api.frankfurter.dev/v2/rates` +
+		`?from=${startDate}` +
+		`&to=${date}` +
+		`&base=${fromCurrency}` +
+		`&quotes=${toCurrency}` +
+		`&providers=ecb`;
 
-    try {
-      const response = await fetch(url);
+		try {
+		const response = await fetch(url);
 
-      if (!response.ok) {
-        return null;
-      }
+		if (!response.ok) {
+			return null;
+		}
 
-      const data =
-        (await response.json()) as FrankfurterRateResponse[];
+		const data =
+			(await response.json()) as FrankfurterRateResponse[];
 
-      const availableRates = data
-        .filter((rate) => rate.date <= date)
-        .sort((a, b) =>
-          b.date.localeCompare(a.date)
-        );
+		const availableRates = data
+			.filter((rate) => rate.date <= date)
+			.sort((a, b) =>
+			b.date.localeCompare(a.date)
+			);
 
-      return availableRates[0] ?? null;
-    } catch {
-      return null;
-    }
-  }
+		return availableRates[0] ?? null;
+		} catch {
+		return null;
+		}
+	}
 
-  private getDateDaysAgo(
-    date: string,
-    days: number
-  ): string {
-    const result = new Date(`${date}T00:00:00Z`);
+	private getDateDaysAgo(
+		date: string,
+		days: number
+	): string {
+		const result = new Date(`${date}T00:00:00Z`);
 
-    result.setUTCDate(
-      result.getUTCDate() - days
-    );
+		result.setUTCDate(
+		result.getUTCDate() - days
+		);
 
-    return result.toISOString().slice(0, 10);
-  }
+		return result.toISOString().slice(0, 10);
+	}
 }

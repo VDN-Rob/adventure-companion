@@ -6,15 +6,15 @@ import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
-  Image,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    Image,
+    Pressable,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
 import { theme } from "@/styling/theme";
@@ -42,7 +42,7 @@ export default function EditDiaryEntryScreen() {
 
       try {
         const result =
-          await diaryEntryServices.getDiaryEntry(diaryEntryId);
+          await diaryEntryServices.getDiaryEntryById(diaryEntryId);
 
         if (!result) {
           Alert.alert(
