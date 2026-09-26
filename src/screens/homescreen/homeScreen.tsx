@@ -146,13 +146,13 @@ export default function HomeScreen() {
                     ? () => setCheckInVisible(true)
                     : () => openCreateDay()
                 }
-                leftActionIcon={today ? 'check' : 'calendar'}
+                leftActionIcon={today ? '◇' : '◇'}
                 leftActionLabel={today ? 'Check In' : 'Day Planner'}
                 onMiddleActionPress={openExpense}
-                middleActionIcon=""
+                middleActionIcon="+"
                 middleActionLabel="Add expense"
                 onRightActionPress={handleDiaryPress}
-                rightActionIcon="todo"
+                rightActionIcon="✎"
                 rightActionLabel="Diary"
             />
         )}
