@@ -1,4 +1,4 @@
-import { ExpensesRepository } from "@/database/dataAccessLayer/expenseRepository";
+import { ExpenseFilter, ExpensesRepository } from "@/database/dataAccessLayer/expenseRepository";
 import { Expense } from "@/models/Expense";
 import { ExchangeRateService } from "./ExchangeRateService";
 
@@ -7,12 +7,6 @@ export type ExpenseStatistics = {
     byCategory: Record<string, number>;
     byDate: Record<string, number>;
     conversionPendingCount: number;
-};
-
-export type ExpenseFilter = {
-    tripId?: string;
-    startDate?: string;
-    endDate?: string;
 };
 
 /**

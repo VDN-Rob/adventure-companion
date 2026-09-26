@@ -4,57 +4,56 @@ import { SQLiteDatabase } from "expo-sqlite";
 type OfflineMapRow = {
     id: string;
     offline_region_id: string;
-    name: string;
-    min_zoom: number;
+	name: string | null;
+    
+	min_zoom: number;
     max_zoom: number;
-    west: number;
+    
+	west: number;
     south: number;
     east: number;
     north: number;
-    creation_date: string;
-  };
+    
+	creation_date: string;
+};
 
-export class MapsRepository {
 
+
+/**
+ * Provides SQLite persistence operations for offline maps.
+ */
+export class OfflineMapsRepository {
     constructor(private db: SQLiteDatabase) {}
 
-    async createMap(map: OfflineMap) {
-        return this.db.runAsync(
-            `INSERT INTO maps (id, offline_region_id, name, min_zoom, max_zoom, west, south, east, north, creation_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            map.id,
-            map.offlineRegionId,
-            map.name,
-            map.minZoom,
-            map.maxZoom,
-            map.west,
-            map.south,
-            map.east,
-            map.north,
-            map.creationDate
-        )
-    }
 
+	/**
+	 * Returns all offline maps ordered from newest to oldest.
+	 */
     async getMaps(): Promise<OfflineMap[]> {
         const rows = await this.db.getAllAsync<OfflineMapRow>(
-            `SELECT * FROM maps ORDER BY creation_date DESC`
+            `SELECT * FROM offline_maps ORDER BY creation_date DESC`
         );
 
         return rows.map(row => this.mapRowToOfflineMap(row));
     }
 
-    async getMapById(id: string) {
+
+	/**
+	 * Returns an offline map by its ID.
+	 */
+    async getMapById(id: string): Promise<OfflineMap | null>  {
         const row = await this.db.getFirstAsync<OfflineMapRow>(
-            "SELECT * FROM maps WHERE id = ?",
+            "SELECT * FROM offline_maps WHERE id = ?",
             id
         );
 
-        if (!row) return null;
-
-        return this.mapRowToOfflineMap(row);
+        return row ? this.mapRowToOfflineMap(row) : null;
     }
 
-    // Small helper function to map database to react
+
+	/**
+	 * Maps a SQLite row to the domain OfflineMap model.
+	 */
     private mapRowToOfflineMap(row: OfflineMapRow): OfflineMap {
         return {
             id: row.id,
@@ -70,9 +69,47 @@ export class MapsRepository {
         };
     }
 
+
+
+	/**
+	 * Persists a new offline map.
+	 */
+    async createMap(map: OfflineMap) {
+        return this.db.runAsync(
+            `
+				INSERT INTO offline_maps (
+					id,
+					offline_region_id,
+					name,
+					min_zoom,
+					max_zoom,
+					west,
+					south,
+					east,
+					north,
+					creation_date
+				)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			`,
+            map.id,
+            map.offlineRegionId,
+            map.name,
+            map.minZoom,
+            map.maxZoom,
+            map.west,
+            map.south,
+            map.east,
+            map.north,
+            map.creationDate
+        )
+    }
+
+	/**
+	 * Deletes an offline map by ID.
+	 */
     async deleteMap(id: string) {
         return this.db.runAsync(
-            "DELETE FROM maps WHERE id = ?",
+            "DELETE FROM offline_maps WHERE id = ?",
             id
         );
     }

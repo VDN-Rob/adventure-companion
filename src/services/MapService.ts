@@ -1,5 +1,5 @@
 import { MAP_STYLE } from "@/constants/map";
-import { MapsRepository } from "@/database/dataAccessLayer/mapsRepository";
+import { OfflineMapsRepository } from "@/database/dataAccessLayer/mapsRepository";
 import { OfflineMap } from "@/models/OfflineMap";
 import { MapBounds } from "@/utils/map/combineMapBounds";
 import { OfflineManager } from "@maplibre/maplibre-react-native";
@@ -7,7 +7,7 @@ import * as Crypto from "expo-crypto";
 
 export class MapServices {
     constructor (
-        private mapsRepository: MapsRepository
+        private mapsRepository: OfflineMapsRepository
     ) {}
 
     // Queries

@@ -4,57 +4,75 @@ import { SQLiteDatabase } from "expo-sqlite";
 type DiaryEntryRow = {
     id: string;
     day_id: string;
+
     title: string;
     text: string | null;
-    photo_one: string | null;
+    
+	photo_one: string | null;
     photo_two: string | null;
     photo_three: string | null;
-    created_at: string;
+    
+	created_at: string;
     updated_at: string;
-  };
+};
 
+
+/**
+ * Provides SQLite persistence operations for diary entries.
+ */
 export class DiaryEntriesRepository {
     constructor(private db: SQLiteDatabase) {}
     
-    async getDiaryEntriesForTrip(tripId: string) {
+
+	/**
+	 * Returns all diary entries belonging to a trip, ordered by day.
+	 */
+    async getDiaryEntriesForTrip(tripId: string): Promise<DiaryEntry[]> {
         const rows = await this.db.getAllAsync<DiaryEntryRow>(
-            `SELECT diary_entries.*
+            `
+				SELECT diary_entries.*
                 FROM diary_entries
                 JOIN days ON diary_entries.day_id = days.id
                 WHERE days.trip_id = ?
                 ORDER BY days.date ASC;
-                `,
+			`,
             tripId
         );
 
         return rows.map(row => this.mapRowToDiaryEntry(row));
     }
 
+
+	/**
+	 * Returns the diary entry belonging to a day.
+	 */
     async getDiaryEntryForDay(dayId: string): Promise<DiaryEntry | null> {
         const row = await this.db.getFirstAsync<DiaryEntryRow>(
             "SELECT * FROM diary_entries WHERE day_id = ?",
             dayId
         );
 
-        if (!row) {
-            return null
-        }
-
-        return this.mapRowToDiaryEntry(row);
+        return row ? this.mapRowToDiaryEntry(row) : null;
     }
 
-    async getDiaryEntryById(id: string) {
+
+
+	/**
+	 * Returns a diary entry associated to an id.
+	 */
+    async getDiaryEntryById(id: string): Promise<DiaryEntry | null> {
         const row = await this.db.getFirstAsync<DiaryEntryRow>(
             "SELECT * FROM diary_entries WHERE id = ?",
             id
         );
 
-        if (!row) return null;
-
-        return this.mapRowToDiaryEntry(row);
+        return row ? this.mapRowToDiaryEntry(row) : null;
     }
 
-    // Small helper function to map database to react
+    
+	/**
+	 * Maps a SQLite row to the domain DiaryEntry model.
+	 */
     private mapRowToDiaryEntry(row: DiaryEntryRow): DiaryEntry {
         return {
             id: row.id,
@@ -72,10 +90,26 @@ export class DiaryEntriesRepository {
         };
     }
 
+
+	/**
+	 * Persists a new diary entry.
+	 */
     async createDiaryEntry(entry: DiaryEntry) {
         return this.db.runAsync(
-            `INSERT INTO diary_entries (id, day_id, title, text, photo_one, photo_two, photo_three, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `
+				INSERT INTO diary_entries (
+					id,
+					day_id,
+					title,
+					text,
+					photo_one,
+					photo_two,
+					photo_three,
+					created_at,
+					updated_at
+				)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+			`,
             entry.id,
             entry.dayId,
 
@@ -91,11 +125,23 @@ export class DiaryEntriesRepository {
         );
     }
 
+
+
+	/**
+	 * Updates an existing diary entry.
+	 */
     async updateDiaryEntry(entry: DiaryEntry) {
         return this.db.runAsync(
-            `UPDATE diary_entries
-            SET title = ?, text = ?, photo_one = ?, photo_two = ?, photo_three = ?, updated_at = ?
-            WHERE id = ?`,
+            `
+				UPDATE diary_entries
+				SET title = ?,
+					text = ?,
+					photo_one = ?,
+					photo_two = ?,
+					photo_three = ?,
+					updated_at = ?
+				WHERE id = ?
+			`,
             entry.title,
             entry.text,
 
@@ -109,6 +155,9 @@ export class DiaryEntriesRepository {
         );
     }
 
+	/**
+	 * Deletes a diary entry by ID.
+	 */
     async deleteDiaryEntry(id: string) {
         return this.db.runAsync(
             "DELETE FROM diary_entries WHERE id = ?",
