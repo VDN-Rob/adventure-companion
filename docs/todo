@@ -132,3 +132,16 @@ SLOW:
   | "USD"
   | "GBP"
   // ..."
+
+
+
+
+READABILITY:
+Do readability reworks for all screens.
+[X] homescreen
+[ ] tripscreen
+[ ] dayscreen
+[ ] poiscreen
+[ ] diaryscreen
+[ ] mapscreen
+[ ] financescreen
