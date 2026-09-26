@@ -1,0 +1,3 @@
+useHomeScreen: This hook owns the screen's state and business/navigation actions. This makes HomeScreen primarily a composition layer.
+
+HomeScreen is the UI

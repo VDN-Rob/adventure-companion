@@ -2,122 +2,130 @@ import { theme } from "@/styling/theme";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type QuickActionsProps = {
-  onExpensePress: () => void;
-  onCheckInPress: () => void;
-  onDiaryPress: () => void;
+	onLeftActionPress: () => void;
+	leftActionLabel: string;
+	leftActionIcon: string;
+	onMiddleActionPress: () => void;
+	middleActionLabel: string;
+	middleActionIcon: string;
+	onRightActionPress: () => void;
+	rightActionLabel: string;
+	rightActionIcon: string;
 };
 
 export function QuickActions({
-  onExpensePress,
-  onCheckInPress,
-  onDiaryPress,
+	onLeftActionPress,
+	leftActionLabel,
+	leftActionIcon,
+	onMiddleActionPress,
+	middleActionLabel,
+	middleActionIcon,
+	onRightActionPress,
+	rightActionLabel,
+	rightActionIcon
 }: QuickActionsProps) {
-  return (
-    <View style={styles.container}>
-      <ActionButton
-        icon="+"
-        label="Expense"
-        onPress={onExpensePress}
-      />
+	return (
+		<View style={styles.container}>
+		<ActionButton
+			icon={leftActionIcon}
+			label={leftActionLabel}
+			onPress={onLeftActionPress}
+		/>
 
-      <ActionButton
-        icon="◇"
-        label="Check POI"
-        onPress={onCheckInPress}
-      />
+		<ActionButton
+			icon={middleActionIcon}
+			label={middleActionLabel}
+			onPress={onMiddleActionPress}
+		/>
 
-      <ActionButton
-        icon="✎"
-        label="Diary"
-        onPress={onDiaryPress}
-      />
-    </View>
-  );
+		<ActionButton
+			icon={rightActionIcon}
+			label={rightActionLabel}
+			onPress={onRightActionPress}
+		/>
+		</View>
+	);
 }
 
 type ActionButtonProps = {
-  icon: string;
-  label: string;
-  onPress: () => void;
+	icon: string;
+	label: string;
+	onPress: () => void;
 };
 
-function ActionButton({
-  icon,
-  label,
-  onPress,
-}: ActionButtonProps) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        pressed && styles.buttonPressed,
-      ]}
-    >
-      <Text style={styles.icon}>{icon}</Text>
+function ActionButton({icon, label, onPress,}: ActionButtonProps) {
+	return (
+		<Pressable
+		onPress={onPress}
+		style={({ pressed }) => [
+			styles.button,
+			pressed && styles.buttonPressed,
+		]}
+		>
+		<Text style={styles.icon}>{icon}</Text>
 
-      <Text style={styles.label}>
-        {label}
-      </Text>
-    </Pressable>
-  );
+		<Text style={styles.label}>
+			{label}
+		</Text>
+		</Pressable>
+	);
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flexDirection: "row",
-      gap: theme.spacing.sm,
+	container: {
+	  flexDirection: "row",
+	  gap: theme.spacing.sm,
   
-      marginTop: theme.spacing.xl,
-      marginBottom: theme.spacing.sm,
-    },
+	  marginTop: theme.spacing.xl,
+	  marginBottom: theme.spacing.sm,
+	},
   
-    button: {
-      flex: 1,
+	button: {
+	  flex: 1,
   
-      minHeight: 86,
+	  minHeight: 86,
   
-      alignItems: "center",
-      justifyContent: "center",
+	  alignItems: "center",
+	  justifyContent: "center",
   
-      paddingVertical: theme.spacing.md,
+	  paddingVertical: theme.spacing.md,
   
-      backgroundColor: theme.colours.surface,
+	  backgroundColor: theme.colours.surface,
   
-      borderWidth: 1,
-      borderColor: theme.colours.border,
+	  borderWidth: 1,
+	  borderColor: theme.colours.border,
   
-      borderRadius: theme.radius.md,
-    },
+	  borderRadius: theme.radius.md,
+	},
   
-    buttonPressed: {
-      backgroundColor: theme.colours.surfaceRaised,
+	buttonPressed: {
+	  backgroundColor: theme.colours.surfaceRaised,
   
-      borderColor: theme.colours.accent,
+	  borderColor: theme.colours.accent,
   
-      transform: [
-        {
-          translateY: 2,
-        },
-      ],
-    },
+	  transform: [
+		{
+		  translateY: 2,
+		},
+	  ],
+	},
   
-    icon: {
-      fontFamily: theme.fonts.displayBold,
-      fontSize: theme.fontSize.xl,
+	icon: {
+	  fontFamily: theme.fonts.displayBold,
+	  fontSize: theme.fontSize.xl,
   
-      color: theme.colours.accent,
+	  color: theme.colours.accent,
   
-      marginBottom: theme.spacing.xs,
-    },
+	  marginBottom: theme.spacing.xs,
+	},
   
-    label: {
-      fontFamily: theme.fonts.bodyBold,
-      fontSize: theme.fontSize.xs,
+	label: {
+	  fontFamily: theme.fonts.bodyBold,
+	  fontSize: theme.fontSize.xs,
   
-      color: theme.colours.text,
+	  color: theme.colours.text,
   
-      letterSpacing: 1.2,
-      textTransform: "uppercase",
-    },
+	  letterSpacing: 1.2,
+	  textTransform: "uppercase",
+	},
   });
