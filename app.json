@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "adventure-companion",
+    "name": "Adventure Companion",
     "slug": "adventure-companion",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "cyclingcompanion",
+    "scheme": "adventurecompanion",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.anonymous.cyclingcompanion"
+      "bundleIdentifier": "com.aesr.adventurecompanion"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.cyclingcompanion"
+      "package": "com.aesr.adventurecompanion"
     },
     "web": {
       "output": "static",
@@ -43,6 +43,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "22dc0a20-4f79-4384-9c91-4471afefafec"
+      }
     }
   }
 }
