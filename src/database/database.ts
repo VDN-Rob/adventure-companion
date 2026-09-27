@@ -67,7 +67,6 @@ export async function setupDatabase(db: SQLiteDatabase): Promise<void> {
 			category TEXT NOT NULL,
 			description TEXT,
 			date TEXT NOT NULL,
-			FOREIGN KEY (day_id) REFERENCES days(id),
 			FOREIGN KEY (trip_id) REFERENCES trips(id)
 		);
 		
