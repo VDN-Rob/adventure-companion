@@ -32,7 +32,7 @@ export function TripCard({ trip, onPress, active = false }: TripCardProps) {
       <View style={styles.topRow}>
 
         <Text style={styles.dates}>
-          DAY {currentDay} / {totalDays === null ? "To Infinity" : totalDays}
+          DAY {currentDay} / {totalDays === null ? "TO INFINITY" : totalDays}
         </Text>
       </View>
       }
@@ -43,8 +43,7 @@ export function TripCard({ trip, onPress, active = false }: TripCardProps) {
     
     <Text style={styles.dates}>
         {trip.startDate}
-        {" → "}
-        {trip.endDate ?? "∞"}
+        {trip.endDate ? " → " + trip.endDate : " - (no end date selected)"}
       </Text>
 
     {trip.description && (

@@ -72,6 +72,12 @@ POIs
 
 
 ## Full run:
+[UX] Possible to double click button -> opens adventure screen twice, making for having to exit twice
+[UX] 
+[UX]  If packed schedule -> long scroll to go down. Try horizontal scroll.
+
+
+
 # Phase 1 : Launching application
 SLOW:
 [UI]  Very empty and dark -> feels weird.
@@ -79,7 +85,6 @@ SLOW:
 # Phase 2 : adventures
 SLOW:
 [UX]  creation should not be allowed unless required fields are filled (see poi/createPoi)
-[UX]  If packed schedule -> long scroll to go down.
 [UX]  Inline errors for impossible elements
 [UX]  Dates should be with calendar or fixed input
 [UX]  Budget currency should be a selection
