@@ -137,7 +137,7 @@ export class ExpensesRepository {
                     description,
                     date
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             `,
             expense.id,
             expense.tripId,

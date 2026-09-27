@@ -95,7 +95,9 @@ export default function CreateExpenseScreen() {
     try {
       await expenseServices.createExpense(newExpense);
       router.back();
-    } catch {
+    } catch (error) {
+      console.log(error)
+      
       Alert.alert(
         "Could not save expense",
         "Something went wrong while saving the expense."
