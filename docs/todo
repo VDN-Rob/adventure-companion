@@ -73,9 +73,8 @@ POIs
 
 ## Full run:
 [UX] Possible to double click button -> opens adventure screen twice, making for having to exit twice
-[UX] 
 [UX]  If packed schedule -> long scroll to go down. Try horizontal scroll.
-
+[UI] POI when "visited" should not be visible as "next" on the homescreen
 
 
 # Phase 1 : Launching application
@@ -123,12 +122,18 @@ SLOW:
 [UX]  Undoing check in should be doable from editPOI
 
 # Phase 6: Finance
+[UX] Add associated field for trip selection
+[UX] Add associated field for notes
+[BUG] Validation of date 
+[UI] show converted amount in expenseCard
+[UX] show expenses when pressing a category/a day
+[UI] deletion same screen as poi or trip or day
+
+
+
+
 
 # Phase 7: Diary
-=> Not possible to test yet due to MIS
-// Step 33
-[MIS] Quick action diary is not linked
-[MIS] More menu diary is not linked to adventure
 
 
 
