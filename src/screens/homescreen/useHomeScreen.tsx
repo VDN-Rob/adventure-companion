@@ -21,28 +21,20 @@ export function useHomeScreen() {
     } = useAppServices();
 
     const [activeTrips, setActiveTrips] = useState<Trip[]>([]);
-    const [selectedTripId, setSelectedTripId] =
-        useState<string | null>(null);
+    const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
 
     const [today, setToday] = useState<Day | null>(null);
     const [todayPois, setTodayPois] = useState<POI[]>([]);
 
-    const [currentDayNumber, setCurrentDayNumber] =
-        useState<number | null>(null);
+    const [currentDayNumber, setCurrentDayNumber] = useState<number | null>(null);
 
-    const [totalDayNumber, setTotalDayNumber] =
-        useState<number | null>(null);
+    const [totalDayNumber, setTotalDayNumber] = useState<number | null>(null);
 
-    const [bottomItems, setBottomItems] =
-        useState<NavigationItem[]>([]);
+    const [bottomItems, setBottomItems] = useState<NavigationItem[]>([]);
 
-    const [checkInVisible, setCheckInVisible] =
-        useState(false);
+    const [checkInVisible, setCheckInVisible] = useState(false);
 
-    const selectedTrip =
-        activeTrips.find(
-        (trip) => trip.id === selectedTripId
-        ) ?? null;
+    const selectedTrip = activeTrips.find((trip) => trip.id === selectedTripId) ?? null;
 
     useFocusEffect(
         useCallback(() => {

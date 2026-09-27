@@ -1,3 +1,4 @@
+import { appSettings } from "@/config/appSetting";
 import { POI } from "@/models/POI";
 import { theme } from "@/styling/theme";
 import {
@@ -159,6 +160,7 @@ function formatTime(value: string) {
 	return new Date(value).toLocaleTimeString([], {
 		hour: "2-digit",
 		minute: "2-digit",
+		hour12: appSettings.timeFormat !== "24",
 	});
 }
 
