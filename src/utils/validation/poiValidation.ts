@@ -25,6 +25,8 @@ export function validatePOIFields(fields: POIFields): POIValidationErrors {
         errors.name = "Give your POI a name before saving it.";
     }
 
+    console.log(fields.visitedAt)
+    console.log(isValidDateString(fields.visitedAt.trim()))
     if (
         fields.visitedAt.trim() !== "" && !isValidDateString(fields.visitedAt.trim())
     ) {
@@ -44,7 +46,7 @@ export function validatePOIFields(fields: POIFields): POIValidationErrors {
         const longitude = Number(fields.longitude);
 
         if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
-            errors.longitude = "Latitude must be a number between -90 and 90";
+            errors.longitude = "Longitude must be a number between -180 and 180";
         }
     }
 
