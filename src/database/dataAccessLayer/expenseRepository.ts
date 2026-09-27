@@ -5,7 +5,6 @@ import { SQLiteDatabase } from "expo-sqlite";
 type ExpenseRow = {
     id: string;
     trip_id: string | null;
-    day_id: string | null;
 
     amount: number;
     currency: string;
@@ -79,12 +78,12 @@ export class ExpensesRepository {
 
 
     /**
-     * Returns all expenses associated with a day.
+     * Returns all expenses associated with a date.
      */
-    async getAllExpensesForDay(dayId: string): Promise<Expense[]> {
+    async getAllExpensesForDate(date: string): Promise<Expense[]> {
         const rows = await this.db.getAllAsync<ExpenseRow>(
-            "SELECT * FROM expenses WHERE day_id = ? ORDER BY date DESC",
-            dayId
+            "SELECT * FROM expenses WHERE date = ? ORDER BY date DESC",
+            date
         );
         
         return rows.map((row) => this.mapRowToExpense(row));
@@ -111,7 +110,6 @@ export class ExpensesRepository {
         return {
             id: row.id,
             tripId: row.trip_id,
-            dayId: row.day_id,
             
             amount: row.amount,
             currency: row.currency,
@@ -133,7 +131,6 @@ export class ExpensesRepository {
                 INSERT INTO expenses (
                     id,
                     trip_id,
-                    day_id,
                     amount,
                     currency,
                     category,
@@ -144,7 +141,6 @@ export class ExpensesRepository {
             `,
             expense.id,
             expense.tripId,
-            expense.dayId,
 
             expense.amount,
             expense.currency,
@@ -165,7 +161,6 @@ export class ExpensesRepository {
             `
                 UPDATE expenses
                 SET trip_id = ?,
-                    day_id = ?,
                     amount = ?,
                     currency = ?,
                     category = ?,
@@ -174,7 +169,7 @@ export class ExpensesRepository {
                 WHERE id = ?
             `,
             expense.tripId,
-            expense.dayId,
+
             expense.amount,
             expense.currency,
 

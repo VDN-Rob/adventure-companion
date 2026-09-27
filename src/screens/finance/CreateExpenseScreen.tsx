@@ -82,7 +82,6 @@ export default function CreateExpenseScreen() {
     const newExpense: Expense = {
       id: Crypto.randomUUID(),
       tripId,
-      dayId: dayId ?? null,
 
       amount: numericAmount,
       currency: currency.trim().toUpperCase(),

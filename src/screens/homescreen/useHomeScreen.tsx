@@ -207,7 +207,7 @@ export function useHomeScreen() {
     );
 
     const openExpense = useCallback(() => {
-        if (!selectedTrip || !today) {
+        if (!selectedTrip) {
         return;
         }
 
@@ -215,7 +215,6 @@ export function useHomeScreen() {
         pathname: "/finance/createExpense",
         params: {
             tripId: selectedTrip.id,
-            dayId: today.id,
         },
         });
     }, [selectedTrip, today]);

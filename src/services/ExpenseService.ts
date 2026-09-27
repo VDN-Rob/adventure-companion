@@ -26,8 +26,8 @@ export class ExpenseService {
         return this.expenseRepository.getExpenseById(id);
     }
 
-    async getExpensesForDay(dayId: string): Promise<Expense[]> {
-        return this.expenseRepository.getAllExpensesForDay(dayId);
+    async getExpensesForDay(date: string): Promise<Expense[]> {
+        return this.expenseRepository.getAllExpensesForDate(date);
     }
   
     async getExpensesForTrip(tripId: string): Promise<Expense[]> {
@@ -56,8 +56,8 @@ export class ExpenseService {
         return this.calculateStatistics(expenses, targetCurrency);
     }
     
-    async getDayStatistics(dayId: string, targetCurrency: string): Promise<ExpenseStatistics> {
-        const expenses = await this.expenseRepository.getAllExpensesForDay(dayId);
+    async getDayStatistics(date: string, targetCurrency: string): Promise<ExpenseStatistics> {
+        const expenses = await this.expenseRepository.getAllExpensesForDate(date);
     
         return this.calculateStatistics(expenses, targetCurrency);
     }

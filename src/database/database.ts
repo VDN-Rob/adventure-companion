@@ -62,7 +62,6 @@ export async function setupDatabase(db: SQLiteDatabase): Promise<void> {
 		CREATE TABLE IF NOT EXISTS expenses (
 			id TEXT PRIMARY KEY NOT NULL,
 			trip_id TEXT,
-			day_id TEXT,
 			amount REAL NOT NULL,
 			currency TEXT NOT NULL,
 			category TEXT NOT NULL,

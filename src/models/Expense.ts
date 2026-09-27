@@ -16,7 +16,6 @@ export type ExpenseCategory =
 export interface Expense {
   id: string;
   tripId: string | null;
-  dayId: string | null;
 
   amount: number;
   currency: string;
