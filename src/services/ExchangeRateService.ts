@@ -1,5 +1,6 @@
 import { ExchangeRateRepository } from "@/database/dataAccessLayer/exchangeRateRepository";
 import { ExchangeRate } from "@/models/ExchangeRate";
+import * as Crypto from "expo-crypto";
 
 type FrankfurterRateResponse = {
   date: string;
@@ -47,7 +48,7 @@ export class ExchangeRateService {
 		}
 
 		const exchangeRate: ExchangeRate = {
-			id: crypto.randomUUID(),
+			id: Crypto.randomUUID(),
 			date,
 			baseCurrency: from,
 			targetCurrency: to,
