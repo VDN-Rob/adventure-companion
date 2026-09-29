@@ -37,7 +37,11 @@ export default function RootLayout() {
       >
 
       <AppServicesProvider>
-        <Stack />
+        <Stack 
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
       </AppServicesProvider>
     </SQLiteProvider>
   );
