@@ -1,4 +1,4 @@
-import { MAP_STYLE } from "@/constants/map";
+import { OFFLINE_MAP_STYLE_URL } from "@/constants/map";
 import { OfflineMapsRepository } from "@/database/dataAccessLayer/mapsRepository";
 import { OfflineMap } from "@/models/OfflineMap";
 import { MapBounds } from "@/utils/map/combineMapBounds";
@@ -36,7 +36,7 @@ export class MapService {
     
             offlinePack = await OfflineManager.createPack(
                 {
-                    mapStyle: MAP_STYLE,
+                    mapStyle: OFFLINE_MAP_STYLE_URL,
                     minZoom,
                     maxZoom,
                     bounds,
