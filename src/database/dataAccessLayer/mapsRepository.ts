@@ -4,7 +4,6 @@ import { SQLiteDatabase } from "expo-sqlite";
 type OfflineMapRow = {
     id: string;
     offline_region_id: string;
-	name: string | null;
     
 	min_zoom: number;
     max_zoom: number;
@@ -51,6 +50,19 @@ export class OfflineMapsRepository {
     }
 
 
+    /**
+	 * Returns an offline map by its regionID.
+	 */
+    async getMapByOfflineRegionId(offlineRegionId: string): Promise<OfflineMap | null> {
+        const row = await this.db.getFirstAsync<OfflineMapRow>(
+            "SELECT * FROM offline_maps WHERE offline_region_id = ?",
+            offlineRegionId
+        );
+    
+        return row ? this.mapRowToOfflineMap(row) : null;
+    }
+
+
 	/**
 	 * Maps a SQLite row to the domain OfflineMap model.
 	 */
@@ -58,7 +70,6 @@ export class OfflineMapsRepository {
         return {
             id: row.id,
             offlineRegionId: row.offline_region_id,
-            name: row.name,
             minZoom: row.min_zoom,
             maxZoom: row.max_zoom,
             west: row.west,
@@ -80,7 +91,6 @@ export class OfflineMapsRepository {
 				INSERT INTO offline_maps (
 					id,
 					offline_region_id,
-					name,
 					min_zoom,
 					max_zoom,
 					west,
@@ -89,11 +99,10 @@ export class OfflineMapsRepository {
 					north,
 					creation_date
 				)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 			`,
             map.id,
             map.offlineRegionId,
-            map.name,
             map.minZoom,
             map.maxZoom,
             map.west,
@@ -113,4 +122,6 @@ export class OfflineMapsRepository {
             id
         );
     }
+
+
 }

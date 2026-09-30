@@ -4,8 +4,6 @@
 export interface OfflineMap {
     id: string;
     offlineRegionId: string;
-    
-    name: string | null;
 
     minZoom: number;
     maxZoom: number;
