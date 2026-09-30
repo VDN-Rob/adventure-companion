@@ -47,7 +47,7 @@ export class TripMapServices {
             }
     
             regions.push({
-                name: `Day ${day.date}`,
+                name: day.date,
                 bounds: [
                     bounds.minLng,
                     bounds.minLat,
@@ -69,12 +69,54 @@ export class TripMapServices {
             return [];
         }
     
+        const currentTrip = await this.tripsRepository.getTripById(tripId);
         return [
             {
-                name: "Entire trip",
+                name: currentTrip ? currentTrip.name : "Entire trip",
                 bounds: combinedBounds,
             },
         ];
+    }
+
+    async getDayMapRegion(dayId: string): Promise<MapRegion | null> {
+        const day = await this.daysRepository.getDayById(dayId);
+    
+        if (!day) {
+            return null;
+        }
+    
+        const pois = await this.poisRepository.getAllPOIsForDay(day.id);
+    
+        const coordinates = pois
+            .filter(
+                poi =>
+                    poi.latitude !== null &&
+                    poi.longitude !== null
+            )
+            .map(poi => ({
+                latitude: poi.latitude!,
+                longitude: poi.longitude!,
+            }));
+    
+        if (coordinates.length === 0) {
+            return null;
+        }
+    
+        const bounds = calculateBounds(coordinates);
+    
+        if (!bounds) {
+            return null;
+        }
+    
+        return {
+            name: day.date,
+            bounds: [
+                bounds.minLng,
+                bounds.minLat,
+                bounds.maxLng,
+                bounds.maxLat,
+            ],
+        };
     }
 
     calculateRegions() {}

@@ -19,7 +19,7 @@ export class MapService {
     }
 
     // Scripts
-    async downloadRegion(bounds: MapBounds, minZoom = 8, maxZoom = 15): Promise<OfflineMap> {
+    async downloadRegion(name: string, bounds: MapBounds, minZoom = 8, maxZoom = 15): Promise<OfflineMap> {
     
         const id = Crypto.randomUUID();
 
@@ -148,6 +148,7 @@ export class MapService {
     
             for (const bounds of remainingRegions) {
                 const map = await this.downloadRegion(
+                    region.name,
                     bounds,
                     minZoom,
                     maxZoom

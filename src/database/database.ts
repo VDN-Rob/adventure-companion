@@ -48,7 +48,7 @@ export async function setupDatabase(db: SQLiteDatabase): Promise<void> {
 		
 		CREATE TABLE IF NOT EXISTS offline_maps (
 			id TEXT PRIMARY KEY NOT NULL,
-			offline_region_id UNIQUE TEXT NOT NULL,
+			offline_region_id TEXT UNIQUE NOT NULL,
 			min_zoom INTEGER NOT NULL,
 			max_zoom INTEGER NOT NULL,
 			west REAL NOT NULL,

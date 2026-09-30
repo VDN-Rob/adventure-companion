@@ -50,19 +50,6 @@ export class OfflineMapsRepository {
     }
 
 
-    /**
-	 * Returns an offline map by its regionID.
-	 */
-    async getMapByOfflineRegionId(offlineRegionId: string): Promise<OfflineMap | null> {
-        const row = await this.db.getFirstAsync<OfflineMapRow>(
-            "SELECT * FROM offline_maps WHERE offline_region_id = ?",
-            offlineRegionId
-        );
-    
-        return row ? this.mapRowToOfflineMap(row) : null;
-    }
-
-
 	/**
 	 * Maps a SQLite row to the domain OfflineMap model.
 	 */
@@ -79,7 +66,6 @@ export class OfflineMapsRepository {
             creationDate: row.creation_date
         };
     }
-
 
 
 	/**

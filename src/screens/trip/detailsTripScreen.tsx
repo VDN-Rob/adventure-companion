@@ -26,6 +26,8 @@ export default function TripDetailsScreen() {
 		totalElevation: 0,
 	});
 	const [poisByDay, setPoisByDay] = useState<Record<string, POI[]>>({});
+	
+	const [isDownloadingMaps, setIsDownloadingMaps] = useState(false);
 
 	// Load the right trip everytime the screen is loaded
 	useFocusEffect(
@@ -108,8 +110,13 @@ export default function TripDetailsScreen() {
 		);
 	}
 
-
 	async function handleTripMapDownloadByDay() {
+		if (isDownloadingMaps) {
+			return;
+		}
+	
+		setIsDownloadingMaps(true);
+	
 		try {
 			const networkState = await NetInfo.fetch();
 
@@ -160,6 +167,8 @@ export default function TripDetailsScreen() {
 				"Download failed",
 				"The offline maps could not be downloaded."
 			);
+		} finally {
+			setIsDownloadingMaps(false);
 		}
 	}
 
@@ -341,10 +350,13 @@ export default function TripDetailsScreen() {
 
 				<Pressable
 					style={styles.downloadButton}
-					onPress={() => tripDownloadWarning()}
+					onPress={tripDownloadWarning}
+					disabled={isDownloadingMaps}
 				>
 					<Text style={styles.downloadText}>
-					DOWNLOAD MAPS
+					{isDownloadingMaps
+						? "DOWNLOADING MAPS..."
+						: "DOWNLOAD MAPS"}
 					</Text>
 
 					<Text style={styles.downloadArrow}>
