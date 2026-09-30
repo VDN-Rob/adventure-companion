@@ -39,6 +39,13 @@ export default function MoreScreen() {
             />
 
             <MenuItem
+              icon="[]"
+              title="Maps"
+              description="Your downloaded maps"
+              onPress={() => { router.push("/map/offlineMap") }}
+            />
+
+            <MenuItem
                 icon="⚙"
                 title="Settings"
                 onPress={() => {

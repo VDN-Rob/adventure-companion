@@ -1,4 +1,4 @@
-import MoreScreen from "@/screens/moreScreen";
+import MoreScreen from "@/screens/homescreen/moreScreen";
 
 export default function More() {
   return <MoreScreen />;
