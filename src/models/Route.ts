@@ -24,7 +24,7 @@ export interface Route {
   elevationGainMeters?: number;
   elevationLossMeters?: number;
   
-  trackPointCount: number;
+  trackPoints: TrackPoint[];
   
   importedAt: string;
   filePath: string;

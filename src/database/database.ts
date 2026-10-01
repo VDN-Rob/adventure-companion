@@ -94,20 +94,36 @@ export async function setupDatabase(db: SQLiteDatabase): Promise<void> {
 
 			UNIQUE(date, base_currency, target_currency)
 		);
+
+		CREATE TABLE IF NOT EXISTS routes (
+			id TEXT PRIMARY KEY NOT NULL,
+			day_id TEXT NOT NULL,
+			name TEXT,
+			distance_meters REAL,
+			elevation_gain_meters REAL,
+			elevation_loss_meters REAL,
+			imported_at TEXT NOT NULL,
+			file_path TEXT NOT NULL,
+			FOREIGN KEY (day_id) REFERENCES days(id) ON DELETE CASCADE
+		);
+
+		CREATE TABLE IF NOT EXISTS trackpoints (
+			id TEXT PRIMARY KEY NOT NULL,
+			route_id TEXT NOT NULL,
+			sequence INTEGER NOT NULL,
+			latitude REAL NOT NULL,
+			longitude REAL NOT NULL,
+			elevation REAL,
+			timestamp TEXT,
+			FOREIGN KEY (route_id) REFERENCES routes(id) ON DELETE CASCADE
+		);
+
+		CREATE INDEX IF NOT EXISTS idx_routes_day_id ON routes(day_id);
+
+		CREATE INDEX IF NOT EXISTS idx_trackpoints_route_id ON trackpoints(route_id);
     `);
 }
 
-//   routes
-// ────────────────────────
-// id
-// day_id
-// name
-// distance_meters
-// elevation_gain_meters
-// elevation_loss_meters
-// track_point_count
-// file_path
-// imported_at
 
 
 /**

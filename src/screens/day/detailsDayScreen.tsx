@@ -5,16 +5,18 @@ import { POI } from "@/models/POI";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import NetInfo from "@react-native-community/netinfo";
+import * as DocumentPicker from "expo-document-picker";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+
 
 export default function DayDetailsScreen() {
 	// Retrieve id from parameters
 	const { dayId } = useLocalSearchParams<{ dayId: string }>();
 
 	// Load databank
-	const { dayServices, poiServices, mapServices, tripMapServices } = useAppServices();
+	const { dayServices, poiServices, mapServices, tripMapServices, routeService } = useAppServices();
 
 	// State
 	const [day, setDay] = useState<Day | null>(null);
@@ -113,6 +115,48 @@ export default function DayDetailsScreen() {
 			Alert.alert(
 				"Download failed",
 				"The offline map could not be downloaded."
+			);
+		}
+	}
+
+	async function handleImportGPX() {
+		try {
+			const result =
+				await DocumentPicker.getDocumentAsync({
+					type: [
+						"application/gpx+xml",
+						"application/xml",
+						"text/xml",
+						"*/*",
+					],
+					copyToCacheDirectory: true,
+					multiple: false,
+				});
+	
+			if (result.canceled) {
+				return;
+			}
+	
+			const file = result.assets[0];
+	
+			await routeService.importGPX(
+				dayId,
+				file.uri
+			);
+	
+			Alert.alert(
+				"GPX imported",
+				"The route was imported successfully."
+			);
+		} catch (error) {
+			console.error(
+				"Failed to import GPX:",
+				error
+			);
+	
+			Alert.alert(
+				"Import failed",
+				"The GPX file could not be imported."
 			);
 		}
 	}
@@ -305,6 +349,14 @@ export default function DayDetailsScreen() {
 
 					<Text style={styles.mapArrow}>
 						↓
+					</Text>
+				</Pressable>
+				<Pressable
+					style={styles.mapButton}
+					onPress={handleImportGPX}
+				>
+					<Text style={styles.mapButtonText}>
+						Load GPX
 					</Text>
 				</Pressable>
 

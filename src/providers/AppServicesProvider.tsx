@@ -5,6 +5,7 @@ import { ExpenseService } from "@/services/ExpenseService";
 import { MapService } from "@/services/MapService";
 import { useNetworkStatus } from "@/services/NetworkServices";
 import { POIService } from "@/services/POIService";
+import { RouteService } from "@/services/RouteService";
 import { TripMapServices } from "@/services/TripMapService";
 import { TripService } from "@/services/TripService";
 import { useDaysRepository } from "@/utils/useRepository/useDaysRepository";
@@ -13,6 +14,7 @@ import { useExchangeRateRepository } from "@/utils/useRepository/useExchangeRate
 import { useExpensesRepository } from "@/utils/useRepository/useExpensesRepository";
 import { useMapsRepository } from "@/utils/useRepository/useMapsRepository";
 import { usePoisRepository } from "@/utils/useRepository/usePoisRepository";
+import { useRoutesRepository } from "@/utils/useRepository/useRoutesRepository";
 import { useTripsRepository } from "@/utils/useRepository/useTripsRepository";
 import { createContext, useMemo } from "react";
 
@@ -22,6 +24,7 @@ interface AppServices {
 	poiServices: POIService;
 	mapServices: MapService;
 	tripMapServices: TripMapServices;
+	routeService: RouteService;
 	expenseServices: ExpenseService;
 	diaryEntryServices: DiaryEntryService;
 	isOnline: boolean | null;
@@ -40,6 +43,7 @@ export function AppServicesProvider({
 	const exchangeRateRepository = useExchangeRateRepository();
 	const expensesRepository = useExpensesRepository();
 	const diaryEntriesRepository = useDiaryEntriesRepository();
+	const routesRepository = useRoutesRepository();
 
 	const isOnline = useNetworkStatus();
 
@@ -92,6 +96,11 @@ export function AppServicesProvider({
 		[diaryEntriesRepository, dayServices]
 	)
 
+	const routeService = useMemo(
+		() => new RouteService(routesRepository),
+		[routesRepository]
+	);
+
 	return (
 		<AppServicesContext.Provider value={{
 		tripServices,
@@ -99,6 +108,7 @@ export function AppServicesProvider({
 		poiServices,
 		mapServices,
 		tripMapServices,
+		routeService,
 		expenseServices,
 		diaryEntryServices,
 		isOnline,
