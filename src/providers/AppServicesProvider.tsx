@@ -76,9 +76,10 @@ export function AppServicesProvider({
 		() => new TripMapServices(
 		tripsRepository,
 		daysRepository,
-		poisRepository
+		poisRepository,
+		routesRepository,
 		),
-		[tripsRepository, daysRepository, poisRepository]
+		[tripsRepository, daysRepository, poisRepository, routesRepository]
 	);
 
 	const exchangeRateServices = useMemo(

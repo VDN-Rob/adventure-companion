@@ -1,5 +1,6 @@
 import { DaysRepository } from "@/database/dataAccessLayer/dayRepository";
 import { POIsRepository } from "@/database/dataAccessLayer/poiRepository";
+import { RoutesRepository } from "@/database/dataAccessLayer/routeRepository";
 import { TripsRepository } from "@/database/dataAccessLayer/tripRepository";
 import { calculateBounds } from "@/utils/map/calculateMapBounds";
 import { combineBounds, MapBounds } from "@/utils/map/combineMapBounds";
@@ -14,6 +15,7 @@ export class TripMapServices {
         private tripsRepository: TripsRepository,
         private daysRepository: DaysRepository,
         private poisRepository: POIsRepository,
+        private routesRepository: RoutesRepository,
     ) {}
 
     async getTripMapRegions(tripId: string, mode: "trip" | "day"): Promise<MapRegion[]> {
@@ -22,19 +24,7 @@ export class TripMapServices {
         const regions: MapRegion[] = [];
     
         for (const day of days) {
-    
-            const pois = await this.poisRepository.getAllPOIsForDay(day.id);
-    
-            const coordinates = pois
-                .filter(
-                    poi =>
-                        poi.latitude !== null &&
-                        poi.longitude !== null
-                )
-                .map(poi => ({
-                    latitude: poi.latitude!,
-                    longitude: poi.longitude!,
-                }));
+            const coordinates = await this.getCoordinates(day.id);
     
             if (coordinates.length === 0) {
                 continue;
@@ -84,19 +74,8 @@ export class TripMapServices {
         if (!day) {
             return null;
         }
-    
-        const pois = await this.poisRepository.getAllPOIsForDay(day.id);
-    
-        const coordinates = pois
-            .filter(
-                poi =>
-                    poi.latitude !== null &&
-                    poi.longitude !== null
-            )
-            .map(poi => ({
-                latitude: poi.latitude!,
-                longitude: poi.longitude!,
-            }));
+
+        const coordinates = await this.getCoordinates(day.id);
     
         if (coordinates.length === 0) {
             return null;
@@ -119,7 +98,28 @@ export class TripMapServices {
         };
     }
 
-    calculateRegions() {}
-    expandRegions() {}
-    mergeRegions() {}
+    private async getCoordinates(dayId: string) {
+        const pois = await this.poisRepository.getAllPOIsForDay(dayId);
+        const routes = await this.routesRepository.getRoutesForDay(dayId);
+    
+        return [
+            ...pois
+                .filter(
+                    (poi) =>
+                        poi.latitude !== null &&
+                        poi.longitude !== null
+                )
+                .map((poi) => ({
+                    latitude: poi.latitude!,
+                    longitude: poi.longitude!,
+                })),
+        
+            ...routes.flatMap((route) =>
+                route.trackPoints.map((point) => ({
+                    latitude: point.latitude,
+                    longitude: point.longitude,
+                }))
+            ),
+        ];
+    }
 }
