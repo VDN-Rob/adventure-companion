@@ -55,15 +55,11 @@ export class RouteService {
         return route;
     }
 
-    async getRouteById(
-        routeId: string
-    ): Promise<Route | null> {
+    async getRouteById(routeId: string): Promise<Route | null> {
         return this.routesRepository.getRouteById(routeId);
     }
 
-    async getRoutesForDay(
-        dayId: string
-    ): Promise<Route[]> {
+    async getRoutesForDay(dayId: string): Promise<Route[]> {
         return this.routesRepository.getRoutesForDay(dayId);
     }
 
