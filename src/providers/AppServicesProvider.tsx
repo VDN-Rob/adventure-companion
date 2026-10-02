@@ -5,6 +5,7 @@ import { ExpenseService } from "@/services/ExpenseService";
 import { MapService } from "@/services/MapService";
 import { useNetworkStatus } from "@/services/NetworkServices";
 import { POIService } from "@/services/POIService";
+import { RouteNavigationService } from "@/services/RouteNavigationService";
 import { RouteService } from "@/services/RouteService";
 import { TripMapServices } from "@/services/TripMapService";
 import { TripService } from "@/services/TripService";
@@ -25,6 +26,7 @@ interface AppServices {
 	mapServices: MapService;
 	tripMapServices: TripMapServices;
 	routeService: RouteService;
+	routeNavigationService: RouteNavigationService;
 	expenseServices: ExpenseService;
 	diaryEntryServices: DiaryEntryService;
 	isOnline: boolean | null;
@@ -102,6 +104,11 @@ export function AppServicesProvider({
 		[routesRepository]
 	);
 
+	const routeNavigationService = useMemo(
+		() => new RouteNavigationService(),
+		[],
+	);
+
 	return (
 		<AppServicesContext.Provider value={{
 		tripServices,
@@ -110,6 +117,7 @@ export function AppServicesProvider({
 		mapServices,
 		tripMapServices,
 		routeService,
+		routeNavigationService,
 		expenseServices,
 		diaryEntryServices,
 		isOnline,

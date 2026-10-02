@@ -5,23 +5,26 @@ import { Camera, GeoJSONSource, Layer, Map, Marker } from "@maplibre/maplibre-re
 import * as Location from "expo-location";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, Button, StyleSheet, View } from "react-native";
 
+import { RouteNavigationInfo } from "@/components/map/RouteNavigationInfo";
 import { MAP_STYLE } from "@/constants/map";
 import { Route } from "@/models/Route";
+import { RouteProgress } from "@/services/RouteNavigationService";
 
 export default function MapScreen() {
 	// Retrieve id from parameters
 	const { dayId } = useLocalSearchParams<{ dayId: string }>();
 	
 	// Load databank
-	const { poiServices } = useAppServices();
+	const { poiServices, routeService, routeNavigationService } = useAppServices();
 	const [pois, setPois] = useState<POI[]>([]);
 	const [bounds, setBounds] = useState<{ minLat: number; maxLat: number; minLng: number; maxLng: number; }|null>(null)
 	const [location, setLocation] = useState<Location.LocationObject | null>(null);
-	const { routeService } = useAppServices();
 
 	const [routes, setRoutes] = useState<Route[]>([]);
+	const [activeRoute, setActiveRoute] = useState<Route | null>(null);
+	const [routeProgress, setRouteProgress] = useState<RouteProgress | null>(null);
 	
 	const routeGeoJSON = {
 		type: "FeatureCollection" as const,
@@ -77,11 +80,11 @@ export default function MapScreen() {
 			// Then keep it updated
 			subscription = await Location.watchPositionAsync(
 				{
-				accuracy: Location.Accuracy.High,
-				distanceInterval: 10,
+					accuracy: Location.Accuracy.High,
+					distanceInterval: 10,
 				},
-				(location) => {
-				setLocation(location);
+					(location) => {
+					setLocation(location);
 				}
 			);
 			} catch (error) {
@@ -129,6 +132,21 @@ export default function MapScreen() {
 		};
 	}, [dayId, poiServices, routeService]);
 	
+	useEffect(() => {
+		if (!activeRoute || !location) {
+			setRouteProgress(null);
+			return;
+		}
+	
+		const progress = routeNavigationService.getProgress(
+			activeRoute,
+			location.coords.latitude,
+			location.coords.longitude,
+		);
+	
+		setRouteProgress(progress);
+	}, [activeRoute, location, routeNavigationService]);
+
 	return (
 		<Map
 			style={{ flex: 1 }}
@@ -207,6 +225,15 @@ export default function MapScreen() {
 				onPress={() => setZoom(zoom-1)}
 			/> */}
 
+			{routes.map((route) => (
+				<Button
+					key={route.id}
+					title={route.name ?? "Follow route"}
+					onPress={() => setActiveRoute(route)}
+				/>
+			))}
+			<RouteNavigationInfo progress={routeProgress} />
+			
 			<GeoJSONSource
 				id="imported-routes"
 				data={routeGeoJSON}
