@@ -2,7 +2,7 @@ import { NavigationItem } from "@/components/homescreen/BottomNavigation";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { Trip } from "@/models/Trip";
-import { getDayNumber, getTodayDate } from "@/utils/date";
+import { formatDate, getDayNumber, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import {
@@ -35,6 +35,14 @@ export function useHomeScreen() {
     const [checkInVisible, setCheckInVisible] = useState(false);
 
     const selectedTrip = activeTrips.find((trip) => trip.id === selectedTripId) ?? null;
+
+    const adventureOptions = activeTrips.map((trip) => ({
+        value: trip.id,
+        label: trip.name,
+        description: `${formatDate(trip.startDate)} → ${
+            trip.endDate ? formatDate(trip.endDate) : "∞"
+        }`,
+    }));
 
     useFocusEffect(
         useCallback(() => {
@@ -364,6 +372,9 @@ export function useHomeScreen() {
         bottomItems,
 
         checkInVisible,
+        adventureOptions,
+        
+        setSelectedTripId,
         setCheckInVisible,
 
         selectTrip,

@@ -1,5 +1,5 @@
 import { DayCard } from "@/components/card/DayCard";
-import { AdventureSelector } from "@/components/homescreen/adventureSelector";
+import { Selector } from "@/components/forms/Selector";
 import { AppHeader } from "@/components/homescreen/AppHeader";
 import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { CheckInModal } from "@/components/homescreen/CheckInModal";
@@ -20,6 +20,9 @@ export default function HomeScreen() {
         totalDayNumber,
         bottomItems,
         checkInVisible,
+        adventureOptions,
+        selectedTripId,
+        setSelectedTripId,
         setCheckInVisible,
         selectTrip,
         openDayDetails,
@@ -54,12 +57,12 @@ export default function HomeScreen() {
         />
 
         {hasMultipleTrips && (
-            <AdventureSelector
-            trips={activeTrips}
-            selectedTripId={
-                selectedTrip?.id ?? null
-            }
-            onSelect={selectTrip}
+            <Selector
+                label="CURRENT ADVENTURE"
+                placeholder="SELECT ADVENTURE"
+                options={adventureOptions}
+                selectedValue={selectedTripId}
+                onSelect={setSelectedTripId}
             />
         )}
 
