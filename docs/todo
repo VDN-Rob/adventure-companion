@@ -1,6 +1,3 @@
-Important:
-- Change POI details screen to POI edit screen
-
 QOL:
 - calendar for dates
 - stops sorted by distance from start
@@ -9,36 +6,6 @@ QOL:
 
 UI:
 - Copy/move editing and deleting inside of trip details
-- styling:
-    * index
-    * tripDetailsScreen
-    * createTripScreen
-    * editTripScreen
-    * createDayScreen
-    * dayDetailsScreen
-    * create POI Screen
-    * edit POI Screen
-
-Bugs:
-- possible to go back in index with added trips dissapearing
-
-Validation:
-- Add validation in application layer
-- start date < end date
-- Day date in range trip dates
-- basic validation:
-    * edit Day
-    * create Trip
-    * edit Trip
-    * create POI
-    * edit POI
-- Advanced validation:
-    * create Day
-    * edit Day
-    * create Trip
-    * edit Trip
-    * create POI
-    * edit POI
 
 REfactoring:
 - Move elements into "cards". example:
