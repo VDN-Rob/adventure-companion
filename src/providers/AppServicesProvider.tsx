@@ -1,3 +1,4 @@
+import { AppSettingsService } from "@/services/AppSettingsService";
 import { DayService } from "@/services/DayService";
 import { DiaryEntryService } from "@/services/DiaryEntryService";
 import { ExchangeRateService } from "@/services/ExchangeRateService";
@@ -30,6 +31,7 @@ interface AppServices {
 	expenseServices: ExpenseService;
 	diaryEntryServices: DiaryEntryService;
 	isOnline: boolean | null;
+	appSettingsService: AppSettingsService;
 }
 export const AppServicesContext = createContext<AppServices | null>(null);
 
@@ -109,20 +111,26 @@ export function AppServicesProvider({
 		[],
 	);
 
+	const appSettingsService = useMemo(
+    () => new AppSettingsService(),
+    [],
+);
+
 	return (
 		<AppServicesContext.Provider value={{
-		tripServices,
-		dayServices,
-		poiServices,
-		mapServices,
-		tripMapServices,
-		routeService,
-		routeNavigationService,
-		expenseServices,
-		diaryEntryServices,
-		isOnline,
-		}}>
-		{children}
+			tripServices,
+			dayServices,
+			poiServices,
+			mapServices,
+			tripMapServices,
+			routeService,
+			routeNavigationService,
+			expenseServices,
+			diaryEntryServices,
+			isOnline,
+			appSettingsService
+			}}>
+			{children}
 		</AppServicesContext.Provider>
 	);
 }

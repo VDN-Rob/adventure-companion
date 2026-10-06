@@ -1,7 +1,7 @@
 export type AppLanguage =
     | "en"
     | "fr"
-    | "nl"
+    | "nl";
 
 export type AppCurrency =
     | "EUR"
@@ -11,14 +11,16 @@ export type AppCurrency =
 
 export type AppTimeFormat =
     | "24"
-    | "12"
+    | "12";
 
-export const appSettings = {
-    language: "en",
-    currency: "EUR",
-    timeFormat: "24"
-} satisfies {
+export interface AppSettings {
     language: AppLanguage;
     currency: AppCurrency;
-    timeFormat: string;
+    timeFormat: AppTimeFormat;
+}
+
+export const defaultAppSettings: AppSettings = {
+    language: "en",
+    currency: "EUR",
+    timeFormat: "24",
 };
