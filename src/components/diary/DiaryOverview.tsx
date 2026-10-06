@@ -1,6 +1,7 @@
 import { DiaryItem } from "@/screens/diary/detailsDiaryScreen";
 import { theme } from "@/styling/theme";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { SectionLabel } from "../forms/SectionLabel";
 import { DiaryCard } from "./DiaryEntryCard";
 
