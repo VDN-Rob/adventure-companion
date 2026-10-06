@@ -14,6 +14,7 @@ import { getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TripsScreen() {
 	
@@ -47,7 +48,7 @@ export default function TripsScreen() {
 	const todayDate = getTodayDate();
 	
 	return (
-		<View style={styles.content}>
+		<SafeAreaView style={styles.content}>
 		<ScrollView
 			style={styles.scroll}
 			contentContainerStyle={styles.scrollContent}
@@ -154,7 +155,7 @@ export default function TripsScreen() {
 				</View>
 			)}
 			</ScrollView>
-		</View>
+		</SafeAreaView>
 	);
 }
 

@@ -1,231 +1,201 @@
-import { Day } from "@/models/Day";
-import { DiaryEntry } from "@/models/DiaryEntry";
-import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
-import {
-    router,
-    useFocusEffect,
-    useLocalSearchParams,
-} from "expo-router";
-import { useCallback, useState } from "react";
-import {
-    ActivityIndicator,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
-
 import { DiaryDetail } from "@/components/diary/DiaryDetail";
 import { DiaryOverview } from "@/components/diary/DiaryOverview";
+import { Day } from "@/models/Day";
+import { DiaryEntry } from "@/models/DiaryEntry";
 import { theme } from "@/styling/theme";
+import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
+import { router, useFocusEffect, useLocalSearchParams, } from "expo-router";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export type DiaryItem = {
-  entry: DiaryEntry;
-  day: Day | null;
+	entry: DiaryEntry;
+	day: Day | null;
 };
 
 export default function DetailsDiaryScreen() {
-  const { tripId } =
-    useLocalSearchParams<{
-      tripId: string;
-    }>();
+	const { tripId } = useLocalSearchParams<{tripId: string;}>();
 
-  const {
-    diaryEntryServices,
-    dayServices,
-  } = useAppServices();
+	const { diaryEntryServices, dayServices } = useAppServices();
 
-  const [items, setItems] = useState<DiaryItem[]>([]);
-  const [selectedEntry, setSelectedEntry] =
-    useState<DiaryItem | null>(null);
+	const [items, setItems] = useState<DiaryItem[]>([]);
+	const [selectedEntry, setSelectedEntry] = useState<DiaryItem | null>(null);
 
-  const [isLoading, setIsLoading] =
-    useState(true);
+	const [isLoading, setIsLoading] = useState(true);
 
-  const [error, setError] =
-    useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
-  const loadDiary = useCallback(async () => {
-    if (!tripId) {
-      setError("No adventure was specified.");
-      setItems([]);
-      setIsLoading(false);
-      return;
-    }
+	const loadDiary = useCallback(async () => {
+		if (!tripId) {
+			setError("No adventure was specified.");
+			setItems([]);
+			setIsLoading(false);
+			return;
+		}
 
-    try {
-      setIsLoading(true);
-      setError(null);
+		try {
+			setIsLoading(true);
+			setError(null);
 
-      const entries =
-        await diaryEntryServices.getDiaryEntriesForTrip(
-          tripId
-        );
+			const entries = await diaryEntryServices.getDiaryEntriesForTrip(tripId);
 
-      const diaryItems =
-        await Promise.all(
-          entries.map(async (entry) => {
-            let day: Day | null = null;
+			const diaryItems = await Promise.all(
+				entries.map(async (entry) => {
+					let day: Day | null = null;
 
-            if (entry.dayId) {
-              day = await dayServices.getDayById(
-                entry.dayId
-              );
-            }
+					if (entry.dayId) {
+					day = await dayServices.getDayById(
+						entry.dayId
+					);
+					}
 
-            return {
-              entry,
-              day,
-            };
-          })
-        );
+					return {
+						entry,
+						day,
+					};
+				})
+			);
 
-      diaryItems.sort((a, b) => {
-        const dateA =
-          a.day?.date ??
-          a.entry.createdAt;
+			diaryItems.sort((a, b) => {
+				const dateA =
+				a.day?.date ??
+				a.entry.createdAt;
 
-        const dateB =
-          b.day?.date ??
-          b.entry.createdAt;
+				const dateB =
+				b.day?.date ??
+				b.entry.createdAt;
 
-        return dateB.localeCompare(dateA);
-      });
-      setItems(diaryItems);
+				return dateB.localeCompare(dateA);
+			});
 
-      setSelectedEntry((current) => {
-        if (!current) {
-          return null;
-        }
-  
-        return (
-          diaryItems.find(
-            (item) =>
-              item.entry.id === current.entry.id
-          ) ?? null
-        );
-      });
-    } catch (e) {
-      console.error(
-        "Failed to load diary:",
-        e
-      );
-  
-      setError("Unable to load diary.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    tripId,
-    diaryEntryServices,
-    dayServices,
-  ]);
+			setItems(diaryItems);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadDiary();
-    }, [loadDiary])
-  );
+			setSelectedEntry((current) => {
+				if (!current) {
+					return null;
+				}
+		
+				return (diaryItems.find((item) => item.entry.id === current.entry.id) ?? null);
+			});
+		} catch (e) {
+			console.error("Failed to load diary:", e);
 
-  function openEntry(item: DiaryItem) {
-    setSelectedEntry(item);
-  }
+			setError("Unable to load diary.");
+		} finally {
+			setIsLoading(false);
+		}
+	}, [
+		tripId,
+		diaryEntryServices,
+		dayServices,
+	]);
 
-  function closeEntry() {
-    setSelectedEntry(null);
-  }
+	useFocusEffect(
+		useCallback(() => {
+		loadDiary();
+		}, [loadDiary])
+	);
 
-  function createEntry() {
-    if (!tripId) {
-      return;
-    }
+	function openEntry(item: DiaryItem) {
+		setSelectedEntry(item);
+	}
 
-    router.push({
-      pathname: "/diary/createDiaryEntry",
-      params: {
-        tripId,
-      },
-    });
-  }
+	function closeEntry() {
+		setSelectedEntry(null);
+	}
 
-  function editEntry(entry: DiaryEntry) {
-    router.push({
-      pathname: "/diary/editDiaryEntry",
-      params: {
-        diaryEntryId: entry.id,
-      },
-    });
-  }
+	function createEntry() {
+		if (!tripId) {
+			return;
+		}
 
-  if (isLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.center}>
-          <ActivityIndicator />
+		router.push({
+			pathname: "/diary/createDiaryEntry",
+			params: {
+				tripId,
+			},
+		});
+	}
 
-          <Text style={styles.loading}>
-            Loading diary...
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+	function editEntry(entry: DiaryEntry) {
+		router.push({
+			pathname: "/diary/editDiaryEntry",
+			params: {
+				diaryEntryId: entry.id,
+			},
+		});
+	}
 
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.error}>
-          {error}
-        </Text>
-      </SafeAreaView>
-    );
-  }
+	if (isLoading) {
+		return (
+		<SafeAreaView style={styles.container}>
+			<View style={styles.center}>
+			<ActivityIndicator />
 
-  if (selectedEntry) {
-    return (
-      <DiaryDetail
-        item={selectedEntry}
-        onBack={closeEntry}
-        onEdit={() =>
-          editEntry(selectedEntry.entry)
-        }
-      />
-    );
-  }
+			<Text style={styles.loading}>
+				Loading diary...
+			</Text>
+			</View>
+		</SafeAreaView>
+		);
+	}
 
-  return (
-    <DiaryOverview
-      items={items}
-      onEntryPress={openEntry}
-      onCreatePress={createEntry}
-    />
-  );
+	if (error) {
+		return (
+		<SafeAreaView style={styles.container}>
+			<Text style={styles.error}>
+			{error}
+			</Text>
+		</SafeAreaView>
+		);
+	}
+
+	if (selectedEntry) {
+		return (
+		<DiaryDetail
+			item={selectedEntry}
+			onBack={closeEntry}
+			onEdit={() =>
+			editEntry(selectedEntry.entry)
+			}
+		/>
+		);
+	}
+
+	return (
+		<DiaryOverview
+		items={items}
+		onEntryPress={openEntry}
+		onCreatePress={createEntry}
+		/>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:
-      theme.colours.background,
-  },
+	container: {
+		flex: 1,
+		backgroundColor:
+		theme.colours.background,
+	},
 
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+	center: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
 
-  loading: {
-    marginTop: theme.spacing.sm,
-    fontFamily: theme.fonts.body,
-    fontSize: theme.fontSize.sm,
-    color: theme.colours.textSecondary,
-  },
+	loading: {
+		marginTop: theme.spacing.sm,
+		fontFamily: theme.fonts.body,
+		fontSize: theme.fontSize.sm,
+		color: theme.colours.textSecondary,
+	},
 
-  error: {
-    margin: theme.spacing.md,
-    fontFamily: theme.fonts.body,
-    fontSize: theme.fontSize.sm,
-    color: theme.colours.textSecondary,
-  },
+	error: {
+		margin: theme.spacing.md,
+		fontFamily: theme.fonts.body,
+		fontSize: theme.fontSize.sm,
+		color: theme.colours.textSecondary,
+	},
 });

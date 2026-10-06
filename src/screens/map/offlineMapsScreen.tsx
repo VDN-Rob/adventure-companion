@@ -11,6 +11,7 @@ import {
     Text,
     View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OfflineMapScreen() {
     const { mapServices } = useAppServices();
@@ -106,7 +107,7 @@ export default function OfflineMapScreen() {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>
                     OFFLINE MAPS
@@ -147,7 +148,7 @@ export default function OfflineMapScreen() {
                     )}
                 />
             )}
-        </View>
+        </SafeAreaView>
     );
 }
 

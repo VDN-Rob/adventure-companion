@@ -7,16 +7,17 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreateDayScreen() {
     // Retrieve id from parameters
@@ -31,157 +32,159 @@ export default function CreateDayScreen() {
     const { dayServices} = useAppServices();
 
     async function handleSaveDay() {
-      const errors = validateDayFields({
-        title,
-        date,
-        plannedElevation,
-        plannedDistance
-      });
+		const errors = validateDayFields({
+			title,
+			date,
+			plannedElevation,
+			plannedDistance
+		});
 
-      const firstError = Object.values(errors)[0];
+		const firstError = Object.values(errors)[0];
 
-      if (firstError) {
-        Alert.alert("Invalid day creation", firstError)
-        return;
-      }
+		if (firstError) {
+			Alert.alert("Invalid day creation", firstError)
+			return;
+		}
 
-      const elevation = (plannedElevation === "" ? null : Number(plannedElevation));
-      const distance = (plannedDistance === "" ? null : Number(plannedDistance));
+		const elevation = (plannedElevation === "" ? null : Number(plannedElevation));
+		const distance = (plannedDistance === "" ? null : Number(plannedDistance));
 
-      // Saving
-      const newDay: Day = {
-          id: Crypto.randomUUID(),
-          tripId: tripId,
-          date: date.trim(),
-          title: title.trim() || null,
-          notes: notes.trim() || null,
-          plannedElevation: elevation,
-          plannedDistance: distance,
-      };
+		// Saving
+		const newDay: Day = {
+			id: Crypto.randomUUID(),
+			tripId: tripId,
+			date: date.trim(),
+			title: title.trim() || null,
+			notes: notes.trim() || null,
+			plannedElevation: elevation,
+			plannedDistance: distance,
+		};
 
-      await dayServices.createDay(newDay);
+		await dayServices.createDay(newDay);
 
-      router.back()
+		router.back()
     }
     
     return (
-  <KeyboardAvoidingView
-    style={styles.container}
-    behavior={Platform.OS === "ios" ? "padding" : undefined}
-  >
-    <ScrollView
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-    >
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.backArrow}>←</Text>
-        </Pressable>
+		<SafeAreaView>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === "ios" ? "padding" : undefined}
+			>
+			<ScrollView
+			contentContainerStyle={styles.content}
+			keyboardShouldPersistTaps="handled"
+			showsVerticalScrollIndicator={false}
+			>
+			{/* HEADER */}
+			<View style={styles.header}>
+				<Pressable
+				style={styles.backButton}
+				onPress={() => router.back()}
+				>
+				<Text style={styles.backArrow}>←</Text>
+				</Pressable>
 
-        <View>
-          <Text style={styles.eyebrow}>
-            ADVENTURE PLANNER
-          </Text>
+				<View>
+				<Text style={styles.eyebrow}>
+					ADVENTURE PLANNER
+				</Text>
 
-          <Text style={styles.headerTitle}>
-            PLAN DAY
-          </Text>
-        </View>
-      </View>
+				<Text style={styles.headerTitle}>
+					PLAN DAY
+				</Text>
+				</View>
+			</View>
 
-      {/* SECTION */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>
-          DAY DETAILS
-        </Text>
+			{/* SECTION */}
+			<View style={styles.sectionHeader}>
+				<Text style={styles.sectionTitle}>
+				DAY DETAILS
+				</Text>
 
-        <View style={styles.sectionLine} />
-      </View>
+				<View style={styles.sectionLine} />
+			</View>
 
-      {/* TITLE */}
-      <InputField
-        label="DAY TITLE"
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Through the Ardennes"
-      />
+			{/* TITLE */}
+			<InputField
+				label="DAY TITLE"
+				value={title}
+				onChangeText={setTitle}
+				placeholder="Through the Ardennes"
+			/>
 
-      {/* DATE */}
-      <InputField
-        label="DATE"
-        value={date}
-        onChangeText={setDate}
-        placeholder="2026-08-28"
-        keyboardType="numbers-and-punctuation"
-      />
+			{/* DATE */}
+			<InputField
+				label="DATE"
+				value={date}
+				onChangeText={setDate}
+				placeholder="2026-08-28"
+				keyboardType="numbers-and-punctuation"
+			/>
 
-      {/* DISTANCE + ELEVATION */}
-      <View style={styles.row}>
-        <View style={styles.half}>
-          <InputField
-            label="DISTANCE"
-            value={plannedDistance}
-            onChangeText={setPlannedDistance}
-            placeholder="68.5"
-            keyboardType="decimal-pad"
-            suffix="KM"
-          />
-        </View>
+			{/* DISTANCE + ELEVATION */}
+			<View style={styles.row}>
+				<View style={styles.half}>
+				<InputField
+					label="DISTANCE"
+					value={plannedDistance}
+					onChangeText={setPlannedDistance}
+					placeholder="68.5"
+					keyboardType="decimal-pad"
+					suffix="KM"
+				/>
+				</View>
 
-        <View style={styles.rowGap} />
+				<View style={styles.rowGap} />
 
-        <View style={styles.half}>
-          <InputField
-            label="ELEVATION"
-            value={plannedElevation}
-            onChangeText={setPlannedElevation}
-            placeholder="820"
-            keyboardType="numeric"
-            suffix="M"
-          />
-        </View>
-      </View>
+				<View style={styles.half}>
+				<InputField
+					label="ELEVATION"
+					value={plannedElevation}
+					onChangeText={setPlannedElevation}
+					placeholder="820"
+					keyboardType="numeric"
+					suffix="M"
+				/>
+				</View>
+			</View>
 
-      {/* NOTES */}
-      <View style={styles.notesContainer}>
-        <Text style={styles.label}>
-          NOTES
-        </Text>
+			{/* NOTES */}
+			<View style={styles.notesContainer}>
+				<Text style={styles.label}>
+				NOTES
+				</Text>
 
-        <TextInput
-          value={notes}
-          onChangeText={setNotes}
-          placeholder="Anything important about this day..."
-          placeholderTextColor={theme.colours.textMuted}
-          multiline
-          textAlignVertical="top"
-          style={[
-            styles.input,
-            styles.notesInput,
-          ]}
-        />
-      </View>
+				<TextInput
+				value={notes}
+				onChangeText={setNotes}
+				placeholder="Anything important about this day..."
+				placeholderTextColor={theme.colours.textMuted}
+				multiline
+				textAlignVertical="top"
+				style={[
+					styles.input,
+					styles.notesInput,
+				]}
+				/>
+			</View>
 
-      {/* SAVE */}
-      <Pressable
-        style={styles.saveButton}
-        onPress={handleSaveDay}
-      >
-        <Text style={styles.saveText}>
-          SAVE DAY
-        </Text>
+			{/* SAVE */}
+			<Pressable
+				style={styles.saveButton}
+				onPress={handleSaveDay}
+			>
+				<Text style={styles.saveText}>
+				SAVE DAY
+				</Text>
 
-        <Text style={styles.saveArrow}>
-          →
-        </Text>
-      </Pressable>
-    </ScrollView>
-  </KeyboardAvoidingView>
+				<Text style={styles.saveArrow}>
+				→
+				</Text>
+			</Pressable>
+			</ScrollView>
+		</KeyboardAvoidingView>
+	</SafeAreaView>
 );
 }
 

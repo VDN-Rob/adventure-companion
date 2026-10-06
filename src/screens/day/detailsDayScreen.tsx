@@ -9,6 +9,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function DayDetailsScreen() {
@@ -191,7 +192,7 @@ export default function DayDetailsScreen() {
 	}
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 		<FlatList
 			data={pois}
 			keyExtractor={(poi) => poi.id}
@@ -376,7 +377,7 @@ export default function DayDetailsScreen() {
 			</View>
 			}
 		/>
-		</View>
+		</SafeAreaView>
 	);
 }
 

@@ -8,6 +8,7 @@ import { styles } from "@/styling/styles";
 import { theme } from "@/styling/theme";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useHomeScreen } from "./useHomeScreen";
 
 export default function HomeScreen() {
@@ -37,7 +38,7 @@ export default function HomeScreen() {
     const hasActiveDay = Boolean(selectedTrip && today);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
         <AppHeader
             appName="ELG WANDER"
             tripName={
@@ -179,7 +180,7 @@ export default function HomeScreen() {
             onUndoCheckIn={handleUndoCheckIn}
             />
         )}
-        </View>
+        </SafeAreaView>
     );
 }
 

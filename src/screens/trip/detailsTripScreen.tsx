@@ -8,6 +8,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TripDetailsScreen() {
 	// Retrieve id from parameters
@@ -191,7 +192,7 @@ export default function TripDetailsScreen() {
 	}
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 		<FlatList
 			data={days}
 			keyExtractor={(day) => day.id}
@@ -379,7 +380,7 @@ export default function TripDetailsScreen() {
 			</>
 			}
 		/>
-		</View>
+		</SafeAreaView>
 	);
 }
 

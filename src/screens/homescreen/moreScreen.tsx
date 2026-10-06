@@ -3,74 +3,75 @@ import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { theme } from "@/styling/theme";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MoreScreen() {
 	return (
-		<View style={styles.container}>
-		<View style={styles.content}>
-			<Text style={styles.title}>
-			MENU
-			</Text>
+		<SafeAreaView style={styles.container}>
+			<View style={styles.content}>
+				<Text style={styles.title}>
+				MENU
+				</Text>
 
-			<Text style={styles.subtitle}>
-			YOUR ADVENTURE
-			</Text>
+				<Text style={styles.subtitle}>
+				YOUR ADVENTURE
+				</Text>
 
-			<View style={styles.menu}>
-				<MenuItem
-				icon="⚑"
-				title="Trips"
-				description="Your adventures"
-				onPress={() => { router.push("/trip/trips") }}
-				/>
+				<View style={styles.menu}>
+					<MenuItem
+					icon="⚑"
+					title="Trips"
+					description="Your adventures"
+					onPress={() => { router.push("/trip/trips") }}
+					/>
 
-				<MenuItem
-				icon="◇"
-				title="Finances"
-				description="Money spent on the road"
-				onPress={() => { router.push("/finance/finance")}}
-				/>
+					<MenuItem
+					icon="◇"
+					title="Finances"
+					description="Money spent on the road"
+					onPress={() => { router.push("/finance/finance")}}
+					/>
 
-				<MenuItem
-				icon="✎"
-				title="Diary"
-				description="Your memories from the road"
-				onPress={() => { router.push("/diary/diary") }}
-				/>
+					<MenuItem
+					icon="✎"
+					title="Diary"
+					description="Your memories from the road"
+					onPress={() => { router.push("/diary/diary") }}
+					/>
 
-				<MenuItem
-				icon="[]"
-				title="Maps"
-				description="Your downloaded maps"
-				onPress={() => { router.push("/map/offlineMap") }}
-				/>
+					<MenuItem
+					icon="[]"
+					title="Maps"
+					description="Your downloaded maps"
+					onPress={() => { router.push("/map/offlineMap") }}
+					/>
 
-				<MenuItem
-					icon="⚙"
-					title="Settings"
-					onPress={() => { router.push("/settings")}}
-				/>
-				</View>
-		</View>
+					<MenuItem
+						icon="⚙"
+						title="Settings"
+						onPress={() => { router.push("/settings")}}
+					/>
+					</View>
+			</View>
 
-		<BottomNavigation
-			activeTab="more"
-			items={[
-			{
-				key: "day",
-				icon: "●",
-				label: "Home",
-				onPress: () => router.push("/"),
-			},
-			{
-				key: "map",
-				icon: "◇",
-				label: "Map",
-				onPress: () => router.push("/map/map"),
-			},
-			]}
-		/>
-		</View>
+			<BottomNavigation
+				activeTab="more"
+				items={[
+				{
+					key: "day",
+					icon: "●",
+					label: "Home",
+					onPress: () => router.push("/"),
+				},
+				{
+					key: "map",
+					icon: "◇",
+					label: "Map",
+					onPress: () => router.push("/map/map"),
+				},
+				]}
+			/>
+		</SafeAreaView>
 	);
 }
 

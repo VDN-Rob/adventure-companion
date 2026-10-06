@@ -4,9 +4,9 @@ import { FinanceSummary } from "@/components/finance/FinanceSummary";
 import { FinancePeriod, PeriodSelector } from "@/components/finance/PeriodSelector";
 import { SpendingOverview } from "@/components/finance/SpendingOverview";
 import { TripSelector } from "@/components/finance/TripSelector";
-import { appSettings } from "@/config/appSetting";
 import { Expense } from "@/models/Expense";
 import { Trip } from "@/models/Trip";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { ExpenseStatistics } from "@/services/ExpenseService";
 import { theme } from "@/styling/theme";
 import { ExpenseFilter } from "@/types/expenseFilter";
@@ -14,18 +14,11 @@ import { getDateDaysAgo, getElapsedTripDays, getTodayDate, getTripDuration } fro
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import {
-	ActivityIndicator,
-	FlatList,
-	Pressable,
-	SafeAreaView,
-	StyleSheet,
-	Text,
-	View
-} from "react-native";
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FinanceScreen() {
-	const { tripServices, expenseServices } = useAppServices();
+	const { tripServices, expenseServices, appSettingsService } = useAppServices();
 
 	const [trips, setTrips] = useState<Trip[]>([]);
 	const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
@@ -39,6 +32,8 @@ export default function FinanceScreen() {
 
 	const [selectorVisible, setSelectorVisible] = useState(false);
 
+	const { settings } = useAppSettings();
+
 	const selectedTrip = useMemo(
 		() =>
 		trips.find(
@@ -47,7 +42,7 @@ export default function FinanceScreen() {
 		[trips, selectedTripId]
 	);
 
-	const financeCurrency =	selectedTrip?.budgetCurrency ??	appSettings.currency;
+	const financeCurrency =	selectedTrip?.budgetCurrency ??	settings.currency;
 
 	useFocusEffect(
 		useCallback(() => {

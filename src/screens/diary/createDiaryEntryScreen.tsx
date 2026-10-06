@@ -7,806 +7,760 @@ import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
-  Image,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+	Alert,
+	Image,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
 } from "react-native";
 
 import { Trip } from "@/models/Trip";
 import { theme } from "@/styling/theme";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreateDiaryEntryScreen() {
-  const { tripId } =
-    useLocalSearchParams<{
-      tripId?: string;
-    }>();
+	const { tripId } = useLocalSearchParams<{tripId?: string;}>();
 
-  const {
-    diaryEntryServices,
-    tripServices,
-  } = useAppServices();
+	const { diaryEntryServices, tripServices } = useAppServices();
 
-  const [trip, setTrip] =
-    useState<Trip | null>(null);
+	const [trip, setTrip] = useState<Trip | null>(null);
 
-  const [title, setTitle] =
-    useState("");
+	const [title, setTitle] = useState("");
 
-  const [text, setText] =
-    useState("");
+	const [text, setText] = useState("");
 
-  const [photos, setPhotos] =
-    useState<string[]>([]);
+	const [photos, setPhotos] = useState<string[]>([]);
 
-  const [date, setDate] =
-    useState<string>(getTodayDate());
+	const [date, setDate] = useState<string>(getTodayDate());
 
-  const [showDatePicker, setShowDatePicker] =
-    useState(false);
+	const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [isSaving, setIsSaving] =
-    useState(false);
+	const [isSaving, setIsSaving] = useState(false);
 
-  const [isLoadingTrip, setIsLoadingTrip] =
-    useState(true);
+	const [isLoadingTrip, setIsLoadingTrip] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
+	useEffect(() => {
+		let cancelled = false;
 
-    async function loadTrip() {
-      if (!tripId) {
-        setIsLoadingTrip(false);
-        return;
-      }
+		async function loadTrip() {
+		if (!tripId) {
+			setIsLoadingTrip(false);
+			return;
+		}
 
-      try {
-        const trips =
-          await tripServices.getAllTrips();
+		try {
+			const trips = await tripServices.getAllTrips();
 
-        const selectedTrip =
-          trips.find(
-            (item) => item.id === tripId
-          ) ?? null;
+			const selectedTrip = trips.find((item) => item.id === tripId) ?? null;
 
-        if (cancelled) {
-          return;
-        }
+			if (cancelled) {
+				return;
+			}
 
-        setTrip(selectedTrip);
+			setTrip(selectedTrip);
 
-        if (selectedTrip) {
-          setDate(
-            getDefaultDiaryDate(
-              selectedTrip
-            )
-          );
-        }
-      } catch (error) {
-        console.error(
-          "Failed to load adventure:",
-          error
-        );
-      } finally {
-        if (!cancelled) {
-          setIsLoadingTrip(false);
-        }
-      }
-    }
+			if (selectedTrip) {
+				setDate(
+					getDefaultDiaryDate(
+					selectedTrip
+					)
+				);
+			}
+		} catch (error) {
+			console.error(
+			"Failed to load adventure:",
+			error
+			);
+		} finally {
+			if (!cancelled) {
+				setIsLoadingTrip(false);
+			}
+		}
+		}
 
-    loadTrip();
+		loadTrip();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [tripId, tripServices]);
+		return () => {
+			cancelled = true;
+		};
+	}, [tripId, tripServices]);
 
-  async function handleAddPhoto() {
-    if (photos.length >= 3) {
-      Alert.alert(
-        "Photo limit",
-        "A diary entry can contain up to three photos."
-      );
-      return;
-    }
+	async function handleAddPhoto() {
+		if (photos.length >= 3) {
+			Alert.alert(
+				"Photo limit",
+				"A diary entry can contain up to three photos."
+			);
+			return;
+		}
 
-    const permission =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+		const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (!permission.granted) {
-      Alert.alert(
-        "Permission required",
-        "Please allow access to your photos to add pictures to your diary."
-      );
-      return;
-    }
+		if (!permission.granted) {
+			Alert.alert(
+				"Permission required",
+				"Please allow access to your photos to add pictures to your diary."
+			);
+			return;
+		}
 
-    const result =
-      await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        quality: 0.85,
-      });
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			quality: 0.85,
+		});
 
-    if (result.canceled) {
-      return;
-    }
+		if (result.canceled) {
+			return;
+		}
 
-    const uri =
-      result.assets[0]?.uri;
+		const uri = result.assets[0]?.uri;
 
-    if (!uri) {
-      return;
-    }
+		if (!uri) {
+			return;
+		}
 
-    setPhotos((current) => [
-      ...current,
-      uri,
-    ]);
-  }
+		setPhotos((current) => [
+			...current,
+			uri,
+		]);
+	}
 
-  function handleRemovePhoto(
-    index: number
-  ) {
-    setPhotos((current) =>
-      current.filter(
-        (_, photoIndex) =>
-          photoIndex !== index
-      )
-    );
-  }
+	function handleRemovePhoto(index: number) {
+		setPhotos((current) =>
+		current.filter(
+			(_, photoIndex) =>
+			photoIndex !== index
+		)
+		);
+	}
 
-  function handleDateChange(
-    _: unknown,
-    selectedDate: Date
-  ) {
-    setDate(
-      dateToDateString(selectedDate)
-    );
-  
-    setShowDatePicker(false);
-  }
-  
-  function handleDateDismiss() {
-    setShowDatePicker(false);
-  }
+	function handleDateChange(_: unknown, selectedDate: Date) {
+		setDate(dateToDateString(selectedDate));
 
-  async function handleSave() {
-    if (!tripId) {
-      Alert.alert(
-        "Missing adventure",
-        "No adventure was specified."
-      );
-      return;
-    }
+		setShowDatePicker(false);
+	}
 
-    if (!trip) {
-      Alert.alert(
-        "Adventure unavailable",
-        "The selected adventure could not be found."
-      );
-      return;
-    }
+	function handleDateDismiss() {
+		setShowDatePicker(false);
+	}
 
-    if (!title.trim()) {
-      Alert.alert(
-        "Missing title",
-        "Please give your diary entry a title."
-      );
-      return;
-    }
+	async function handleSave() {
+		if (!tripId) {
+			Alert.alert(
+				"Missing adventure",
+				"No adventure was specified."
+			);
+			return;
+		}
 
-    if (
-      date < trip.startDate ||
-      (trip.endDate !== null &&
-        date > trip.endDate)
-    ) {
-      Alert.alert(
-        "Invalid date",
-        "The diary entry date must be inside the adventure."
-      );
-      return;
-    }
+		if (!trip) {
+			Alert.alert(
+				"Adventure unavailable",
+				"The selected adventure could not be found."
+			);
+			return;
+		}
 
-    try {
-      setIsSaving(true);
+		if (!title.trim()) {
+			Alert.alert(
+				"Missing title",
+				"Please give your diary entry a title."
+			);
+			return;
+		}
 
-      await diaryEntryServices.createDiaryEntry({
-        tripId,
-        date,
+		if (date < trip.startDate || (trip.endDate !== null && date > trip.endDate)) {
+			Alert.alert(
+				"Invalid date",
+				"The diary entry date must be inside the adventure."
+			);
+			return;
+		}
 
-        title: title.trim(),
-        text: text.trim() || null,
+		try {
+			setIsSaving(true);
 
-        photo1: photos[0] ?? null,
-        photo2: photos[1] ?? null,
-        photo3: photos[2] ?? null,
-      });
+			await diaryEntryServices.createDiaryEntry({
+				tripId,
+				date,
 
-      router.back();
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Something went wrong while saving your diary entry.";
-    
-      if (
-        message ===
-        "A diary entry already exists for this date."
-      ) {
-        Alert.alert(
-          "Diary entry already exists",
-          "There is already a diary entry for this date. Please choose another date."
-        );
-    
-        return;
-      }
-    
-      console.error(
-        "Failed to create diary entry:",
-        error
-      );
-    
-      Alert.alert(
-        "Could not save diary entry",
-        "Something went wrong while saving your diary entry."
-      );
-    } finally {
-      setIsSaving(false);
-    }
-  }
+				title: title.trim(),
+				text: text.trim() || null,
 
-  if (isLoadingTrip) {
-    return (
-      <SafeAreaView
-        style={styles.container}
-      >
-        <View style={styles.loading}>
-          <Text style={styles.loadingText}>
-            Loading adventure...
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+				photo1: photos[0] ?? null,
+				photo2: photos[1] ?? null,
+				photo3: photos[2] ?? null,
+			});
 
-  if (!trip) {
-    return (
-      <SafeAreaView
-        style={styles.container}
-      >
-        <View style={styles.loading}>
-          <Text style={styles.error}>
-            The selected adventure could not
-            be found.
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+			router.back();
+		} catch (error) {
+			const message =
+				error instanceof Error
+				? error.message
+				: "Something went wrong while saving your diary entry.";
+		
+			if (message === "A diary entry already exists for this date.") {
+				Alert.alert(
+				"Diary entry already exists",
+				"There is already a diary entry for this date. Please choose another date."
+				);
+			
+				return;
+			}
+			
+			console.error(
+				"Failed to create diary entry:",
+				error
+			);
+			
+			Alert.alert(
+				"Could not save diary entry",
+				"Something went wrong while saving your diary entry."
+			);
+		} finally {
+			setIsSaving(false);
+		}
+	}
 
-  const minimumDate =
-    dateStringToLocalDate(
-      trip.startDate
-    );
+	if (isLoadingTrip) {
+		return (
+		<SafeAreaView
+			style={styles.container}
+		>
+			<View style={styles.loading}>
+			<Text style={styles.loadingText}>
+				Loading adventure...
+			</Text>
+			</View>
+		</SafeAreaView>
+		);
+	}
 
-  const maximumDate =
-    trip.endDate !== null
-      ? dateStringToLocalDate(
-          trip.endDate
-        )
-      : undefined;
+	if (!trip) {
+		return (
+		<SafeAreaView
+			style={styles.container}
+		>
+			<View style={styles.loading}>
+			<Text style={styles.error}>
+				The selected adventure could not
+				be found.
+			</Text>
+			</View>
+		</SafeAreaView>
+		);
+	}
 
-  const selectedDate =
-    dateStringToLocalDate(date);
+	const minimumDate =
+		dateStringToLocalDate(
+		trip.startDate
+		);
 
-  return (
-    <SafeAreaView
-      style={styles.container}
-    >
-      <ScrollView
-        contentContainerStyle={
-          styles.content
-        }
-        keyboardShouldPersistTaps="handled"
-      >
-        <Pressable
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Text style={styles.backText}>
-            ← BACK
-          </Text>
-        </Pressable>
+	const maximumDate =
+		trip.endDate !== null
+		? dateStringToLocalDate(
+			trip.endDate
+			)
+		: undefined;
 
-        <Text style={styles.kicker}>
-          {trip.name}
-        </Text>
+	const selectedDate =
+		dateStringToLocalDate(date);
 
-        <Text style={styles.title}>
-          NEW DIARY ENTRY
-        </Text>
+	return (
+		<SafeAreaView
+		style={styles.container}
+		>
+			<ScrollView
+				contentContainerStyle={
+				styles.content
+				}
+				keyboardShouldPersistTaps="handled"
+			>
+				<Pressable
+				onPress={() => router.back()}
+				style={styles.backButton}
+				>
+				<Text style={styles.backText}>
+					← BACK
+				</Text>
+				</Pressable>
 
-        <SectionLabel title="DATE" />
+				<Text style={styles.kicker}>
+				{trip.name}
+				</Text>
 
-        <Pressable
-          onPress={() =>
-            setShowDatePicker(true)
-          }
-          style={({ pressed }) => [
-            styles.dateButton,
-            pressed &&
-              styles.dateButtonPressed,
-          ]}
-        >
-          <View>
-            <Text style={styles.dateLabel}>
-              ENTRY DATE
-            </Text>
+				<Text style={styles.title}>
+				NEW DIARY ENTRY
+				</Text>
 
-            <Text style={styles.dateValue}>
-              {formatDate(date)}
-            </Text>
-          </View>
+				<SectionLabel title="DATE" />
 
-          <Text style={styles.dateArrow}>
-            ▼
-          </Text>
-        </Pressable>
+				<Pressable
+				onPress={() =>
+					setShowDatePicker(true)
+				}
+				style={({ pressed }) => [
+					styles.dateButton,
+					pressed &&
+					styles.dateButtonPressed,
+				]}
+				>
+				<View>
+					<Text style={styles.dateLabel}>
+					ENTRY DATE
+					</Text>
 
-        {showDatePicker && (
-          <View style={styles.datePicker}>
-            <DateTimePicker
-              value={selectedDate}
-              mode="date"
-              display="default"
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
-              onValueChange={handleDateChange}
-              onDismiss={handleDateDismiss}
-            />
-          </View>
-        )}
+					<Text style={styles.dateValue}>
+					{formatDate(date)}
+					</Text>
+				</View>
 
-        <SectionLabel title="ENTRY" />
+				<Text style={styles.dateArrow}>
+					▼
+				</Text>
+				</Pressable>
 
-        <InputField
-          label="Title"
-          value={title}
-          onChangeText={setTitle}
-          placeholder="A day worth remembering"
-        />
+				{showDatePicker && (
+				<View style={styles.datePicker}>
+					<DateTimePicker
+					value={selectedDate}
+					mode="date"
+					display="default"
+					minimumDate={minimumDate}
+					maximumDate={maximumDate}
+					onValueChange={handleDateChange}
+					onDismiss={handleDateDismiss}
+					/>
+				</View>
+				)}
 
-        <View
-          style={styles.textContainer}
-        >
-          <Text style={styles.textLabel}>
-            Story
-          </Text>
+				<SectionLabel title="ENTRY" />
 
-          <Text style={styles.optional}>
-            OPTIONAL
-          </Text>
+				<InputField
+				label="Title"
+				value={title}
+				onChangeText={setTitle}
+				placeholder="A day worth remembering"
+				/>
 
-          <View
-            style={styles.textInputWrapper}
-          >
-            <TextInput
-              value={text}
-              onChangeText={setText}
-              placeholder="What happened today?"
-              placeholderTextColor={
-                theme.colours.textMuted
-              }
-              multiline
-              textAlignVertical="top"
-              style={styles.textInput}
-            />
-          </View>
-        </View>
+				<View
+				style={styles.textContainer}
+				>
+				<Text style={styles.textLabel}>
+					Story
+				</Text>
 
-        <SectionLabel title="PHOTOS" />
+				<Text style={styles.optional}>
+					OPTIONAL
+				</Text>
 
-        <View style={styles.photoGrid}>
-          {photos.map(
-            (uri, index) => (
-              <View
-                key={`${uri}-${index}`}
-                style={
-                  styles.photoContainer
-                }
-              >
-                <Image
-                  source={{ uri }}
-                  style={styles.photo}
-                />
+				<View
+					style={styles.textInputWrapper}
+				>
+					<TextInput
+					value={text}
+					onChangeText={setText}
+					placeholder="What happened today?"
+					placeholderTextColor={
+						theme.colours.textMuted
+					}
+					multiline
+					textAlignVertical="top"
+					style={styles.textInput}
+					/>
+				</View>
+				</View>
 
-                <Pressable
-                  onPress={() =>
-                    handleRemovePhoto(
-                      index
-                    )
-                  }
-                  style={
-                    styles.removeButton
-                  }
-                >
-                  <Text
-                    style={
-                      styles.removeText
-                    }
-                  >
-                    ×
-                  </Text>
-                </Pressable>
-              </View>
-            )
-          )}
+				<SectionLabel title="PHOTOS" />
 
-          {photos.length < 3 && (
-            <Pressable
-              onPress={handleAddPhoto}
-              style={({
-                pressed,
-              }) => [
-                styles.addPhoto,
-                pressed &&
-                  styles.addPhotoPressed,
-              ]}
-            >
-              <Text
-                style={
-                  styles.addPhotoIcon
-                }
-              >
-                +
-              </Text>
+				<View style={styles.photoGrid}>
+				{photos.map(
+					(uri, index) => (
+					<View
+						key={`${uri}-${index}`}
+						style={
+						styles.photoContainer
+						}
+					>
+						<Image
+						source={{ uri }}
+						style={styles.photo}
+						/>
 
-              <Text
-                style={
-                  styles.addPhotoText
-                }
-              >
-                ADD PHOTO
-              </Text>
-            </Pressable>
-          )}
-        </View>
+						<Pressable
+						onPress={() =>
+							handleRemovePhoto(
+							index
+							)
+						}
+						style={
+							styles.removeButton
+						}
+						>
+						<Text
+							style={
+							styles.removeText
+							}
+						>
+							×
+						</Text>
+						</Pressable>
+					</View>
+					)
+				)}
 
-        <Text style={styles.photoHint}>
-          {photos.length}/3 photos
-        </Text>
+				{photos.length < 3 && (
+					<Pressable
+					onPress={handleAddPhoto}
+					style={({
+						pressed,
+					}) => [
+						styles.addPhoto,
+						pressed &&
+						styles.addPhotoPressed,
+					]}
+					>
+					<Text
+						style={
+						styles.addPhotoIcon
+						}
+					>
+						+
+					</Text>
 
-        <Pressable
-          onPress={handleSave}
-          disabled={isSaving}
-          style={({ pressed }) => [
-            styles.saveButton,
-            pressed &&
-              styles.saveButtonPressed,
-            isSaving &&
-              styles.saveButtonDisabled,
-          ]}
-        >
-          <Text style={styles.saveText}>
-            {isSaving
-              ? "SAVING..."
-              : "SAVE ENTRY"}
-          </Text>
-        </Pressable>
-      </ScrollView>
-    </SafeAreaView>
-  );
+					<Text
+						style={
+						styles.addPhotoText
+						}
+					>
+						ADD PHOTO
+					</Text>
+					</Pressable>
+				)}
+				</View>
+
+				<Text style={styles.photoHint}>
+				{photos.length}/3 photos
+				</Text>
+
+				<Pressable
+				onPress={handleSave}
+				disabled={isSaving}
+				style={({ pressed }) => [
+					styles.saveButton,
+					pressed &&
+					styles.saveButtonPressed,
+					isSaving &&
+					styles.saveButtonDisabled,
+				]}
+				>
+				<Text style={styles.saveText}>
+					{isSaving
+					? "SAVING..."
+					: "SAVE ENTRY"}
+				</Text>
+				</Pressable>
+			</ScrollView>
+		</SafeAreaView>
+	);
 }
 
-function getDefaultDiaryDate(
-  trip: Trip
-): string {
-  const today = getTodayDate();
+function getDefaultDiaryDate(trip: Trip): string {
+	const today = getTodayDate();
 
-  if (
-    today >= trip.startDate &&
-    (trip.endDate === null ||
-      today <= trip.endDate)
-  ) {
-    return today;
-  }
+	if (
+		today >= trip.startDate &&
+		(trip.endDate === null ||
+		today <= trip.endDate)
+	) {
+		return today;
+	}
 
-  if (today < trip.startDate) {
-    return trip.startDate;
-  }
+	if (today < trip.startDate) {
+		return trip.startDate;
+	}
 
-  return trip.endDate ?? today;
+	return trip.endDate ?? today;
 }
 
-function dateStringToLocalDate(
-  value: string
-): Date {
-  const [
-    year,
-    month,
-    day,
-  ] = value
-    .split("-")
-    .map(Number);
+function dateStringToLocalDate(value: string): Date {
+	const [
+		year,
+		month,
+		day,
+	] = value
+		.split("-")
+		.map(Number);
 
-  return new Date(
-    year,
-    month - 1,
-    day
-  );
+	return new Date(
+		year,
+		month - 1,
+		day
+	);
 }
 
-function dateToDateString(
-  value: Date
-): string {
-  const year =
-    value.getFullYear();
+function dateToDateString(value: Date): string {
+	const year = value.getFullYear();
 
-  const month = String(
-    value.getMonth() + 1
-  ).padStart(2, "0");
+	const month = String(value.getMonth() + 1).padStart(2, "0");
 
-  const day = String(
-    value.getDate()
-  ).padStart(2, "0");
+	const day = String(value.getDate()).padStart(2, "0");
 
-  return `${year}-${month}-${day}`;
+	return `${year}-${month}-${day}`;
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:
-      theme.colours.background,
-  },
+	container: {
+		flex: 1,
+		backgroundColor:
+		theme.colours.background,
+	},
 
-  content: {
-    padding: theme.spacing.md,
-    paddingBottom: theme.spacing.xl,
-  },
+	content: {
+		padding: theme.spacing.md,
+		paddingBottom: theme.spacing.xl,
+	},
 
-  backButton: {
-    alignSelf: "flex-start",
-    marginBottom: theme.spacing.lg,
-  },
+	backButton: {
+		alignSelf: "flex-start",
+		marginBottom: theme.spacing.lg,
+	},
 
-  backText: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: theme.fontSize.xs,
-    letterSpacing: 1.2,
-    color: theme.colours.accent,
-  },
+	backText: {
+		fontFamily: theme.fonts.bodyBold,
+		fontSize: theme.fontSize.xs,
+		letterSpacing: 1.2,
+		color: theme.colours.accent,
+	},
 
-  kicker: {
-    marginBottom: theme.spacing.xs,
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: theme.fontSize.xs,
-    letterSpacing: 1.5,
-    color: theme.colours.accent,
-  },
+	kicker: {
+		marginBottom: theme.spacing.xs,
+		fontFamily: theme.fonts.bodyBold,
+		fontSize: theme.fontSize.xs,
+		letterSpacing: 1.5,
+		color: theme.colours.accent,
+	},
 
-  title: {
-    marginBottom: theme.spacing.lg,
-    fontFamily: theme.fonts.displayBold,
-    fontSize: theme.fontSize.xl,
-    color: theme.colours.text,
-  },
+	title: {
+		marginBottom: theme.spacing.lg,
+		fontFamily: theme.fonts.displayBold,
+		fontSize: theme.fontSize.xl,
+		color: theme.colours.text,
+	},
 
-  dateButton: {
-    minHeight: 64,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderWidth: 1,
-    borderColor: theme.colours.border,
-    borderRadius: theme.radius.md,
-    backgroundColor:
-      theme.colours.surface,
-  },
+	dateButton: {
+		minHeight: 64,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginBottom: theme.spacing.md,
+		paddingHorizontal: theme.spacing.md,
+		paddingVertical: theme.spacing.sm,
+		borderWidth: 1,
+		borderColor: theme.colours.border,
+		borderRadius: theme.radius.md,
+		backgroundColor:
+		theme.colours.surface,
+	},
 
-  dateButtonPressed: {
-    backgroundColor:
-      theme.colours.surfaceRaised,
-    borderColor:
-      theme.colours.accent,
-  },
+	dateButtonPressed: {
+		backgroundColor:
+		theme.colours.surfaceRaised,
+		borderColor:
+		theme.colours.accent,
+	},
 
-  dateLabel: {
-    marginBottom: 2,
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: theme.fontSize.xs,
-    letterSpacing: 1,
-    color: theme.colours.textMuted,
-  },
+	dateLabel: {
+		marginBottom: 2,
+		fontFamily: theme.fonts.bodyBold,
+		fontSize: theme.fontSize.xs,
+		letterSpacing: 1,
+		color: theme.colours.textMuted,
+	},
 
-  dateValue: {
-    fontFamily: theme.fonts.displayBold,
-    fontSize: theme.fontSize.lg,
-    color: theme.colours.text,
-  },
+	dateValue: {
+		fontFamily: theme.fonts.displayBold,
+		fontSize: theme.fontSize.lg,
+		color: theme.colours.text,
+	},
 
-  dateArrow: {
-    fontFamily: theme.fonts.displayBold,
-    fontSize: theme.fontSize.sm,
-    color: theme.colours.textMuted,
-  },
+	dateArrow: {
+		fontFamily: theme.fonts.displayBold,
+		fontSize: theme.fontSize.sm,
+		color: theme.colours.textMuted,
+	},
 
-  datePicker: {
-    alignItems: "center",
-    marginBottom: theme.spacing.lg,
-  },
+	datePicker: {
+		alignItems: "center",
+		marginBottom: theme.spacing.lg,
+	},
 
-  textContainer: {
-    marginTop: theme.spacing.md,
-  },
+	textContainer: {
+		marginTop: theme.spacing.md,
+	},
 
-  textLabel: {
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: theme.fontSize.sm,
-    color: theme.colours.text,
-  },
+	textLabel: {
+		fontFamily: theme.fonts.bodyBold,
+		fontSize: theme.fontSize.sm,
+		color: theme.colours.text,
+	},
 
-  optional: {
-    position: "absolute",
-    right: 0,
-    top: 2,
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: theme.fontSize.xs,
-    letterSpacing: 1,
-    color: theme.colours.textMuted,
-  },
+	optional: {
+		position: "absolute",
+		right: 0,
+		top: 2,
+		fontFamily: theme.fonts.bodyBold,
+		fontSize: theme.fontSize.xs,
+		letterSpacing: 1,
+		color: theme.colours.textMuted,
+	},
 
-  textInputWrapper: {
-    marginTop: theme.spacing.xs,
-    minHeight: 140,
-    borderWidth: 1,
-    borderColor: theme.colours.border,
-    borderRadius: theme.radius.md,
-    backgroundColor:
-      theme.colours.surface,
-  },
+	textInputWrapper: {
+		marginTop: theme.spacing.xs,
+		minHeight: 140,
+		borderWidth: 1,
+		borderColor: theme.colours.border,
+		borderRadius: theme.radius.md,
+		backgroundColor:
+		theme.colours.surface,
+	},
 
-  textInput: {
-    flex: 1,
-    minHeight: 140,
-    padding: theme.spacing.md,
-    fontFamily: theme.fonts.body,
-    fontSize: theme.fontSize.md,
-    color: theme.colours.text,
-  },
+	textInput: {
+		flex: 1,
+		minHeight: 140,
+		padding: theme.spacing.md,
+		fontFamily: theme.fonts.body,
+		fontSize: theme.fontSize.md,
+		color: theme.colours.text,
+	},
 
-  photoGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: theme.spacing.sm,
-  },
+	photoGrid: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		gap: theme.spacing.sm,
+	},
 
-  photoContainer: {
-    width: 100,
-    height: 100,
-    position: "relative",
-  },
+	photoContainer: {
+		width: 100,
+		height: 100,
+		position: "relative",
+	},
 
-  photo: {
-    width: "100%",
-    height: "100%",
-    borderRadius: theme.radius.md,
-  },
+	photo: {
+		width: "100%",
+		height: "100%",
+		borderRadius: theme.radius.md,
+	},
 
-  removeButton: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor:
-      theme.colours.background,
-    borderWidth: 1,
-    borderColor: theme.colours.border,
-  },
+	removeButton: {
+		position: "absolute",
+		top: 4,
+		right: 4,
+		width: 26,
+		height: 26,
+		borderRadius: 13,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor:
+		theme.colours.background,
+		borderWidth: 1,
+		borderColor: theme.colours.border,
+	},
 
-  removeText: {
-    fontFamily: theme.fonts.displayBold,
-    fontSize: theme.fontSize.md,
-    color: theme.colours.text,
-    lineHeight: 22,
-  },
+	removeText: {
+		fontFamily: theme.fonts.displayBold,
+		fontSize: theme.fontSize.md,
+		color: theme.colours.text,
+		lineHeight: 22,
+	},
 
-  addPhoto: {
-    width: 100,
-    height: 100,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderStyle: "dashed",
-    borderColor: theme.colours.border,
-    borderRadius: theme.radius.md,
-    backgroundColor:
-      theme.colours.surface,
-  },
+	addPhoto: {
+		width: 100,
+		height: 100,
+		alignItems: "center",
+		justifyContent: "center",
+		borderWidth: 1,
+		borderStyle: "dashed",
+		borderColor: theme.colours.border,
+		borderRadius: theme.radius.md,
+		backgroundColor:
+		theme.colours.surface,
+	},
 
-  addPhotoPressed: {
-    backgroundColor:
-      theme.colours.surfaceRaised,
-    borderColor:
-      theme.colours.accent,
-  },
+	addPhotoPressed: {
+		backgroundColor:
+		theme.colours.surfaceRaised,
+		borderColor:
+		theme.colours.accent,
+	},
 
-  addPhotoIcon: {
-    fontFamily: theme.fonts.displayBold,
-    fontSize: theme.fontSize.xl,
-    color: theme.colours.accent,
-  },
+	addPhotoIcon: {
+		fontFamily: theme.fonts.displayBold,
+		fontSize: theme.fontSize.xl,
+		color: theme.colours.accent,
+	},
 
-  addPhotoText: {
-    marginTop: 2,
-    fontFamily: theme.fonts.bodyBold,
-    fontSize: theme.fontSize.xs,
-    letterSpacing: 1,
-    color: theme.colours.textSecondary,
-  },
+	addPhotoText: {
+		marginTop: 2,
+		fontFamily: theme.fonts.bodyBold,
+		fontSize: theme.fontSize.xs,
+		letterSpacing: 1,
+		color: theme.colours.textSecondary,
+	},
 
-  photoHint: {
-    marginTop: theme.spacing.xs,
-    fontFamily: theme.fonts.body,
-    fontSize: theme.fontSize.xs,
-    color: theme.colours.textMuted,
-  },
+	photoHint: {
+		marginTop: theme.spacing.xs,
+		fontFamily: theme.fonts.body,
+		fontSize: theme.fontSize.xs,
+		color: theme.colours.textMuted,
+	},
 
-  saveButton: {
-    marginTop: theme.spacing.xl,
-    minHeight: 52,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: theme.radius.md,
-    backgroundColor:
-      theme.colours.accent,
-  },
+	saveButton: {
+		marginTop: theme.spacing.xl,
+		minHeight: 52,
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: theme.radius.md,
+		backgroundColor:
+		theme.colours.accent,
+	},
 
-  saveButtonPressed: {
-    opacity: 0.75,
-  },
+	saveButtonPressed: {
+		opacity: 0.75,
+	},
 
-  saveButtonDisabled: {
-    opacity: 0.5,
-  },
+	saveButtonDisabled: {
+		opacity: 0.5,
+	},
 
-  saveText: {
-    fontFamily: theme.fonts.displayBold,
-    fontSize: theme.fontSize.md,
-    letterSpacing: 1.5,
-    color: theme.colours.background,
-  },
+	saveText: {
+		fontFamily: theme.fonts.displayBold,
+		fontSize: theme.fontSize.md,
+		letterSpacing: 1.5,
+		color: theme.colours.background,
+	},
 
-  loading: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: theme.spacing.md,
-  },
+	loading: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		padding: theme.spacing.md,
+	},
 
-  loadingText: {
-    fontFamily: theme.fonts.body,
-    fontSize: theme.fontSize.sm,
-    color: theme.colours.textSecondary,
-  },
+	loadingText: {
+		fontFamily: theme.fonts.body,
+		fontSize: theme.fontSize.sm,
+		color: theme.colours.textSecondary,
+	},
 
-  error: {
-    fontFamily: theme.fonts.body,
-    fontSize: theme.fontSize.sm,
-    textAlign: "center",
-    color: theme.colours.textSecondary,
-  },
+	error: {
+		fontFamily: theme.fonts.body,
+		fontSize: theme.fontSize.sm,
+		textAlign: "center",
+		color: theme.colours.textSecondary,
+	},
 });

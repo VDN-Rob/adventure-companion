@@ -1,327 +1,309 @@
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { DiaryEntry } from "@/models/DiaryEntry";
+import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-    Alert,
-    Image,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
-} from "react-native";
-
-import { theme } from "@/styling/theme";
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditDiaryEntryScreen() {
-  const { diaryEntryId } =
-    useLocalSearchParams<{
-      diaryEntryId: string;
-    }>();
+	const { diaryEntryId } = useLocalSearchParams<{diaryEntryId: string;}>();
 
-  const { diaryEntryServices } = useAppServices();
+	const { diaryEntryServices } = useAppServices();
 
-  const [entry, setEntry] =
-    useState<DiaryEntry | null>(null);
+	const [entry, setEntry] = useState<DiaryEntry | null>(null);
 
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [photos, setPhotos] = useState<string[]>([]);
+	const [title, setTitle] = useState("");
+	const [text, setText] = useState("");
+	const [photos, setPhotos] = useState<string[]>([]);
 
-  useEffect(() => {
-    async function loadEntry() {
-      if (!diaryEntryId) {
-        return;
-      }
+	useEffect(() => {
+		async function loadEntry() {
+			if (!diaryEntryId) {
+				return;
+			}
 
-      try {
-        const result =
-          await diaryEntryServices.getDiaryEntryById(diaryEntryId);
+			try {
+				const result =
+				await diaryEntryServices.getDiaryEntryById(diaryEntryId);
 
-        if (!result) {
-          Alert.alert(
-            "Diary entry not found",
-            "This diary entry could not be found."
-          );
-          router.back();
-          return;
-        }
+				if (!result) {
+					Alert.alert(
+						"Diary entry not found",
+						"This diary entry could not be found."
+					);
+					router.back();
+					return;
+				}
 
-        setEntry(result);
-        setTitle(result.title);
-        setText(result.text ?? "");
+				setEntry(result);
+				setTitle(result.title);
+				setText(result.text ?? "");
 
-        setPhotos(
-          [
-            result.photo1,
-            result.photo2,
-            result.photo3,
-          ].filter(
-            (photo): photo is string => photo !== null
-          )
-        );
-      } catch {
-        Alert.alert(
-          "Could not load diary entry",
-          "Something went wrong while loading the diary entry."
-        );
-        router.back();
-      }
-    }
+				setPhotos(
+					[
+						result.photo1,
+						result.photo2,
+						result.photo3,
+					].filter(
+						(photo): photo is string => photo !== null
+					)
+				);
+			} catch {
+				Alert.alert(
+					"Could not load diary entry",
+					"Something went wrong while loading the diary entry."
+					);
+				router.back();
+			}
+		}
 
-    loadEntry();
-  }, [diaryEntryId]);
+		loadEntry();
+	}, [diaryEntryId]);
 
-  async function handleAddPhoto() {
-    if (photos.length >= 3) {
-      Alert.alert(
-        "Photo limit",
-        "A diary entry can contain up to three photos."
-      );
-      return;
-    }
+	async function handleAddPhoto() {
+		if (photos.length >= 3) {
+			Alert.alert(
+				"Photo limit",
+				"A diary entry can contain up to three photos."
+			);
+			return;
+		}
 
-    const permission =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+		const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (!permission.granted) {
-      Alert.alert(
-        "Permission required",
-        "Please allow access to your photos to add pictures to your diary."
-      );
-      return;
-    }
+		if (!permission.granted) {
+			Alert.alert(
+				"Permission required",
+				"Please allow access to your photos to add pictures to your diary."
+			);
+			return;
+		}
 
-    const result =
-      await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        quality: 0.85,
-      });
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"],
+			allowsEditing: true,
+			quality: 0.85,
+		});
 
-    if (result.canceled) {
-      return;
-    }
+		if (result.canceled) {
+			return;
+		}
 
-    const uri = result.assets[0]?.uri;
+		const uri = result.assets[0]?.uri;
 
-    if (!uri) {
-      return;
-    }
+		if (!uri) {
+			return;
+		}
 
-    setPhotos((current) => [...current, uri]);
-  }
+		setPhotos((current) => [...current, uri]);
+	}
 
-  function handleRemovePhoto(index: number) {
-    setPhotos((current) =>
-      current.filter((_, photoIndex) => photoIndex !== index)
-    );
-  }
+	function handleRemovePhoto(index: number) {
+		setPhotos((current) => current.filter((_, photoIndex) => photoIndex !== index));
+	}
 
-  async function handleSave() {
-    if (!entry) {
-      return;
-    }
+	async function handleSave() {
+		if (!entry) {
+			return;
+		}
 
-    if (!title.trim()) {
-      Alert.alert(
-        "Missing title",
-        "Please give your diary entry a title."
-      );
-      return;
-    }
+		if (!title.trim()) {
+			Alert.alert(
+				"Missing title",
+				"Please give your diary entry a title."
+			);
+			return;
+		}
 
-    const updatedEntry: DiaryEntry = {
-      ...entry,
+		const updatedEntry: DiaryEntry = {
+			...entry,
 
-      title: title.trim(),
-      text: text.trim() || null,
+			title: title.trim(),
+			text: text.trim() || null,
 
-      photo1: photos[0] ?? null,
-      photo2: photos[1] ?? null,
-      photo3: photos[2] ?? null,
+			photo1: photos[0] ?? null,
+			photo2: photos[1] ?? null,
+			photo3: photos[2] ?? null,
 
-      updatedAt: new Date().toISOString(),
-    };
+			updatedAt: new Date().toISOString(),
+		};
 
-    try {
-      await diaryEntryServices.updateDiaryEntry(updatedEntry);
-      router.back();
-    } catch {
-      Alert.alert(
-        "Could not save diary entry",
-        "Something went wrong while saving your changes."
-      );
-    }
-  }
+		try {
+			await diaryEntryServices.updateDiaryEntry(updatedEntry);
+			router.back();
+		} catch {
+			Alert.alert(
+				"Could not save diary entry",
+				"Something went wrong while saving your changes."
+			);
+		}
+	}
 
-  function handleDelete() {
-    Alert.alert(
-      "Delete diary entry?",
-      "This memory will be permanently deleted.",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: deleteEntry,
-        },
-      ]
-    );
-  }
+	function handleDelete() {
+		Alert.alert(
+		"Delete diary entry?",
+		"This memory will be permanently deleted.",
+		[
+			{
+			text: "Cancel",
+			style: "cancel",
+			},
+			{
+			text: "Delete",
+			style: "destructive",
+			onPress: deleteEntry,
+			},
+		]
+		);
+	}
 
-  async function deleteEntry() {
-    if (!diaryEntryId) {
-      return;
-    }
+	async function deleteEntry() {
+		if (!diaryEntryId) {
+			return;
+		}
 
-    try {
-      await diaryEntryServices.deleteDiaryEntry(
-        diaryEntryId
-      );
+		try {
+			await diaryEntryServices.deleteDiaryEntry(
+				diaryEntryId
+			);
 
-      router.back();
-    } catch {
-      Alert.alert(
-        "Could not delete diary entry",
-        "Something went wrong while deleting the entry."
-      );
-    }
-  }
+			router.back();
+		} catch {
+			Alert.alert(
+				"Could not delete diary entry",
+				"Something went wrong while deleting the entry."
+			);
+		}
+	}
 
-  if (!entry) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.loading}>
-          Loading...
-        </Text>
-      </SafeAreaView>
-    );
-  }
+	if (!entry) {
+		return (
+		<SafeAreaView style={styles.container}>
+			<Text style={styles.loading}>
+			Loading...
+			</Text>
+		</SafeAreaView>
+		);
+	}
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Text style={styles.title}>EDIT DIARY ENTRY</Text>
+	return (
+		<SafeAreaView style={styles.container}>
+		<ScrollView
+			contentContainerStyle={styles.content}
+			keyboardShouldPersistTaps="handled"
+		>
+			<Text style={styles.title}>EDIT DIARY ENTRY</Text>
 
-        <SectionLabel title="ENTRY" />
+			<SectionLabel title="ENTRY" />
 
-        <InputField
-          label="Title"
-          value={title}
-          onChangeText={setTitle}
-          placeholder="A day worth remembering"
-        />
+			<InputField
+			label="Title"
+			value={title}
+			onChangeText={setTitle}
+			placeholder="A day worth remembering"
+			/>
 
-        <View style={styles.textContainer}>
-          <Text style={styles.textLabel}>Story</Text>
+			<View style={styles.textContainer}>
+			<Text style={styles.textLabel}>Story</Text>
 
-          <Text style={styles.optional}>
-            OPTIONAL
-          </Text>
+			<Text style={styles.optional}>
+				OPTIONAL
+			</Text>
 
-          <View style={styles.textInputWrapper}>
-            <TextInput
-              value={text}
-              onChangeText={setText}
-              placeholder="What happened today?"
-              placeholderTextColor={
-                theme.colours.textMuted
-              }
-              multiline
-              textAlignVertical="top"
-              style={styles.textInput}
-            />
-          </View>
-        </View>
+			<View style={styles.textInputWrapper}>
+				<TextInput
+				value={text}
+				onChangeText={setText}
+				placeholder="What happened today?"
+				placeholderTextColor={
+					theme.colours.textMuted
+				}
+				multiline
+				textAlignVertical="top"
+				style={styles.textInput}
+				/>
+			</View>
+			</View>
 
-        <SectionLabel title="PHOTOS" />
+			<SectionLabel title="PHOTOS" />
 
-        <View style={styles.photoGrid}>
-          {photos.map((uri, index) => (
-            <View
-              key={`${uri}-${index}`}
-              style={styles.photoContainer}
-            >
-              <Image
-                source={{ uri }}
-                style={styles.photo}
-              />
+			<View style={styles.photoGrid}>
+			{photos.map((uri, index) => (
+				<View
+				key={`${uri}-${index}`}
+				style={styles.photoContainer}
+				>
+				<Image
+					source={{ uri }}
+					style={styles.photo}
+				/>
 
-              <Pressable
-                onPress={() =>
-                  handleRemovePhoto(index)
-                }
-                style={styles.removeButton}
-              >
-                <Text style={styles.removeText}>
-                  ×
-                </Text>
-              </Pressable>
-            </View>
-          ))}
+				<Pressable
+					onPress={() =>
+					handleRemovePhoto(index)
+					}
+					style={styles.removeButton}
+				>
+					<Text style={styles.removeText}>
+					×
+					</Text>
+				</Pressable>
+				</View>
+			))}
 
-          {photos.length < 3 && (
-            <Pressable
-              onPress={handleAddPhoto}
-              style={({ pressed }) => [
-                styles.addPhoto,
-                pressed && styles.addPhotoPressed,
-              ]}
-            >
-              <Text style={styles.addPhotoIcon}>
-                +
-              </Text>
+			{photos.length < 3 && (
+				<Pressable
+				onPress={handleAddPhoto}
+				style={({ pressed }) => [
+					styles.addPhoto,
+					pressed && styles.addPhotoPressed,
+				]}
+				>
+				<Text style={styles.addPhotoIcon}>
+					+
+				</Text>
 
-              <Text style={styles.addPhotoText}>
-                ADD PHOTO
-              </Text>
-            </Pressable>
-          )}
-        </View>
+				<Text style={styles.addPhotoText}>
+					ADD PHOTO
+				</Text>
+				</Pressable>
+			)}
+			</View>
 
-        <Text style={styles.photoHint}>
-          {photos.length}/3 photos
-        </Text>
+			<Text style={styles.photoHint}>
+			{photos.length}/3 photos
+			</Text>
 
-        <Pressable
-          onPress={handleSave}
-          style={({ pressed }) => [
-            styles.saveButton,
-            pressed && styles.saveButtonPressed,
-          ]}
-        >
-          <Text style={styles.saveText}>
-            SAVE CHANGES
-          </Text>
-        </Pressable>
+			<Pressable
+			onPress={handleSave}
+			style={({ pressed }) => [
+				styles.saveButton,
+				pressed && styles.saveButtonPressed,
+			]}
+			>
+			<Text style={styles.saveText}>
+				SAVE CHANGES
+			</Text>
+			</Pressable>
 
-        <Pressable
-          onPress={handleDelete}
-          style={({ pressed }) => [
-            styles.deleteButton,
-            pressed && styles.deleteButtonPressed,
-          ]}
-        >
-          <Text style={styles.deleteText}>
-            DELETE ENTRY
-          </Text>
-        </Pressable>
-      </ScrollView>
-    </SafeAreaView>
-  );
+			<Pressable
+			onPress={handleDelete}
+			style={({ pressed }) => [
+				styles.deleteButton,
+				pressed && styles.deleteButtonPressed,
+			]}
+			>
+			<Text style={styles.deleteText}>
+				DELETE ENTRY
+			</Text>
+			</Pressable>
+		</ScrollView>
+		</SafeAreaView>
+	);
 }
 
 const styles = StyleSheet.create({

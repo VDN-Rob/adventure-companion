@@ -6,292 +6,295 @@ import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
 } from "react-native";
 
 import { theme } from "@/styling/theme";
 import { validateDayFields } from "@/utils/validation/dayValidation";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditDayScreen() {
-    // Retrieve id from parameters
-    const { dayId } = useLocalSearchParams<{ dayId: string }>();
+	// Retrieve id from parameters
+	const { dayId } = useLocalSearchParams<{ dayId: string }>();
 
-    // Load databank
-    const { dayServices } = useAppServices();
+	// Load databank
+	const { dayServices } = useAppServices();
 
-    // State
-    const [day, setDay] = useState<Day>();
-    const [date, setDate] = useState("");
-    const [title, setTitle] = useState("");
-    const [notes, setNotes] = useState("");
-    const [plannedElevation, setPlannedElevation] = useState("");
-    const [plannedDistance, setPlannedDistance] = useState("");
-    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-    
-    // Load the right trip when screen finishes loading
-    useEffect(() => {
-        async function loadDay() {
-          if (!dayId) return;
-      
-          const day = await dayServices.getDayById(dayId);
-      
-          if (day) {
-            setDay(day);
-            setDate(day.date);
-      
-            // Database null → empty form field
-            setTitle(day.title ?? "");
-            setNotes(day.notes ?? "");
-      
-            setPlannedElevation(
-              day.plannedElevation === null
-                ? ""
-                : String(day.plannedElevation)
-            );
-      
-            setPlannedDistance(
-              day.plannedDistance === null
-                ? ""
-                : String(day.plannedDistance)
-            );
-          }
-        }
-      
-        loadDay();
-      }, [dayId]);
+	// State
+	const [day, setDay] = useState<Day>();
+	const [date, setDate] = useState("");
+	const [title, setTitle] = useState("");
+	const [notes, setNotes] = useState("");
+	const [plannedElevation, setPlannedElevation] = useState("");
+	const [plannedDistance, setPlannedDistance] = useState("");
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+	
+	// Load the right trip when screen finishes loading
+	useEffect(() => {
+		async function loadDay() {
+		if (!dayId) return;
+	
+		const day = await dayServices.getDayById(dayId);
+	
+		if (day) {
+			setDay(day);
+			setDate(day.date);
+	
+			// Database null → empty form field
+			setTitle(day.title ?? "");
+			setNotes(day.notes ?? "");
+	
+			setPlannedElevation(
+			day.plannedElevation === null
+				? ""
+				: String(day.plannedElevation)
+			);
+	
+			setPlannedDistance(
+			day.plannedDistance === null
+				? ""
+				: String(day.plannedDistance)
+			);
+		}
+		}
+	
+		loadDay();
+	}, [dayId]);
 
-    async function handleSave() {
-      if (!day) return;
+	async function handleSave() {
+	if (!day) return;
 
-      const errors = validateDayFields({
-        title,
-        date,
-        plannedElevation,
-        plannedDistance
-      });
+	const errors = validateDayFields({
+		title,
+		date,
+		plannedElevation,
+		plannedDistance
+	});
 
-      const firstError = Object.values(errors)[0];
+	const firstError = Object.values(errors)[0];
 
-      if (firstError) {
-        Alert.alert("Invalid day change", firstError);
-        return;
-      }
+	if (firstError) {
+		Alert.alert("Invalid day change", firstError);
+		return;
+	}
 
-      const updatedDay: Day = {
-          ...day,
-          date: date,
-          title: title.trim() === "" ? null : title.trim(),
-          notes: notes.trim() == "" ? null : notes.trim(),
-          plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
-          plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
-      }
-      
-      const result = await dayServices.updateDay(updatedDay);
+	const updatedDay: Day = {
+		...day,
+		date: date,
+		title: title.trim() === "" ? null : title.trim(),
+		notes: notes.trim() == "" ? null : notes.trim(),
+		plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
+		plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
+	}
+	
+	const result = await dayServices.updateDay(updatedDay);
 
-      if (!result.success) {
-        const firstServiceError = Object.values(result.errors)[0];
-    
-        Alert.alert(
-          "Could not save day",
-          firstServiceError ?? "The day contains invalid data."
-        );
-    
-        return;
-      }
+	if (!result.success) {
+		const firstServiceError = Object.values(result.errors)[0];
+	
+		Alert.alert(
+		"Could not save day",
+		firstServiceError ?? "The day contains invalid data."
+		);
+	
+		return;
+	}
 
-      router.back();
-    }
+	router.back();
+	}
 
-    async function deleteDay() {
-        if (!dayId) return;
-      
-        setDeleteModalVisible(false);
-      
-        await dayServices.deleteDay(dayId);
-      
-        router.dismiss(2);
-    }
-    
-    if (!day) {
-        return (
-          <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>
-              LOADING DAY...
-            </Text>
-          </View>
-        );
-      }
-      
-      return (
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <ScrollView
-            contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* HEADER */}
-      
-            <View style={styles.header}>
-              <Pressable
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backArrow}>
-                  ←
-                </Text>
-              </Pressable>
-      
-              <View>
-                <Text style={styles.eyebrow}>
-                  ADVENTURE PLANNER
-                </Text>
-      
-                <Text style={styles.headerTitle}>
-                  EDIT DAY
-                </Text>
-              </View>
-            </View>
-      
-            {/* DAY DETAILS */}
-      
-            <SectionLabel title="DAY DETAILS" />
-      
-            <InputField
-              label="TITLE"
-              value={title ?? ""}
-              onChangeText={setTitle}
-              placeholder="Riding into the mountains"
-            />
-      
-            <InputField
-              label="DATE"
-              value={date}
-              onChangeText={setDate}
-              placeholder="2026-08-08"
-            />
-      
-            {/* PLANNING */}
-      
-            <SectionLabel title="PLANNING" />
-      
-            <View style={styles.row}>
-              <View style={styles.half}>
-                <InputField
-                  label="DISTANCE (KM)"
-                  value={plannedDistance}
-                  onChangeText={setPlannedDistance}
-                  placeholder="85"
-                  keyboardType="decimal-pad"
-                />
-              </View>
-      
-              <View style={styles.rowGap} />
-      
-              <View style={styles.half}>
-                <InputField
-                  label="ELEVATION (M)"
-                  value={plannedElevation}
-                  onChangeText={setPlannedElevation}
-                  placeholder="1200"
-                  keyboardType="numeric"
-                />
-              </View>
-            </View>
-      
-            {/* NOTES */}
-      
-            <SectionLabel title="DAY NOTES" />
-      
-            <View style={styles.notesContainer}>
-              <Text style={styles.label}>
-                NOTES
-              </Text>
-      
-              <View style={styles.notesWrapper}>
-                <TextInput
-                  value={notes ?? ""}
-                  onChangeText={setNotes}
-                  placeholder="What do you need to remember?"
-                  placeholderTextColor={theme.colours.textMuted}
-                  multiline
-                  textAlignVertical="top"
-                  style={styles.notesInput}
-                />
-              </View>
-            </View>
-      
-            {/* SAVE */}
-      
-            <Pressable
-              style={styles.saveButton}
-              onPress={handleSave}
-            >
-              <View>
-                <Text style={styles.saveEyebrow}>
-                  ADVENTURE PLANNER
-                </Text>
-      
-                <Text style={styles.saveText}>
-                  SAVE CHANGES
-                </Text>
-              </View>
-      
-              <Text style={styles.saveSymbol}>
-                ✓
-              </Text>
-            </Pressable>
-      
-            {/* DANGER ZONE */}
-      
-            <View style={styles.dangerSection}>
-              <Text style={styles.dangerLabel}>
-                DANGER ZONE
-              </Text>
-      
-              <Pressable
-                style={styles.deleteButton}
-                onPress={() => setDeleteModalVisible(true)}
-              >
-                <View>
-                  <Text style={styles.deleteTitle}>
-                    DELETE DAY
-                  </Text>
-      
-                  <Text style={styles.deleteDescription}>
-                    Permanently remove this day and its POIs.
-                  </Text>
-                </View>
-      
-                <Text style={styles.deleteSymbol}>
-                  ×
-                </Text>
-              </Pressable>
-            </View>
-          </ScrollView>
-      
-          <GameModal
-            visible={deleteModalVisible}
-            title="DELETE DAY?"
-            message="This day and its planned points of interest will be permanently removed. This action cannot be undone."
-            confirmText="DELETE"
-            cancelText="KEEP DAY"
-            destructive
-            onCancel={() => setDeleteModalVisible(false)}
-            onConfirm={deleteDay}
-          />
-        </KeyboardAvoidingView>
-      );
+	async function deleteDay() {
+		if (!dayId) return;
+	
+		setDeleteModalVisible(false);
+	
+		await dayServices.deleteDay(dayId);
+	
+		router.dismiss(2);
+	}
+	
+	if (!day) {
+		return (
+		<View style={styles.loadingContainer}>
+			<Text style={styles.loadingText}>
+			LOADING DAY...
+			</Text>
+		</View>
+		);
+	}
+	
+	return (
+		<SafeAreaView>
+			<KeyboardAvoidingView
+			style={styles.container}
+			behavior={Platform.OS === "ios" ? "padding" : undefined}
+			>
+			<ScrollView
+				contentContainerStyle={styles.content}
+				keyboardShouldPersistTaps="handled"
+				showsVerticalScrollIndicator={false}
+			>
+				{/* HEADER */}
+		
+				<View style={styles.header}>
+				<Pressable
+					style={styles.backButton}
+					onPress={() => router.back()}
+				>
+					<Text style={styles.backArrow}>
+					←
+					</Text>
+				</Pressable>
+		
+				<View>
+					<Text style={styles.eyebrow}>
+					ADVENTURE PLANNER
+					</Text>
+		
+					<Text style={styles.headerTitle}>
+					EDIT DAY
+					</Text>
+				</View>
+				</View>
+		
+				{/* DAY DETAILS */}
+		
+				<SectionLabel title="DAY DETAILS" />
+		
+				<InputField
+				label="TITLE"
+				value={title ?? ""}
+				onChangeText={setTitle}
+				placeholder="Riding into the mountains"
+				/>
+		
+				<InputField
+				label="DATE"
+				value={date}
+				onChangeText={setDate}
+				placeholder="2026-08-08"
+				/>
+		
+				{/* PLANNING */}
+		
+				<SectionLabel title="PLANNING" />
+		
+				<View style={styles.row}>
+				<View style={styles.half}>
+					<InputField
+					label="DISTANCE (KM)"
+					value={plannedDistance}
+					onChangeText={setPlannedDistance}
+					placeholder="85"
+					keyboardType="decimal-pad"
+					/>
+				</View>
+		
+				<View style={styles.rowGap} />
+		
+				<View style={styles.half}>
+					<InputField
+					label="ELEVATION (M)"
+					value={plannedElevation}
+					onChangeText={setPlannedElevation}
+					placeholder="1200"
+					keyboardType="numeric"
+					/>
+				</View>
+				</View>
+		
+				{/* NOTES */}
+		
+				<SectionLabel title="DAY NOTES" />
+		
+				<View style={styles.notesContainer}>
+				<Text style={styles.label}>
+					NOTES
+				</Text>
+		
+				<View style={styles.notesWrapper}>
+					<TextInput
+					value={notes ?? ""}
+					onChangeText={setNotes}
+					placeholder="What do you need to remember?"
+					placeholderTextColor={theme.colours.textMuted}
+					multiline
+					textAlignVertical="top"
+					style={styles.notesInput}
+					/>
+				</View>
+				</View>
+		
+				{/* SAVE */}
+		
+				<Pressable
+				style={styles.saveButton}
+				onPress={handleSave}
+				>
+				<View>
+					<Text style={styles.saveEyebrow}>
+					ADVENTURE PLANNER
+					</Text>
+		
+					<Text style={styles.saveText}>
+					SAVE CHANGES
+					</Text>
+				</View>
+		
+				<Text style={styles.saveSymbol}>
+					✓
+				</Text>
+				</Pressable>
+		
+				{/* DANGER ZONE */}
+		
+				<View style={styles.dangerSection}>
+				<Text style={styles.dangerLabel}>
+					DANGER ZONE
+				</Text>
+		
+				<Pressable
+					style={styles.deleteButton}
+					onPress={() => setDeleteModalVisible(true)}
+				>
+					<View>
+					<Text style={styles.deleteTitle}>
+						DELETE DAY
+					</Text>
+		
+					<Text style={styles.deleteDescription}>
+						Permanently remove this day and its POIs.
+					</Text>
+					</View>
+		
+					<Text style={styles.deleteSymbol}>
+					×
+					</Text>
+				</Pressable>
+				</View>
+			</ScrollView>
+		
+			<GameModal
+				visible={deleteModalVisible}
+				title="DELETE DAY?"
+				message="This day and its planned points of interest will be permanently removed. This action cannot be undone."
+				confirmText="DELETE"
+				cancelText="KEEP DAY"
+				destructive
+				onCancel={() => setDeleteModalVisible(false)}
+				onConfirm={deleteDay}
+			/>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
+	);
 }
 
 const styles = StyleSheet.create({

@@ -7,17 +7,8 @@ import { validateTripFields } from "@/utils/validation/tripValidation";
 import * as Crypto from "expo-crypto";
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function CreateTripScreen() {
@@ -34,201 +25,203 @@ export default function CreateTripScreen() {
     const { tripServices } = useAppServices();
 
     async function handleSaveTrip() {
-      const errors = validateTripFields({
-        name,
-        startDate,
-        endDate,
-        budget,
-        budgetCurrency,
-      });
-    
-      const firstError = Object.values(errors)[0];
-    
-      if (firstError) {
-        Alert.alert("Invalid adventure", firstError);
-        return;
-      }
-    
-      const trimmedName = name.trim();
-      const trimmedStartDate = startDate.trim();
-      const trimmedEndDate = endDate.trim();
-      const trimmedDescription = description.trim();
-      const trimmedBudgetCurrency = budgetCurrency.trim();
-    
-      const checkedBudget = budget.trim() === "" ? null : Number(budget);
-    
-      const newTrip: Trip = {
-        id: Crypto.randomUUID(),
-        name: trimmedName,
-        startDate: trimmedStartDate,
-        endDate: trimmedEndDate === "" ? null : trimmedEndDate,
-        description: trimmedDescription === "" ? null : trimmedDescription,
-        budget: checkedBudget,
-        budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
-      };
-    
-      const result = await tripServices.createTrip(newTrip);
-    
-      if (!result.success) {
-        const firstServiceError = Object.values(result.errors)[0];
-    
-        Alert.alert(
-          "Could not save adventure",
-          firstServiceError ?? "The adventure contains invalid data."
-        );
-    
-        return;
-      }
-    
-      router.back();
+		const errors = validateTripFields({
+			name,
+			startDate,
+			endDate,
+			budget,
+			budgetCurrency,
+		});
+		
+		const firstError = Object.values(errors)[0];
+		
+		if (firstError) {
+			Alert.alert("Invalid adventure", firstError);
+			return;
+		}
+		
+		const trimmedName = name.trim();
+		const trimmedStartDate = startDate.trim();
+		const trimmedEndDate = endDate.trim();
+		const trimmedDescription = description.trim();
+		const trimmedBudgetCurrency = budgetCurrency.trim();
+		
+		const checkedBudget = budget.trim() === "" ? null : Number(budget);
+		
+		const newTrip: Trip = {
+			id: Crypto.randomUUID(),
+			name: trimmedName,
+			startDate: trimmedStartDate,
+			endDate: trimmedEndDate === "" ? null : trimmedEndDate,
+			description: trimmedDescription === "" ? null : trimmedDescription,
+			budget: checkedBudget,
+			budgetCurrency: trimmedBudgetCurrency === "" ? "EUR" : trimmedBudgetCurrency,
+		};
+		
+		const result = await tripServices.createTrip(newTrip);
+		
+		if (!result.success) {
+			const firstServiceError = Object.values(result.errors)[0];
+		
+			Alert.alert(
+			"Could not save adventure",
+			firstServiceError ?? "The adventure contains invalid data."
+			);
+		
+			return;
+		}
+		
+		router.back();
     }
     
       return (
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <ScrollView
-            contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* HEADER */}
-            <View style={styles.header}>
-              <Pressable
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backArrow}>
-                  ←
-                </Text>
-              </Pressable>
-      
-              <View>
-                <Text style={styles.eyebrow}>
-                  ADVENTURE SYSTEM
-                </Text>
-      
-                <Text style={styles.headerTitle}>
-                  NEW ADVENTURE
-                </Text>
-              </View>
-            </View>
-      
-            {/* INTRO */}
-            <View style={styles.intro}>
-              <Text style={styles.introTitle}>
-                PLAN YOUR NEXT JOURNEY
-              </Text>
-      
-              <Text style={styles.introText}>
-                Set the basics now. You can add days,
-                routes, points of interest and diary
-                entries later.
-              </Text>
-            </View>
-      
-            {/* DETAILS */}
-            <SectionLabel title="ADVENTURE DETAILS" />
-      
-            {/* NAME */}
-            <InputField
-              label="NAME"
-              value={name}
-              onChangeText={setName}
-              placeholder="2026 Cycling Trip"
-            />
-      
-            {/* DATES */}
-            <View style={styles.row}>
-              <View style={styles.half}>
-                <InputField
-                  label="START DATE"
-                  value={startDate}
-                  onChangeText={setStartDate}
-                  placeholder="2026-08-08"
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
-      
-              <View style={styles.rowGap} />
-      
-              <View style={styles.half}>
-                <InputField
-                  label="END DATE"
-                  value={endDate}
-                  onChangeText={setEndDate}
-                  placeholder="Optional"
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
-            </View>
-      
-            {/* DESCRIPTION */}
-            <View style={styles.notesContainer}>
-              <Text style={styles.label}>
-                DESCRIPTION
-              </Text>
-      
-              <TextInput
-                value={description}
-                onChangeText={setDescription}
-                placeholder="A few words about this adventure..."
-                placeholderTextColor={theme.colours.textMuted}
-                multiline
-                textAlignVertical="top"
-                style={[
-                  styles.input,
-                  styles.descriptionInput,
-                ]}
-              />
-            </View>
+		<SafeAreaView>
+			<KeyboardAvoidingView
+			style={styles.container}
+			behavior={Platform.OS === "ios" ? "padding" : undefined}
+			>
+			<ScrollView
+				contentContainerStyle={styles.content}
+				keyboardShouldPersistTaps="handled"
+				showsVerticalScrollIndicator={false}
+			>
+				{/* HEADER */}
+				<View style={styles.header}>
+				<Pressable
+					style={styles.backButton}
+					onPress={() => router.back()}
+				>
+					<Text style={styles.backArrow}>
+					←
+					</Text>
+				</Pressable>
+		
+				<View>
+					<Text style={styles.eyebrow}>
+					ADVENTURE SYSTEM
+					</Text>
+		
+					<Text style={styles.headerTitle}>
+					NEW ADVENTURE
+					</Text>
+				</View>
+				</View>
+		
+				{/* INTRO */}
+				<View style={styles.intro}>
+				<Text style={styles.introTitle}>
+					PLAN YOUR NEXT JOURNEY
+				</Text>
+		
+				<Text style={styles.introText}>
+					Set the basics now. You can add days,
+					routes, points of interest and diary
+					entries later.
+				</Text>
+				</View>
+		
+				{/* DETAILS */}
+				<SectionLabel title="ADVENTURE DETAILS" />
+		
+				{/* NAME */}
+				<InputField
+				label="NAME"
+				value={name}
+				onChangeText={setName}
+				placeholder="2026 Cycling Trip"
+				/>
+		
+				{/* DATES */}
+				<View style={styles.row}>
+				<View style={styles.half}>
+					<InputField
+					label="START DATE"
+					value={startDate}
+					onChangeText={setStartDate}
+					placeholder="2026-08-08"
+					keyboardType="numbers-and-punctuation"
+					/>
+				</View>
+		
+				<View style={styles.rowGap} />
+		
+				<View style={styles.half}>
+					<InputField
+					label="END DATE"
+					value={endDate}
+					onChangeText={setEndDate}
+					placeholder="Optional"
+					keyboardType="numbers-and-punctuation"
+					/>
+				</View>
+				</View>
+		
+				{/* DESCRIPTION */}
+				<View style={styles.notesContainer}>
+				<Text style={styles.label}>
+					DESCRIPTION
+				</Text>
+		
+				<TextInput
+					value={description}
+					onChangeText={setDescription}
+					placeholder="A few words about this adventure..."
+					placeholderTextColor={theme.colours.textMuted}
+					multiline
+					textAlignVertical="top"
+					style={[
+					styles.input,
+					styles.descriptionInput,
+					]}
+				/>
+				</View>
 
-            {/* BUDGET */}
-            <View style={styles.row}>
-              <View style={styles.half}>
-                <InputField
-                  label="Budget"
-                  value={budget}
-                  onChangeText={setBudget}
-                  placeholder="0.00"
-                  keyboardType="numbers-and-punctuation"
-                />
-              </View>
-      
-              <View style={styles.rowGap} />
-      
-              <View style={styles.half}>
-                <InputField
-                  label="Budget Currency"
-                  value={budgetCurrency}
-                  onChangeText={setBudgetCurrency}
-                  placeholder="EUR"
-                />
-              </View>
-            </View>
-      
-            {/* CREATE */}
-            <Pressable
-              style={styles.createButton}
-              onPress={handleSaveTrip}
-            >
-              <View>
-                <Text style={styles.createEyebrow}>
-                  BEGIN PLANNING
-                </Text>
-      
-                <Text style={styles.createText}>
-                  CREATE ADVENTURE
-                </Text>
-              </View>
-      
-              <Text style={styles.createArrow}>
-                →
-              </Text>
-            </Pressable>
-          </ScrollView>
-        </KeyboardAvoidingView>
+				{/* BUDGET */}
+				<View style={styles.row}>
+				<View style={styles.half}>
+					<InputField
+					label="Budget"
+					value={budget}
+					onChangeText={setBudget}
+					placeholder="0.00"
+					keyboardType="numbers-and-punctuation"
+					/>
+				</View>
+		
+				<View style={styles.rowGap} />
+		
+				<View style={styles.half}>
+					<InputField
+					label="Budget Currency"
+					value={budgetCurrency}
+					onChangeText={setBudgetCurrency}
+					placeholder="EUR"
+					/>
+				</View>
+				</View>
+		
+				{/* CREATE */}
+				<Pressable
+				style={styles.createButton}
+				onPress={handleSaveTrip}
+				>
+				<View>
+					<Text style={styles.createEyebrow}>
+					BEGIN PLANNING
+					</Text>
+		
+					<Text style={styles.createText}>
+					CREATE ADVENTURE
+					</Text>
+				</View>
+		
+				<Text style={styles.createArrow}>
+					→
+				</Text>
+				</Pressable>
+			</ScrollView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
       );
 }
 
