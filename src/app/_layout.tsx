@@ -5,6 +5,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from 'expo-splash-screen';
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // Root layout of the app
 // Initializes the database
@@ -31,18 +32,21 @@ export default function RootLayout() {
   }
 
   return (
-    <SQLiteProvider
-      databaseName="cycling.db"
-      onInit={setupDatabase}
-      >
+    <SafeAreaProvider>
+		<SQLiteProvider
+		databaseName="cycling.db"
+		onInit={setupDatabase}
+		>
 
-      <AppServicesProvider>
-        <Stack 
-          screenOptions={{
-            headerShown: false,
-          }}
-        />
-      </AppServicesProvider>
-    </SQLiteProvider>
+		<AppServicesProvider>
+			<Stack 
+			screenOptions={{
+				headerShown: false,
+			}}
+			/>
+		</AppServicesProvider>
+		</SQLiteProvider>
+    </SafeAreaProvider>
+    
   );
 }

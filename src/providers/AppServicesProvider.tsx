@@ -19,6 +19,7 @@ import { usePoisRepository } from "@/utils/useRepository/usePoisRepository";
 import { useRoutesRepository } from "@/utils/useRepository/useRoutesRepository";
 import { useTripsRepository } from "@/utils/useRepository/useTripsRepository";
 import { createContext, useMemo } from "react";
+import { AppSettingsProvider } from "./AppSettingsProvider";
 
 interface AppServices {
 	tripServices: TripService;
@@ -117,6 +118,7 @@ export function AppServicesProvider({
 );
 
 	return (
+		
 		<AppServicesContext.Provider value={{
 			tripServices,
 			dayServices,
@@ -130,7 +132,12 @@ export function AppServicesProvider({
 			isOnline,
 			appSettingsService
 			}}>
-			{children}
+			<AppSettingsProvider
+                appSettingsService={appSettingsService}
+            >
+				{children}
+			</AppSettingsProvider>
+			
 		</AppServicesContext.Provider>
 	);
 }

@@ -1,9 +1,9 @@
 import { Selector } from "@/components/forms/Selector";
-import { AppCurrency, AppLanguage, AppSettings, AppTimeFormat } from "@/config/appSetting";
+import { AppCurrency, AppLanguage, AppTimeFormat } from "@/config/appSetting";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { styles } from "@/styling/styles";
-import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
-import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, SafeAreaView, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const timeFormatOptions = [
@@ -70,86 +70,52 @@ const currencyOptions = [
 
 
 export default function SettingsScreen() {
-    const [settings, setSettings] = useState<AppSettings | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    const { appSettingsService } = useAppServices();
-
-    useEffect(() => {
-        async function loadSettings() {
-            try {
-                const storedSettings =
-                    await appSettingsService.getSettings();
-
-                setSettings(storedSettings);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadSettings();
-    }, [appSettingsService]);
+    const { settings, updateSettings } = useAppSettings();
 
     async function handleTimeFormatChange(value: AppTimeFormat) {
-        const updatedSettings =
-            await appSettingsService.updateSettings({
-                timeFormat: value,
-            });
-
-        setSettings(updatedSettings);
+		await updateSettings({
+			timeFormat: value,
+		});
     }
 
     async function handleLanguageChange(value: AppLanguage) {
-        const updatedSettings =
-            await appSettingsService.updateSettings({
-                language: value,
-            });
-
-        setSettings(updatedSettings);
+		await updateSettings({
+			language: value,
+		});
     }
 
     async function handleCurrencyChange(value: AppCurrency) {
-        const updatedSettings =
-            await appSettingsService.updateSettings({
-                currency: value,
-            });
-
-        setSettings(updatedSettings);
+		await updateSettings({
+			currency: value,
+		});
     }
 
     return (
-		<SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-			<KeyboardAvoidingView style={styles.container}>
-				<ScrollView>
-					<View style={styles.content}>
-						{!loading && settings && (
-							<>
-								<Selector
-									label="TIME FORMAT"
-									options={timeFormatOptions}
-									selectedValue={settings.timeFormat}
-									onSelect={handleTimeFormatChange}
-								/>
+        <SafeAreaView style={styles.container}>
+            <ScrollView>
+                <View style={styles.content}>
+                    <Selector
+						label="TIME FORMAT"
+						options={timeFormatOptions}
+						selectedValue={settings.timeFormat}
+						onSelect={handleTimeFormatChange}
+					/>
 
-								<Selector
-									label="LANGUAGE"
-									options={languageOptions}
-									selectedValue={settings.language}
-									onSelect={handleLanguageChange}
-								/>
+					<Selector
+						label="LANGUAGE"
+						options={languageOptions}
+						selectedValue={settings.language}
+						onSelect={handleLanguageChange}
+					/>
 
-								<Selector
-									label="CURRENCY"
-									options={currencyOptions}
-									selectedValue={settings.currency}
-									onSelect={handleCurrencyChange}
-								/>
-							</>
-						)}
-					</View>
-				</ScrollView>
-			</KeyboardAvoidingView>
-		</SafeAreaView>
-        
+					<Selector
+						label="CURRENCY"
+						options={currencyOptions}
+						selectedValue={settings.currency}
+						onSelect={handleCurrencyChange}
+					/>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
