@@ -151,12 +151,12 @@ export default function HomeScreen() {
                 middleActionLabel={t.homeScreen.addExpense}
                 onRightActionPress={handleDiaryPress}
                 rightActionIcon="✎"
-                rightActionLabel={t.common.diary}
+                rightActionLabel={t.diary.diary}
             />
         )}
 
         <BottomNavigation
-            activeTab={today ? t.common.day : ""}
+            activeTab={today ? t.day.day : ""}
             items={bottomItems}
             onMorePress={() => router.push("/more")}
         />

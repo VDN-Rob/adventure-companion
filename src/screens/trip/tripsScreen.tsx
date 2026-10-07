@@ -8,7 +8,9 @@ import {
 
 import { TripCard } from "@/components/card/trips/TripCard";
 import { UpcomingTripCard } from "@/components/card/trips/UpcomingTripCard";
+import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
@@ -24,6 +26,8 @@ export default function TripsScreen() {
 	const [futureTrips, setFutureTrips] = useState<Trip[]>([]);
 	const [pastTrips, setPastTrips] = useState<Trip[]>([]);
 
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language)
 
 	useFocusEffect(
 		useCallback(() => {
@@ -54,7 +58,7 @@ export default function TripsScreen() {
 			contentContainerStyle={styles.scrollContent}
 			showsVerticalScrollIndicator={false}
 		>
-		<SectionHeader title="ACTIVE ADVENTURE" />
+		<SectionHeader title={t.adventures.activeAdventureTitle.toUpperCase()} />
 
 			{activeTrips.length > 0 ? (
 
@@ -64,29 +68,29 @@ export default function TripsScreen() {
 				trip={trip}
 				active={true}
 				onPress={() => {
-				router.push({
-					pathname: "/trip/detailsTrip",
-					params: {
-					id: trip.id,
-					},
-				});
+					router.push({
+						pathname: "/trip/detailsTrip",
+						params: {
+						id: trip.id,
+						},
+					});
 				}}
 			/>
 			))
 			) : (
 			<View style={styles.noAdventure}>
 				<Text style={styles.noAdventureTitle}>
-				NO ACTIVE ADVENTURE
+					{t.adventures.noActiveAdventure}
 				</Text>
 			
 				<Text style={styles.noAdventureText}>
-				You are currently between adventures.
+					{t.adventures.noActiveAdventureDesc}
 				</Text>
 			</View>
 			)}
 			
 
-			<SectionHeader title="UPCOMING" />
+			<SectionHeader title={t.adventures.upcomingAdventureTitle.toUpperCase()} />
 
 			{futureTrips.length > 0 ? (
 			futureTrips.map((trip) => (
@@ -106,11 +110,11 @@ export default function TripsScreen() {
 			) : (
 				<View style={styles.noAdventure}>
 				<Text style={styles.noAdventureTitle}>
-					NO UPCOMING ADVENTURE
+					{t.adventures.noUpcomingAdventure}
 				</Text>
 			
 				<Text style={styles.noAdventureText}>
-					You have no pending adventures. Get to planning!
+					{t.adventures.noUpcomingAdventureDesc}
 				</Text>
 				</View>
 			)}
@@ -122,11 +126,11 @@ export default function TripsScreen() {
 				>
 				<Text style={styles.newAdventureIcon}>+</Text>
 				<Text style={styles.newAdventureText}>
-					NEW ADVENTURE
+					{t.adventures.newAdventure}
 				</Text>
 			</Pressable>
 
-			<SectionHeader title="PAST" />
+			<SectionHeader title={t.adventures.pastAdventureTitle.toUpperCase()} />
 
 			{pastTrips.length > 0 ? (
 			pastTrips.map((trip) => (
@@ -146,11 +150,11 @@ export default function TripsScreen() {
 			) : (
 				<View style={styles.noAdventure}>
 				<Text style={styles.noAdventureTitle}>
-					NO PAST ADVENTURES
+					{t.adventures.noPastAdventure}
 				</Text>
 			
 				<Text style={styles.noAdventureText}>
-					You have no past adventures. Time to set off!
+					{t.adventures.noPastAdventureDesc}
 				</Text>
 				</View>
 			)}

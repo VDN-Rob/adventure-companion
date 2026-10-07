@@ -1,7 +1,9 @@
 import { DayCard } from "@/components/card/DayCard";
+import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { Trip } from "@/models/Trip";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import NetInfo from "@react-native-community/netinfo";
@@ -30,6 +32,9 @@ export default function TripDetailsScreen() {
 	
 	const [isDownloadingMaps, setIsDownloadingMaps] = useState(false);
 
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language)
+	
 	// Load the right trip everytime the screen is loaded
 	useFocusEffect(
 		useCallback(() => {
@@ -91,7 +96,7 @@ export default function TripDetailsScreen() {
 			/>
 
 			<Text style={styles.loadingText}>
-			LOADING ADVENTURE...
+				{t.adventures.loadingAdventure}
 			</Text>
 		</View>
 		);
@@ -101,11 +106,11 @@ export default function TripDetailsScreen() {
 		return (
 		<View style={styles.centered}>
 			<Text style={styles.errorTitle}>
-			ADVENTURE NOT FOUND
+				{t.adventures.notFound}
 			</Text>
 
 			<Text style={styles.errorText}>
-			{error ?? "Unable to load this adventure."}
+			{error ?? t.adventures.notFoundDesc}
 			</Text>
 		</View>
 		);
@@ -123,8 +128,8 @@ export default function TripDetailsScreen() {
 
 			if (!networkState.isConnected) {
 				Alert.alert(
-					"No internet connection",
-					"Connect to the internet before downloading offline maps."
+					t.alerts.noInternet,
+					t.alerts.noInternetDesc
 				);
 	
 				return;
@@ -134,8 +139,8 @@ export default function TripDetailsScreen() {
 
 			if (regions.length === 0) {
 				Alert.alert(
-					"No map data",
-					"There are no mapped locations for the days in this trip."
+					t.alerts.noMapData,
+					t.alerts.noMapDataDesc
 				);
 
 				return;
@@ -145,15 +150,15 @@ export default function TripDetailsScreen() {
 
 			if (downloadedMaps.length === 0) {
 				Alert.alert(
-					"Maps already downloaded",
-					"The required map areas are already available offline."
+					t.alerts.mapDataPresent,
+					t.alerts.mapDataPresentDesc
 				);
 
 				return;
 			}
 
 			Alert.alert(
-				"Download complete",
+				t.alerts.downloadComplete,
 				`${downloadedMaps.length} map region${
 					downloadedMaps.length === 1 ? "" : "s"
 				} downloaded.`
@@ -165,8 +170,8 @@ export default function TripDetailsScreen() {
 			);
 
 			Alert.alert(
-				"Download failed",
-				"The offline maps could not be downloaded."
+				t.alerts.downloadFailed,
+				t.alerts.downloadFailedDesc				
 			);
 		} finally {
 			setIsDownloadingMaps(false);
@@ -175,16 +180,15 @@ export default function TripDetailsScreen() {
 
 	function tripDownloadWarning() {
 		Alert.alert(
-			"Download maps",
-			"Download offline map data for each planned day. " +
-			"Areas that are already available offline will not be downloaded again.",
+			t.alerts.downloadMaps,
+			t.alerts.downloadMapsDesc,
 			[
 				{
-					text: "Cancel",
+					text: t.common.cancel,
 					style: "cancel",
 				},
 				{
-					text: "Download",
+					text: t.common.download,
 					onPress: handleTripMapDownloadByDay,
 				},
 			]
@@ -215,24 +219,24 @@ export default function TripDetailsScreen() {
 			<>
 				{/* HEADER */}
 				<View style={styles.header}>
-				<Pressable
-					style={styles.backButton}
-					onPress={() => router.back()}
-				>
-					<Text style={styles.backArrow}>
-					←
-					</Text>
-				</Pressable>
+					<Pressable
+						style={styles.backButton}
+						onPress={() => router.back()}
+					>
+						<Text style={styles.backArrow}>
+						←
+						</Text>
+					</Pressable>
 
-				<View>
-					<Text style={styles.eyebrow}>
-					ADVENTURE
-					</Text>
+					<View>
+						<Text style={styles.eyebrow}>
+							{t.adventures.adventure.toUpperCase()}
+						</Text>
 
-					<Text style={styles.headerSubtext}>
-					MISSION BRIEFING
-					</Text>
-				</View>
+						<Text style={styles.headerSubtext}>
+							{t.adventures.subHeader.toUpperCase()}
+						</Text>
+					</View>
 				</View>
 
 				{/* TRIP TITLE */}
@@ -244,7 +248,7 @@ export default function TripDetailsScreen() {
 				<Text style={styles.dates}>
 					{trip.startDate}
 					{trip.endDate
-					? ` to ${trip.endDate}`
+					? ` ${t.common.to} ${trip.endDate}`
 					: ""}
 				</Text>
 				</View>
@@ -257,11 +261,11 @@ export default function TripDetailsScreen() {
 					</Text>
 
 					<Text style={styles.statUnit}>
-					DAYS
+						{t.day.day.toUpperCase()}
 					</Text>
 
 					<Text style={styles.statLabel}>
-					OF ADVENTURE
+						{t.adventures.statAdventure.toUpperCase()}
 					</Text>
 				</View>
 
@@ -273,11 +277,11 @@ export default function TripDetailsScreen() {
 					</Text>
 
 					<Text style={styles.statUnit}>
-					KM
+						{t.common.kmAbr.toUpperCase()}
 					</Text>
 
 					<Text style={styles.statLabel}>
-					DISTANCE
+						{t.common.distance.toUpperCase()}
 					</Text>
 				</View>
 
@@ -289,11 +293,11 @@ export default function TripDetailsScreen() {
 					</Text>
 
 					<Text style={styles.statUnit}>
-					M ↑
+						{t.common.mAbr.toUpperCase()}
 					</Text>
 
 					<Text style={styles.statLabel}>
-					ELEVATION
+						{t.common.elevation.toUpperCase()}
 					</Text>
 				</View>
 				</View>
@@ -306,17 +310,16 @@ export default function TripDetailsScreen() {
 				)}
 
 				{/* SCHEDULE HEADER */}
-				<SectionLabel title="SCHEDULE" />
+				<SectionLabel title={t.adventures.scheduleSectionTitle.toUpperCase()} />
 
 				{days.length === 0 && (
 				<View style={styles.emptyDays}>
 					<Text style={styles.emptyTitle}>
-					NO DAYS PLANNED
+						{t.adventures.noDays}
 					</Text>
 
 					<Text style={styles.emptyText}>
-					Your adventure needs a route.
-					Add the first day to begin planning.
+						{t.adventures.noDaysDesc}
 					</Text>
 				</View>
 				)}
@@ -334,19 +337,14 @@ export default function TripDetailsScreen() {
 				<Text style={styles.addDayPlus}>
 					+
 				</Text>
-
-				<Text style={styles.addDayText}>
-					ADD DAY
-				</Text>
 				</Pressable>
 
 				{/* MAP SECTION */}
 				<View style={styles.mapSection}>
-				<SectionLabel title="OFFLINE MAP" />
+				<SectionLabel title={t.maps.offlineMaps.toUpperCase()} />
 
 				<Text style={styles.mapDescription}>
-					Download map data before heading out
-					of range.
+					{t.adventures.offlineMapDesc}
 				</Text>
 
 				<Pressable
@@ -356,8 +354,8 @@ export default function TripDetailsScreen() {
 				>
 					<Text style={styles.downloadText}>
 					{isDownloadingMaps
-						? "DOWNLOADING MAPS..."
-						: "DOWNLOAD MAPS"}
+						? t.maps.downloadingMaps.toUpperCase()
+						: t.maps.downloadMaps.toUpperCase()}
 					</Text>
 
 					<Text style={styles.downloadArrow}>
@@ -374,7 +372,7 @@ export default function TripDetailsScreen() {
 				}}
 				>
 				<Text style={styles.editText}>
-					EDIT ADVENTURE
+					{t.adventures.editAdventure.toUpperCase()}
 				</Text>
 				</Pressable>
 			</>
@@ -388,7 +386,7 @@ function SectionLabel({ title }: { title: string }) {
 	return (
 		<View style={styles.sectionHeader}>
 			<Text style={styles.sectionTitle}>
-			{title}
+				{title}
 			</Text>
 
 			<View style={styles.sectionLine} />

@@ -26,28 +26,28 @@ export default function MoreScreen() {
 				<View style={styles.menu}>
 					<MenuItem
 					icon="⚑"
-					title={t.common.adventures}
+					title={t.adventures.adventure}
 					description={t.moreScreen.adventuresDesc}
 					onPress={() => { router.push("/trip/trips") }}
 					/>
 
 					<MenuItem
 					icon="◇"
-					title={t.common.finances}
+					title={t.finance.finances}
 					description={t.moreScreen.financesDesc}
 					onPress={() => { router.push("/finance/finance")}}
 					/>
 
 					<MenuItem
 					icon="✎"
-					title={t.common.diary}
+					title={t.diary.diary}
 					description={t.moreScreen.diaryDesc}
 					onPress={() => { router.push("/diary/diary") }}
 					/>
 
 					<MenuItem
 					icon="[]"
-					title={t.common.map}
+					title={t.maps.maps}
 					description={t.moreScreen.mapsDesc}
 					onPress={() => { router.push("/map/offlineMap") }}
 					/>
@@ -72,7 +72,7 @@ export default function MoreScreen() {
 				{
 					key: "map",
 					icon: "◇",
-					label: t.common.map,
+					label: t.maps.map,
 					onPress: () => router.push("/map/map"),
 				},
 				]}

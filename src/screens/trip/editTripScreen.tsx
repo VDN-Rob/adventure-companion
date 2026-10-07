@@ -17,7 +17,10 @@ import {
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { GameModal } from "@/components/GameModal";
+import { getTranslations } from "@/i18n";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
+import { capitalize } from "@/utils/string/capitalize";
 import { validateTripFields } from "@/utils/validation/tripValidation";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -39,6 +42,9 @@ export default function EditTripScreen() {
 
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language)
+	
     // Load the right trip when screen finishes loading
     useEffect(() => {
         async function loadTrip() {
@@ -73,7 +79,7 @@ export default function EditTripScreen() {
 		const firstError = Object.values(errors)[0];
 		
 		if (firstError) {
-			Alert.alert("Invalid adventure", firstError);
+			Alert.alert(t.alerts.invalidAdventure, firstError);
 			return;
 		}
 
@@ -101,8 +107,8 @@ export default function EditTripScreen() {
 			const firstServiceError = Object.values(result.errors)[0];
 		
 			Alert.alert(
-			"Could not save adventure",
-			firstServiceError ?? "The adventure contains invalid data."
+			t.alerts.savingAdventureError,
+			firstServiceError ?? t.alerts.savingAdventureErrorDesc
 			);
 		
 			return;
@@ -112,7 +118,7 @@ export default function EditTripScreen() {
     }
     
     return (
-		<SafeAreaView>
+		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
 				style={styles.container}
 				behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -133,11 +139,11 @@ export default function EditTripScreen() {
 			
 					<View>
 					<Text style={styles.eyebrow}>
-						ADVENTURE SYSTEM
+						{t.adventures.adventureSystem.toUpperCase()}
 					</Text>
 			
 					<Text style={styles.headerTitle}>
-						EDIT ADVENTURE
+						{t.adventures.editAdventure.toUpperCase()}
 					</Text>
 					</View>
 				</View>
@@ -145,7 +151,7 @@ export default function EditTripScreen() {
 				{/* CURRENT ADVENTURE */}
 				<View style={styles.currentTrip}>
 					<Text style={styles.currentLabel}>
-					CURRENT ADVENTURE
+						{t.adventures.currentAdventure.toUpperCase()}
 					</Text>
 			
 					<Text style={styles.currentName}>
@@ -154,20 +160,20 @@ export default function EditTripScreen() {
 				</View>
 			
 				{/* DETAILS */}
-				<SectionLabel title="ADVENTURE DETAILS" />
+				<SectionLabel title={t.adventures.details.toUpperCase()} />
 			
 				<InputField
-					label="NAME"
+					label={t.common.title.toUpperCase()}
 					value={name}
 					onChangeText={setName}
-					placeholder="Adventure name"
+					placeholder={capitalize(t.adventures.adventureTitle)}
 				/>
 			
 				{/* DATES */}
 				<View style={styles.row}>
 					<View style={styles.half}>
 					<InputField
-						label="START DATE"
+						label={t.adventures.startDate.toUpperCase()}
 						value={startDate}
 						onChangeText={setStartDate}
 						placeholder="2026-08-08"
@@ -179,10 +185,10 @@ export default function EditTripScreen() {
 			
 					<View style={styles.half}>
 					<InputField
-						label="END DATE"
+						label={t.adventures.endDate.toUpperCase()}
 						value={endDate}
 						onChangeText={setEndDate}
-						placeholder="Optional"
+						placeholder={capitalize(t.common.optional)}
 						keyboardType="numbers-and-punctuation"
 					/>
 					</View>
@@ -191,13 +197,13 @@ export default function EditTripScreen() {
 				{/* DESCRIPTION */}
 				<View style={styles.notesContainer}>
 					<Text style={styles.label}>
-					DESCRIPTION
+						{t.common.description.toUpperCase()}
 					</Text>
 			
 					<TextInput
 					value={description}
 					onChangeText={setDescription}
-					placeholder="Describe this adventure..."
+					placeholder={t.adventures.adventureDesc}
 					placeholderTextColor={theme.colours.textMuted}
 					multiline
 					textAlignVertical="top"
@@ -212,7 +218,7 @@ export default function EditTripScreen() {
 				<View style={styles.row}>
 					<View style={styles.half}>
 					<InputField
-						label="Budget"
+						label={t.finance.budget.toUpperCase()}
 						value={budget}
 						onChangeText={setBudget}
 						placeholder="0.00"
@@ -224,10 +230,10 @@ export default function EditTripScreen() {
 			
 					<View style={styles.half}>
 					<InputField
-						label="Budget Currency"
+						label={t.finance.currency.toUpperCase()}
 						value={budgetCurrency}
 						onChangeText={setBudgetCurrency}
-						placeholder="EUR"
+						placeholder={settings.currency}
 					/>
 					</View>
 				</View>
@@ -238,7 +244,7 @@ export default function EditTripScreen() {
 					onPress={handleSave}
 				>
 					<Text style={styles.saveText}>
-					SAVE CHANGES
+						{t.common.save.toUpperCase()}
 					</Text>
 			
 					<Text style={styles.saveArrow}>
@@ -248,11 +254,10 @@ export default function EditTripScreen() {
 			
 				{/* DANGER ZONE */}
 				<View style={styles.dangerSection}>
-					<SectionLabel title="DANGER ZONE" />
+					<SectionLabel title={t.common.dangerZone.toUpperCase()} />
 			
 					<Text style={styles.dangerDescription}>
-					Permanently remove this adventure and
-					its associated data.
+						{t.adventures.delDesc}
 					</Text>
 			
 					<Pressable
@@ -260,7 +265,7 @@ export default function EditTripScreen() {
 					onPress={() => setDeleteModalVisible(true)}
 					>
 					<Text style={styles.deleteText}>
-						DELETE ADVENTURE
+						{t.adventures.delAdventure}
 					</Text>
 			
 					<Text style={styles.deleteSymbol}>
@@ -271,10 +276,10 @@ export default function EditTripScreen() {
 				</ScrollView>
 				<GameModal
 				visible={deleteModalVisible}
-				title="DELETE ADVENTURE?"
-				message="This adventure and its planned days, POIs and other data will be permanently removed. This action cannot be undone."
-				confirmText="DELETE"
-				cancelText="KEEP IT"
+				title={t.adventures.delAdventure + "?"}
+				message={t.adventures.delAdventureDesc}
+				confirmText={t.common.delete.toUpperCase()}
+				cancelText={t.common.cancel.toUpperCase()}
 				destructive
 				onCancel={() => setDeleteModalVisible(false)}
 				onConfirm={async () => {

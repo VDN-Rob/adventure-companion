@@ -4,6 +4,7 @@ import { POI } from "@/models/POI";
 import { Route } from "@/models/Route";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
+import { capitalize } from "@/utils/string/capitalize";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { DayMapPreview } from "../DayMapPreview";
 
@@ -128,7 +129,7 @@ export function DayCard({
 			<View style={styles.poiSummary}>
 				<View style={styles.summaryInfo}>
 				<Text style={styles.summaryLabel}>
-					{t.common.next}
+					{capitalize(t.common.next)}
 				</Text>
 
 				<Text style={styles.summaryValue}>

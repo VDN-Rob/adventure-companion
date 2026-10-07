@@ -4,15 +4,15 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-	Alert,
-	KeyboardAvoidingView,
-	Platform,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import { InputField } from "@/components/forms/InputField";
@@ -148,7 +148,7 @@ export default function CreatePoiScreen() {
 	}
 	
 	return (
-	<SafeAreaView>
+	<SafeAreaView style={styles.container}>
 		<KeyboardAvoidingView
 			style={styles.container}
 			behavior={Platform.OS === "ios" ? "padding" : undefined}
