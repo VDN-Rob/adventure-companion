@@ -98,7 +98,7 @@ SLOW:
 
 # Phase 7: Diary
 
-
+make poitype and expense categories a card/component/separate translation
 
 [ ] Adding a currency type or constrained type: "export type CurrencyCode = string;" or "export type CurrencyCode = 
   | "EUR"

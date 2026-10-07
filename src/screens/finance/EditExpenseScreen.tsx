@@ -6,20 +6,10 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { getTranslations } from "@/i18n";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const categories: {
-	value: ExpenseCategory;
-	label: string;
-	icon: string;
-}[] = [
-	{ value: "food", label: "Food", icon: "◆" },
-	{ value: "transport", label: "Transport", icon: "➜" },
-	{ value: "accommodation", label: "Stay", icon: "⌂" },
-	{ value: "gear", label: "Gear", icon: "◇" },
-	{ value: "other", label: "Other", icon: "●" },
-];
 
 export default function EditExpenseScreen() {
 	const { expenseId } = useLocalSearchParams<{ expenseId: string }>();
@@ -33,6 +23,41 @@ export default function EditExpenseScreen() {
 	const [category, setCategory] = useState<ExpenseCategory>("food");
 	const [description, setDescription] = useState("");
 	const [date, setDate] = useState("");
+
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
+
+	const categories: {
+		value: ExpenseCategory;
+		label: string;
+		icon: string;
+	}[] = [
+		{
+			value: "food",
+			label: t.finance.categories.food,
+			icon: "◆",
+		},
+		{
+			value: "transport",
+			label: t.finance.categories.transport,
+			icon: "➜",
+		},
+		{
+			value: "accommodation",
+			label: t.finance.categories.accommodation,
+			icon: "⌂",
+		},
+		{
+			value: "gear",
+			label: t.finance.categories.gear,
+			icon: "◇",
+		},
+		{
+			value: "other",
+			label: t.finance.categories.other,
+			icon: "●",
+		},
+	];
 
 	useEffect(() => {
 		async function loadExpense() {
@@ -55,7 +80,9 @@ export default function EditExpenseScreen() {
 	}, [expenseId]);
 
 	async function handleSave() {
-		if (!expense) return;
+		if (!expense) {
+			return;
+		}
 
 		const numericAmount = Number(amount);
 
@@ -65,24 +92,24 @@ export default function EditExpenseScreen() {
 			numericAmount <= 0
 		) {
 			Alert.alert(
-				"Invalid amount",
-				"Please enter an amount greater than zero."
+				t.alerts.invalidAmount.title,
+				t.alerts.invalidAmount.message,
 			);
 			return;
 		}
 
 		if (!currency.trim()) {
 			Alert.alert(
-				"Missing currency",
-				"Please enter a currency."
+				t.alerts.missingCurrency.title,
+				t.alerts.missingCurrency.message,
 			);
 			return;
 		}
 
 		if (!date.trim()) {
 			Alert.alert(
-				"Missing date",
-				"Please enter a date."
+				t.alerts.missingDate.title,
+				t.alerts.missingDate.message,
 			);
 			return;
 		}
@@ -100,166 +127,196 @@ export default function EditExpenseScreen() {
 		};
 
 		try {
-			await expenseServices.updateExpense(updatedExpense);
+			await expenseServices.updateExpense(
+				updatedExpense,
+			);
+
 			router.back();
-			} catch {
+		} catch {
 			Alert.alert(
-				"Could not save expense",
-				"Something went wrong while saving the expense."
+				t.alerts.couldNotSaveExpense.title,
+				t.alerts.couldNotSaveExpense.message,
 			);
 		}
 	}
 
 	function handleDelete() {
 		Alert.alert(
-		"Delete expense?",
-		"This expense will be permanently removed.",
-		[
-			{
-			text: "Cancel",
-			style: "cancel",
-			},
-			{
-			text: "Delete",
-			style: "destructive",
-			onPress: deleteExpense,
-			},
-		]
+			t.finance.deleteConfirmation.title,
+			t.finance.deleteConfirmation.message,
+			[
+				{
+					text: t.finance.deleteConfirmation.cancel,
+					style: "cancel",
+				},
+				{
+					text: t.finance.deleteConfirmation.confirm,
+					style: "destructive",
+					onPress: deleteExpense,
+				},
+			],
 		);
 	}
 
 	async function deleteExpense() {
-		if (!expenseId) return;
+		if (!expenseId) {
+			return;
+		}
 
 		try {
-			await expenseServices.deleteExpense(expenseId);
+			await expenseServices.deleteExpense(
+				expenseId,
+			);
+
 			router.back();
 		} catch {
 			Alert.alert(
-				"Could not delete expense",
-				"Something went wrong while deleting the expense."
+				t.alerts.couldNotDeleteExpense.title,
+				t.alerts.couldNotDeleteExpense.message,
 			);
 		}
 	}
 
 	if (!expense) {
 		return (
-		<SafeAreaView style={styles.container}>
-			<Text style={styles.loading}>
-			LOADING EXPENSE...
-			</Text>
-		</SafeAreaView>
+			<SafeAreaView style={styles.container}>
+				<Text style={styles.loading}>
+					{t.finance.loadingExpense}
+				</Text>
+			</SafeAreaView>
 		);
 	}
 
 	return (
 		<SafeAreaView style={styles.container}>
-		<ScrollView
-			contentContainerStyle={styles.content}
-			keyboardShouldPersistTaps="handled"
-		>
-			<Text style={styles.title}>EDIT EXPENSE</Text>
+			<ScrollView
+				contentContainerStyle={styles.content}
+				keyboardShouldPersistTaps="handled"
+			>
+				<Text style={styles.title}>
+					{t.finance.editExpense}
+				</Text>
 
-			<SectionLabel title="AMOUNT" />
-
-			<View style={styles.amountRow}>
-			<View style={styles.amountContainer}>
-				<InputField
-				label="Amount"
-				value={amount}
-				onChangeText={setAmount}
-				placeholder="0.00"
-				keyboardType="decimal-pad"
+				<SectionLabel
+					title={t.finance.amount}
 				/>
-			</View>
 
-			<View style={styles.currencyContainer}>
-				<InputField
-				label="Currency"
-				value={currency}
-				onChangeText={setCurrency}
-				placeholder="EUR"
+				<View style={styles.amountRow}>
+					<View style={styles.amountContainer}>
+						<InputField
+							label={t.finance.amountLabel}
+							value={amount}
+							onChangeText={setAmount}
+							placeholder={
+								t.finance.amountPlaceholder
+							}
+							keyboardType="decimal-pad"
+						/>
+					</View>
+
+					<View style={styles.currencyContainer}>
+						<InputField
+							label={t.finance.currency}
+							value={currency}
+							onChangeText={setCurrency}
+							placeholder={settings.currency}
+						/>
+					</View>
+				</View>
+
+				<SectionLabel
+					title={t.finance.category}
 				/>
-			</View>
-			</View>
 
-			<SectionLabel title="CATEGORY" />
+				<View style={styles.categoryGrid}>
+					{categories.map((item) => {
+						const selected =
+							category === item.value;
 
-			<View style={styles.categoryGrid}>
-			{categories.map((item) => {
-				const selected = category === item.value;
+						return (
+							<Pressable
+								key={item.value}
+								onPress={() =>
+									setCategory(item.value)
+								}
+								style={[
+									styles.category,
+									selected &&
+										styles.categorySelected,
+								]}
+							>
+								<Text
+									style={[
+										styles.categoryIcon,
+										selected &&
+											styles.categorySelectedText,
+									]}
+								>
+									{item.icon}
+								</Text>
 
-				return (
+								<Text
+									style={[
+										styles.categoryText,
+										selected &&
+											styles.categorySelectedText,
+									]}
+								>
+									{item.label}
+								</Text>
+							</Pressable>
+						);
+					})}
+				</View>
+
+				<SectionLabel
+					title={t.finance.details}
+				/>
+
+				<InputField
+					label={t.finance.description}
+					value={description}
+					onChangeText={setDescription}
+					placeholder={
+						t.finance.descriptionPlaceholder
+					}
+				/>
+
+				<InputField
+					label={t.finance.date}
+					value={date}
+					onChangeText={setDate}
+					placeholder={
+						t.finance.datePlaceholder
+					}
+				/>
+
 				<Pressable
-					key={item.value}
-					onPress={() => setCategory(item.value)}
-					style={[
-					styles.category,
-					selected && styles.categorySelected,
+					onPress={handleSave}
+					style={({ pressed }) => [
+						styles.saveButton,
+						pressed &&
+							styles.saveButtonPressed,
 					]}
 				>
-					<Text
-					style={[
-						styles.categoryIcon,
-						selected && styles.categorySelectedText,
-					]}
-					>
-					{item.icon}
-					</Text>
-
-					<Text
-					style={[
-						styles.categoryText,
-						selected && styles.categorySelectedText,
-					]}
-					>
-					{item.label}
+					<Text style={styles.saveText}>
+						{t.finance.saveChanges}
 					</Text>
 				</Pressable>
-				);
-			})}
-			</View>
 
-			<SectionLabel title="DETAILS" />
-
-			<InputField
-			label="Description"
-			value={description}
-			onChangeText={setDescription}
-			placeholder="What did you spend it on?"
-			/>
-
-			<InputField
-			label="Date"
-			value={date}
-			onChangeText={setDate}
-			placeholder="2026-08-29"
-			/>
-
-			<Pressable
-			onPress={handleSave}
-			style={({ pressed }) => [
-				styles.saveButton,
-				pressed && styles.saveButtonPressed,
-			]}
-			>
-			<Text style={styles.saveText}>
-				SAVE CHANGES
-			</Text>
-			</Pressable>
-
-			<Pressable
-			onPress={handleDelete}
-			style={({ pressed }) => [
-				styles.deleteButton,
-				pressed && styles.deleteButtonPressed,
-			]}
-			>
-			<Text style={styles.deleteText}>
-				DELETE EXPENSE
-			</Text>
-			</Pressable>
-		</ScrollView>
+				<Pressable
+					onPress={handleDelete}
+					style={({ pressed }) => [
+						styles.deleteButton,
+						pressed &&
+							styles.deleteButtonPressed,
+					]}
+				>
+					<Text style={styles.deleteText}>
+						{t.finance.deleteExpense}
+					</Text>
+				</Pressable>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }

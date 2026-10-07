@@ -4,6 +4,7 @@ import { FinanceSummary } from "@/components/finance/FinanceSummary";
 import { FinancePeriod, PeriodSelector } from "@/components/finance/PeriodSelector";
 import { SpendingOverview } from "@/components/finance/SpendingOverview";
 import { TripSelector } from "@/components/finance/TripSelector";
+import { getTranslations } from "@/i18n";
 import { Expense } from "@/models/Expense";
 import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
@@ -29,10 +30,10 @@ export default function FinanceScreen() {
 	const [period, setPeriod] =	useState<FinancePeriod>("30_DAYS");
 
 	const [isLoading, setIsLoading] = useState(true);
-
 	const [selectorVisible, setSelectorVisible] = useState(false);
 
 	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
 
 	const selectedTrip = useMemo(
 		() =>
@@ -138,11 +139,8 @@ export default function FinanceScreen() {
 	);
 
 	const totalSpent = statistics?.total ?? 0;
-
 	const tripBudget = selectedTrip?.budget ?? null;
-
 	const tripDuration = selectedTrip ? getTripDuration(selectedTrip) : null;
-
 	const elapsedTripDays = selectedTrip ? getElapsedTripDays(selectedTrip) : null;
 
 	const dailySpending =
@@ -181,177 +179,175 @@ export default function FinanceScreen() {
 
 	return (
 		<SafeAreaView style={styles.container}>
-		<FlatList
-			data={expenses}
-			keyExtractor={(expense) => expense.id}
-			renderItem={({ item }) => (
-			<ExpenseCard
-				expense={item}
-				onPress={() => {
-				router.push({
-					pathname:
-					"/finance/editExpense",
-					params: {
-					expenseId: item.id,
-					},
-				});
-				}}
-			/>
-			)}
-			ItemSeparatorComponent={() => (
-			<View style={styles.separator} />
-			)}
-			contentContainerStyle={
-			styles.content
-			}
-			ListHeaderComponent={
-			<>
-				<View style={styles.header}>
-				<Text style={styles.eyebrow}>
-					ADVENTURE FINANCE
-				</Text>
-
-				<Text style={styles.title}>
-					FINANCE
-				</Text>
-				</View>
-
-				<TripSelector
-					trips={trips}
-					selectedTrip={selectedTrip}
-					visible={selectorVisible}
-					onOpen={() =>
-						setSelectorVisible(true)
-					}
-					onClose={() =>
-						setSelectorVisible(false)
-					}
-					onSelect={(tripId) => {
-						setSelectedTripId(tripId);
-						setSelectorVisible(false);
-					}}
-				/>
-
-				{!selectedTrip && (
-				<PeriodSelector
-					period={period}
-					onChange={setPeriod}
-				/>
+			<FlatList
+				data={expenses}
+				keyExtractor={(expense) => expense.id}
+				renderItem={({ item }) => (
+					<ExpenseCard
+						expense={item}
+						onPress={() => {
+							router.push({
+								pathname:
+									"/finance/editExpense",
+								params: {
+									expenseId: item.id,
+								},
+							});
+						}}
+					/>
 				)}
-
-				<FinanceSummary
-					totalSpent={totalSpent}
-					currency={financeCurrency}
-					selectedTrip={selectedTrip}
-					dailySpending={dailySpending}
-					dailyBudget={dailyBudget}
-					remaining={remaining}
-					budgetPercentage={
-						budgetPercentage
-					}
-				/>
-
-				{statistics &&
-				statistics.conversionPendingCount >
-					0 && (
-					<View
-					style={
-						styles.conversionNotice
-					}
-					>
-					<Text
-						style={
-						styles.conversionNoticeText
-						}
-					>
-						{
-						statistics.conversionPendingCount
-						}{" "}
-						expense
-						{statistics.conversionPendingCount ===
-						1
-						? ""
-						: "s"} awaiting exchange
-						rate
-						{statistics.conversionPendingCount ===
-						1
-						? ""
-						: "s"}
-						.
-					</Text>
-					</View>
+				ItemSeparatorComponent={() => (
+					<View style={styles.separator} />
 				)}
-
-				<SpendingOverview
-				statistics={statistics}
-				/>
-
-				<CategoryBreakdown
-					statistics={statistics?.byCategory ?? {}}
-					currency={financeCurrency}
-				/>
-
-				<View style={styles.expensesHeader}>
-				<View>
-					<Text style={styles.sectionLabel}>
-					ADVENTURE LOG
-					</Text>
-
-					<Text
-					style={
-						styles.expensesTitle
-					}
-					>
-					RECENT EXPENSES
-					</Text>
-				</View>
-
-				<Text style={styles.expenseCount}>
-					{expenses.length}
-				</Text>
-				</View>
-			</>
-			}
-			ListEmptyComponent={
-			<View style={styles.emptyExpenses}>
-				<Text
-				style={
-					styles.emptyExpensesTitle
+				contentContainerStyle={
+					styles.content
 				}
-				>
-				NO EXPENSES
-				</Text>
+				ListHeaderComponent={
+					<>
+						<View style={styles.header}>
+							<Text style={styles.eyebrow}>
+								{t.finance.adventureFinance}
+							</Text>
 
-				<Text style={styles.emptyText}>
-				Your adventure spending will
-				appear here.
-				</Text>
-			</View>
-			}
-		/>
+							<Text style={styles.title}>
+								{t.finance.finance}
+							</Text>
+						</View>
 
-		<Pressable
-			onPress={() => {
-			router.push({
-				pathname:
-				"/finance/createExpense",
-				params: selectedTrip
-				? {
-					tripId: selectedTrip.id,
-					}
-				: undefined,
-			});
-			}}
-			style={({ pressed }) => [
-			styles.addButton,
-			pressed &&
-				styles.addButtonPressed,
-			]}
-		>
-			<Text style={styles.addButtonText}>
-			+ ADD EXPENSE
-			</Text>
-		</Pressable>
+						<TripSelector
+							trips={trips}
+							selectedTrip={selectedTrip}
+							visible={selectorVisible}
+							onOpen={() =>
+								setSelectorVisible(true)
+							}
+							onClose={() =>
+								setSelectorVisible(false)
+							}
+							onSelect={(tripId) => {
+								setSelectedTripId(tripId);
+								setSelectorVisible(false);
+							}}
+						/>
+
+						{!selectedTrip && (
+							<PeriodSelector
+								period={period}
+								onChange={setPeriod}
+							/>
+						)}
+
+						<FinanceSummary
+							totalSpent={totalSpent}
+							currency={financeCurrency}
+							selectedTrip={selectedTrip}
+							dailySpending={dailySpending}
+							dailyBudget={dailyBudget}
+							remaining={remaining}
+							budgetPercentage={
+								budgetPercentage
+							}
+						/>
+
+						{statistics &&
+							statistics.conversionPendingCount >
+								0 && (
+								<View
+									style={
+										styles.conversionNotice
+									}
+								>
+									<Text
+										style={
+											styles.conversionNoticeText
+										}
+									>
+										{t.finance.conversionNotice(
+											statistics.conversionPendingCount,
+										)}
+									</Text>
+									</View>
+								)}
+
+						<SpendingOverview
+							statistics={statistics}
+						/>
+
+						<CategoryBreakdown
+							statistics={
+								statistics?.byCategory ?? {}
+							}
+							currency={financeCurrency}
+						/>
+
+						<View
+							style={styles.expensesHeader}
+						>
+							<View>
+								<Text
+									style={
+										styles.sectionLabel
+									}
+								>
+									{t.finance.adventureLog}
+								</Text>
+
+								<Text
+									style={
+										styles.expensesTitle
+									}
+								>
+									{t.finance.recentExpenses}
+								</Text>
+							</View>
+
+							<Text
+								style={styles.expenseCount}
+							>
+								{expenses.length}
+							</Text>
+						</View>
+					</>
+				}
+				ListEmptyComponent={
+					<View style={styles.emptyExpenses}>
+						<Text
+							style={
+								styles.emptyExpensesTitle
+							}
+						>
+							{t.finance.noExpenses}
+						</Text>
+
+						<Text style={styles.emptyText}>
+							{t.finance.noExpensesMessage}
+						</Text>
+					</View>
+				}
+			/>
+
+			<Pressable
+				onPress={() => {
+					router.push({
+						pathname:
+							"/finance/createExpense",
+						params: selectedTrip
+							? {
+								tripId: selectedTrip.id,
+							}
+							: undefined,
+					});
+				}}
+				style={({ pressed }) => [
+					styles.addButton,
+					pressed &&
+						styles.addButtonPressed,
+				]}
+			>
+				<Text style={styles.addButtonText}>
+					+ {t.finance.addExpense}
+				</Text>
+			</Pressable>
 		</SafeAreaView>
 	);
 }

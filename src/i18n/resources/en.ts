@@ -62,12 +62,58 @@ export const en = {
     },
 
     finance: {
-        finance: "finance",
         finances: "finances",
         budget: "budget",
         expenses: "expenses",
         remaining: "remaining",
-        currency: "currency",
+        adventureFinance: "ADVENTURE FINANCE",
+        finance: "FINANCE",
+
+        conversionNotice: (count: number) => `${count} expense${count === 1 ? "" : "s"} awaiting exchange rate${count === 1 ? "" : "s"}.`,
+
+        adventureLog: "ADVENTURE LOG",
+        recentExpenses: "RECENT EXPENSES",
+        noExpenses: "NO EXPENSES",
+        noExpensesMessage: "Your adventure spending will appear here.",
+
+        addExpense: "ADD EXPENSE",
+
+        editExpense: "EDIT EXPENSE",
+
+        amount: "AMOUNT",
+        amountLabel: "Amount",
+        amountPlaceholder: "0.00",
+
+        currency: "Currency",
+
+        category: "CATEGORY",
+
+        details: "DETAILS",
+        description: "Description",
+        descriptionPlaceholder: "What did you spend it on?",
+        date: "Date",
+        datePlaceholder: "2026-08-29",
+
+        saveChanges: "SAVE CHANGES",
+        deleteExpense: "DELETE EXPENSE",
+
+        categories: {
+            food: "Food",
+            transport: "Transport",
+            accommodation: "Stay",
+            gear: "Gear",
+            other: "Other",
+        },
+
+        deleteConfirmation: {
+            title: "Delete expense?",
+            message: "This expense will be permanently removed.",
+            cancel: "Cancel",
+            confirm: "Delete",
+        },
+        loadingExpense: "LOADING EXPENSE...",
+        newExpense: "NEW EXPENSE",
+        saveExpense: "SAVE EXPENSE",
     },
 
     maps: {
@@ -508,6 +554,31 @@ export const en = {
             title: "Could not delete diary entry",
             message:
                 "Something went wrong while deleting the entry.",
+        },
+
+        invalidAmount: {
+            title: "Invalid amount",
+            message: "Please enter an amount greater than zero.",
+        },
+
+        missingCurrency: {
+            title: "Missing currency",
+            message: "Please enter a currency.",
+        },
+
+        missingDate: {
+            title: "Missing date",
+            message: "Please enter a date.",
+        },
+
+        couldNotSaveExpense: {
+            title: "Could not save expense",
+            message: "Something went wrong while saving the expense.",
+        },
+
+        couldNotDeleteExpense: {
+            title: "Could not delete expense",
+            message: "Something went wrong while deleting the expense.",
         },
     }
 };
