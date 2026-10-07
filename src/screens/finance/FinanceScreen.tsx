@@ -18,7 +18,7 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FinanceScreen() {
-	const { tripServices, expenseServices, appSettingsService } = useAppServices();
+	const { tripServices, expenseServices } = useAppServices();
 
 	const [trips, setTrips] = useState<Trip[]>([]);
 	const [selectedTripId, setSelectedTripId] = useState<string | null>(null);

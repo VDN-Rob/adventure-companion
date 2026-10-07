@@ -4,6 +4,8 @@ import { AppHeader } from "@/components/homescreen/AppHeader";
 import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
 import { CheckInModal } from "@/components/homescreen/CheckInModal";
 import { QuickActions } from "@/components/homescreen/QuickActions";
+import { getTranslations } from "@/i18n";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { styles } from "@/styling/styles";
 import { theme } from "@/styling/theme";
 import { router } from "expo-router";
@@ -37,13 +39,16 @@ export default function HomeScreen() {
     const hasMultipleTrips = activeTrips.length > 1;
     const hasActiveDay = Boolean(selectedTrip && today);
 
+    const { settings } = useAppSettings();
+    const t = getTranslations(settings.language)
+
     return (
         <SafeAreaView style={styles.container}>
         <AppHeader
-            appName="ELG WANDER"
+            appName={t.common.appName}
             tripName={
             selectedTrip?.name ??
-            "No active adventure"
+            t.homeScreen.noAdventure
             }
             currentDay={
             selectedTrip
@@ -52,15 +57,15 @@ export default function HomeScreen() {
             }
             totalDays={
             selectedTrip
-                ? totalDayNumber ?? "TO INFINITY!"
+                ? totalDayNumber ?? t.homeScreen.infinity.toUpperCase()
                 : undefined
             }
         />
 
         {hasMultipleTrips && (
             <Selector
-                label="CURRENT ADVENTURE"
-                placeholder="SELECT ADVENTURE"
+                label={t.homeScreen.currentAdventure.toUpperCase()}
+                placeholder={t.homeScreen.selectAdventure.toUpperCase()}
                 options={adventureOptions}
                 selectedValue={selectedTripId}
                 onSelect={setSelectedTripId}
@@ -71,11 +76,11 @@ export default function HomeScreen() {
             {activeTrips.length === 0 && (
             <View style={emptyStateStyles.container}>
                 <Text style={emptyStateStyles.title}>
-                    NO ACTIVE ADVENTURE
+                    {t.homeScreen.noAdventure}
                 </Text>
                 
                 <Text style={emptyStateStyles.description}>
-                    Start or join an adventure to begin your journey.
+                    {t.homeScreen.noAdventureDesc}
                 </Text>
                 
                 <Pressable
@@ -83,7 +88,7 @@ export default function HomeScreen() {
                     onPress={() => router.push('/trip/trips')}
                 >
                     <Text style={emptyStateStyles.buttonText}>
-                    VIEW ADVENTURES
+                        {t.homeScreen.viewAdventures.toUpperCase()}
                     </Text>
                 </Pressable>
                 </View>
@@ -92,29 +97,18 @@ export default function HomeScreen() {
             {activeTrips.length > 0 &&
             !selectedTrip && (
                 <Pressable
-                style={
-                    styles.chooseAdventureButton
-                }
+                style={styles.chooseAdventureButton}
                 onPress={() => {
                     // The selector above is the entry
                     // point for choosing an adventure.
                 }}
                 >
-                <Text
-                    style={
-                    styles.chooseAdventureTitle
-                    }
-                >
-                    SELECT YOUR ADVENTURE
+                <Text style={styles.chooseAdventureTitle}>
+                    {t.homeScreen.selectAdventure}
                 </Text>
 
-                <Text
-                    style={
-                    styles.chooseAdventureText
-                    }
-                >
-                    You have multiple active
-                    adventures today.
+                <Text style={styles.chooseAdventureText}>
+                    {t.homeScreen.multAdventuresDesc}
                 </Text>
                 </Pressable>
             )}
@@ -133,11 +127,11 @@ export default function HomeScreen() {
             {selectedTrip && !today && (
             <View style={styles.restDay}>
                 <Text style={styles.restDayTitle}>
-                REST DAY
+                    {t.homeScreen.restDayTitle.toUpperCase()}
                 </Text>
 
                 <Text style={styles.restDayText}>
-                Nothing planned for today.
+                    {t.homeScreen.restDayDesc}
                 </Text>
             </View>
             )}
@@ -151,33 +145,31 @@ export default function HomeScreen() {
                     : () => openCreateDay()
                 }
                 leftActionIcon={today ? '◇' : '◇'}
-                leftActionLabel={today ? 'Check In' : 'Day Planner'}
+                leftActionLabel={today ? t.homeScreen.checkIn : t.homeScreen.dayPlanner}
                 onMiddleActionPress={openExpense}
                 middleActionIcon="+"
-                middleActionLabel="Add expense"
+                middleActionLabel={t.homeScreen.addExpense}
                 onRightActionPress={handleDiaryPress}
                 rightActionIcon="✎"
-                rightActionLabel="Diary"
+                rightActionLabel={t.common.diary}
             />
         )}
 
         <BottomNavigation
-            activeTab={today ? "day" : ""}
+            activeTab={today ? t.common.day : ""}
             items={bottomItems}
-            onMorePress={() =>
-            router.push("/more")
-            }
+            onMorePress={() => router.push("/more")}
         />
 
         {selectedTrip && today && (
             <CheckInModal
-            visible={checkInVisible}
-            pois={todayPois}
-            onClose={() =>
-                setCheckInVisible(false)
-            }
-            onCheckIn={handleCheckIn}
-            onUndoCheckIn={handleUndoCheckIn}
+                visible={checkInVisible}
+                pois={todayPois}
+                onClose={() =>
+                    setCheckInVisible(false)
+                }
+                onCheckIn={handleCheckIn}
+                onUndoCheckIn={handleUndoCheckIn}
             />
         )}
         </SafeAreaView>
