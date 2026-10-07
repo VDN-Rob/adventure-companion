@@ -127,10 +127,7 @@ export default function TripDetailsScreen() {
 			const networkState = await NetInfo.fetch();
 
 			if (!networkState.isConnected) {
-				Alert.alert(
-					t.alerts.noInternet,
-					t.alerts.noInternetDesc
-				);
+				Alert.alert(t.alerts.noInternetConnection.title, t.alerts.noInternetConnection.message);
 	
 				return;
 			}
@@ -138,10 +135,7 @@ export default function TripDetailsScreen() {
 			const regions = await tripMapServices.getTripMapRegions(tripId, "day");
 
 			if (regions.length === 0) {
-				Alert.alert(
-					t.alerts.noMapData,
-					t.alerts.noMapDataDesc
-				);
+				Alert.alert(t.alerts.noMapData.title, t.alerts.noMapData.message);
 
 				return;
 			}
@@ -149,16 +143,13 @@ export default function TripDetailsScreen() {
 			const downloadedMaps = await mapServices.downloadRequiredRegions(regions);
 
 			if (downloadedMaps.length === 0) {
-				Alert.alert(
-					t.alerts.mapDataPresent,
-					t.alerts.mapDataPresentDesc
-				);
+				Alert.alert(t.alerts.mapAlreadyDownloaded.title, t.alerts.mapAlreadyDownloaded.message);
 
 				return;
 			}
 
 			Alert.alert(
-				t.alerts.downloadComplete,
+				t.alerts.downloadComplete.title,
 				`${downloadedMaps.length} map region${
 					downloadedMaps.length === 1 ? "" : "s"
 				} downloaded.`
@@ -169,19 +160,14 @@ export default function TripDetailsScreen() {
 				error
 			);
 
-			Alert.alert(
-				t.alerts.downloadFailed,
-				t.alerts.downloadFailedDesc				
-			);
+			Alert.alert(t.alerts.downloadFailed.title, t.alerts.downloadFailed.message);
 		} finally {
 			setIsDownloadingMaps(false);
 		}
 	}
 
 	function tripDownloadWarning() {
-		Alert.alert(
-			t.alerts.downloadMaps,
-			t.alerts.downloadMapsDesc,
+		Alert.alert(t.alerts.downloadMaps.title, t.alerts.downloadMaps.message,
 			[
 				{
 					text: t.common.cancel,
@@ -277,7 +263,7 @@ export default function TripDetailsScreen() {
 					</Text>
 
 					<Text style={styles.statUnit}>
-						{t.common.kmAbr.toUpperCase()}
+						{t.units.kmAbr.toUpperCase()}
 					</Text>
 
 					<Text style={styles.statLabel}>
@@ -293,7 +279,7 @@ export default function TripDetailsScreen() {
 					</Text>
 
 					<Text style={styles.statUnit}>
-						{t.common.mAbr.toUpperCase()}
+						{t.units.mAbr.toUpperCase()}
 					</Text>
 
 					<Text style={styles.statLabel}>

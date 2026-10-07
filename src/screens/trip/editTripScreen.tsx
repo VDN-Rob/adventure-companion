@@ -79,7 +79,7 @@ export default function EditTripScreen() {
 		const firstError = Object.values(errors)[0];
 		
 		if (firstError) {
-			Alert.alert(t.alerts.invalidAdventure, firstError);
+			Alert.alert(t.alerts.invalidAdventure.title, firstError);
 			return;
 		}
 
@@ -106,10 +106,7 @@ export default function EditTripScreen() {
 		if (!result.success) {
 			const firstServiceError = Object.values(result.errors)[0];
 		
-			Alert.alert(
-			t.alerts.savingAdventureError,
-			firstServiceError ?? t.alerts.savingAdventureErrorDesc
-			);
+			Alert.alert(t.alerts.savingAdventureError.title, firstServiceError ?? t.alerts.savingAdventureError.message);
 		
 			return;
 		}
@@ -173,10 +170,10 @@ export default function EditTripScreen() {
 				<View style={styles.row}>
 					<View style={styles.half}>
 					<InputField
-						label={t.adventures.startDate.toUpperCase()}
+						label={t.time.startDate.toUpperCase()}
 						value={startDate}
 						onChangeText={setStartDate}
-						placeholder="2026-08-08"
+						placeholder={t.time.datePlaceholder}
 						keyboardType="numbers-and-punctuation"
 					/>
 					</View>
@@ -185,7 +182,7 @@ export default function EditTripScreen() {
 			
 					<View style={styles.half}>
 					<InputField
-						label={t.adventures.endDate.toUpperCase()}
+						label={t.time.endDate.toUpperCase()}
 						value={endDate}
 						onChangeText={setEndDate}
 						placeholder={capitalize(t.common.optional)}

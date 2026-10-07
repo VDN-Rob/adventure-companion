@@ -1,5 +1,7 @@
 import { InputField } from "@/components/forms/InputField";
+import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { validateDayFields } from "@/utils/validation/dayValidation";
@@ -7,15 +9,15 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -30,6 +32,9 @@ export default function CreateDayScreen() {
     const [plannedDistance, setPlannedDistance] = useState("");
 
     const { dayServices} = useAppServices();
+
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
 
     async function handleSaveDay() {
 		const errors = validateDayFields({
@@ -87,11 +92,11 @@ export default function CreateDayScreen() {
 
 				<View>
 				<Text style={styles.eyebrow}>
-					ADVENTURE PLANNER
+					{t.day.adventurePlanner}
 				</Text>
 
 				<Text style={styles.headerTitle}>
-					PLAN DAY
+					{t.day.planDay}
 				</Text>
 				</View>
 			</View>
@@ -99,7 +104,7 @@ export default function CreateDayScreen() {
 			{/* SECTION */}
 			<View style={styles.sectionHeader}>
 				<Text style={styles.sectionTitle}>
-				DAY DETAILS
+					{t.day.details}
 				</Text>
 
 				<View style={styles.sectionLine} />
@@ -107,18 +112,18 @@ export default function CreateDayScreen() {
 
 			{/* TITLE */}
 			<InputField
-				label="DAY TITLE"
+				label={t.day.title}
 				value={title}
 				onChangeText={setTitle}
-				placeholder="Through the Ardennes"
+				placeholder={t.day.titlePlaceholder}
 			/>
 
 			{/* DATE */}
 			<InputField
-				label="DATE"
+				label={t.time.date.toUpperCase()}
 				value={date}
 				onChangeText={setDate}
-				placeholder="2026-08-28"
+				placeholder={t.time.datePlaceholder}
 				keyboardType="numbers-and-punctuation"
 			/>
 
@@ -126,12 +131,12 @@ export default function CreateDayScreen() {
 			<View style={styles.row}>
 				<View style={styles.half}>
 				<InputField
-					label="DISTANCE"
+					label={t.common.distance.toUpperCase()}
 					value={plannedDistance}
 					onChangeText={setPlannedDistance}
 					placeholder="68.5"
 					keyboardType="decimal-pad"
-					suffix="KM"
+					suffix={t.units.kmAbr.toUpperCase()}
 				/>
 				</View>
 
@@ -139,12 +144,12 @@ export default function CreateDayScreen() {
 
 				<View style={styles.half}>
 				<InputField
-					label="ELEVATION"
+					label={t.common.elevation.toUpperCase()}
 					value={plannedElevation}
 					onChangeText={setPlannedElevation}
 					placeholder="820"
 					keyboardType="numeric"
-					suffix="M"
+					suffix={t.units.mAbr.toUpperCase()}
 				/>
 				</View>
 			</View>
@@ -152,20 +157,20 @@ export default function CreateDayScreen() {
 			{/* NOTES */}
 			<View style={styles.notesContainer}>
 				<Text style={styles.label}>
-				NOTES
+					{t.day.notes.toUpperCase()}
 				</Text>
 
 				<TextInput
-				value={notes}
-				onChangeText={setNotes}
-				placeholder="Anything important about this day..."
-				placeholderTextColor={theme.colours.textMuted}
-				multiline
-				textAlignVertical="top"
-				style={[
-					styles.input,
-					styles.notesInput,
-				]}
+					value={notes}
+					onChangeText={setNotes}
+					placeholder={t.day.notesPlaceholder}
+					placeholderTextColor={theme.colours.textMuted}
+					multiline
+					textAlignVertical="top"
+					style={[
+						styles.input,
+						styles.notesInput,
+					]}
 				/>
 			</View>
 
@@ -175,7 +180,7 @@ export default function CreateDayScreen() {
 				onPress={handleSaveDay}
 			>
 				<Text style={styles.saveText}>
-				SAVE DAY
+					{t.day.save}
 				</Text>
 
 				<Text style={styles.saveArrow}>

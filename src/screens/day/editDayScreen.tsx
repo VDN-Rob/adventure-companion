@@ -17,6 +17,8 @@ import {
 	View,
 } from "react-native";
 
+import { getTranslations } from "@/i18n";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { validateDayFields } from "@/utils/validation/dayValidation";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,78 +39,78 @@ export default function EditDayScreen() {
 	const [plannedDistance, setPlannedDistance] = useState("");
 	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 	
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
+	
 	// Load the right trip when screen finishes loading
 	useEffect(() => {
 		async function loadDay() {
-		if (!dayId) return;
-	
-		const day = await dayServices.getDayById(dayId);
-	
-		if (day) {
-			setDay(day);
-			setDate(day.date);
-	
-			// Database null → empty form field
-			setTitle(day.title ?? "");
-			setNotes(day.notes ?? "");
-	
-			setPlannedElevation(
-			day.plannedElevation === null
-				? ""
-				: String(day.plannedElevation)
-			);
-	
-			setPlannedDistance(
-			day.plannedDistance === null
-				? ""
-				: String(day.plannedDistance)
-			);
+			if (!dayId) return;
+		
+			const day = await dayServices.getDayById(dayId);
+		
+			if (day) {
+				setDay(day);
+				setDate(day.date);
+		
+				// Database null → empty form field
+				setTitle(day.title ?? "");
+				setNotes(day.notes ?? "");
+		
+				setPlannedElevation(
+				day.plannedElevation === null
+					? ""
+					: String(day.plannedElevation)
+				);
+		
+				setPlannedDistance(
+				day.plannedDistance === null
+					? ""
+					: String(day.plannedDistance)
+				);
+			}
+			}
+		
+			loadDay();
+		}, [dayId]);
+
+		async function handleSave() {
+		if (!day) return;
+
+		const errors = validateDayFields({
+			title,
+			date,
+			plannedElevation,
+			plannedDistance
+		});
+
+		const firstError = Object.values(errors)[0];
+
+		if (firstError) {
+			Alert.alert(t.alerts.invalidDayChange.title, firstError);
+			return;
 		}
+
+		const updatedDay: Day = {
+			...day,
+			date: date,
+			title: title.trim() === "" ? null : title.trim(),
+			notes: notes.trim() == "" ? null : notes.trim(),
+			plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
+			plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
 		}
-	
-		loadDay();
-	}, [dayId]);
+		
+		const result = await dayServices.updateDay(updatedDay);
 
-	async function handleSave() {
-	if (!day) return;
+		if (!result.success) {
+			const firstServiceError = Object.values(result.errors)[0];
+		
+			Alert.alert(t.alerts.couldNotSaveDay.title, firstServiceError ?? t.alerts.couldNotSaveDay.fallbackMessage);
+		
+			return;
+		}
 
-	const errors = validateDayFields({
-		title,
-		date,
-		plannedElevation,
-		plannedDistance
-	});
-
-	const firstError = Object.values(errors)[0];
-
-	if (firstError) {
-		Alert.alert("Invalid day change", firstError);
-		return;
-	}
-
-	const updatedDay: Day = {
-		...day,
-		date: date,
-		title: title.trim() === "" ? null : title.trim(),
-		notes: notes.trim() == "" ? null : notes.trim(),
-		plannedElevation: plannedElevation === "" ? null : Number(plannedElevation),
-		plannedDistance: plannedDistance === "" ? null : Number(plannedDistance),
-	}
-	
-	const result = await dayServices.updateDay(updatedDay);
-
-	if (!result.success) {
-		const firstServiceError = Object.values(result.errors)[0];
-	
-		Alert.alert(
-		"Could not save day",
-		firstServiceError ?? "The day contains invalid data."
-		);
-	
-		return;
-	}
-
-	router.back();
+		router.back();
 	}
 
 	async function deleteDay() {
@@ -125,7 +127,7 @@ export default function EditDayScreen() {
 		return (
 		<View style={styles.loadingContainer}>
 			<Text style={styles.loadingText}>
-			LOADING DAY...
+				{t.day.loading}
 			</Text>
 		</View>
 		);
@@ -156,45 +158,45 @@ export default function EditDayScreen() {
 		
 				<View>
 					<Text style={styles.eyebrow}>
-					ADVENTURE PLANNER
+						{t.day.adventurePlanner}
 					</Text>
 		
 					<Text style={styles.headerTitle}>
-					EDIT DAY
+						{t.day.editDay}
 					</Text>
 				</View>
 				</View>
 		
 				{/* DAY DETAILS */}
 		
-				<SectionLabel title="DAY DETAILS" />
+				<SectionLabel title={t.day.details} />
 		
 				<InputField
-				label="TITLE"
+				label={t.day.title}
 				value={title ?? ""}
 				onChangeText={setTitle}
-				placeholder="Riding into the mountains"
+				placeholder={t.day.titlePlaceholder}
 				/>
 		
 				<InputField
-				label="DATE"
+				label={t.day.date}
 				value={date}
 				onChangeText={setDate}
-				placeholder="2026-08-08"
+				placeholder={t.time.datePlaceholder}
 				/>
 		
 				{/* PLANNING */}
 		
-				<SectionLabel title="PLANNING" />
+				<SectionLabel title={t.day.planning} />
 		
 				<View style={styles.row}>
 				<View style={styles.half}>
 					<InputField
-					label="DISTANCE (KM)"
-					value={plannedDistance}
-					onChangeText={setPlannedDistance}
-					placeholder="85"
-					keyboardType="decimal-pad"
+						label={t.day.distance + "(" + t.units.kmAbr.toUpperCase() + ")"}
+						value={plannedDistance}
+						onChangeText={setPlannedDistance}
+						placeholder={t.day.distancePlaceholder}
+						keyboardType="decimal-pad"
 					/>
 				</View>
 		
@@ -202,10 +204,10 @@ export default function EditDayScreen() {
 		
 				<View style={styles.half}>
 					<InputField
-					label="ELEVATION (M)"
+					label={t.day.elevation + "(" + t.units.mAbr.toUpperCase() + ")"}
 					value={plannedElevation}
 					onChangeText={setPlannedElevation}
-					placeholder="1200"
+					placeholder={t.day.elevationPlaceholder}
 					keyboardType="numeric"
 					/>
 				</View>
@@ -213,18 +215,18 @@ export default function EditDayScreen() {
 		
 				{/* NOTES */}
 		
-				<SectionLabel title="DAY NOTES" />
+				<SectionLabel title={t.day.notesSection} />
 		
 				<View style={styles.notesContainer}>
 				<Text style={styles.label}>
-					NOTES
+					{t.day.notes}
 				</Text>
 		
 				<View style={styles.notesWrapper}>
 					<TextInput
 					value={notes ?? ""}
 					onChangeText={setNotes}
-					placeholder="What do you need to remember?"
+					placeholder={t.day.notesPlaceholder}
 					placeholderTextColor={theme.colours.textMuted}
 					multiline
 					textAlignVertical="top"
@@ -241,11 +243,11 @@ export default function EditDayScreen() {
 				>
 				<View>
 					<Text style={styles.saveEyebrow}>
-					ADVENTURE PLANNER
+						{t.day.adventurePlanner}
 					</Text>
 		
 					<Text style={styles.saveText}>
-					SAVE CHANGES
+						{t.day.saveChanges}
 					</Text>
 				</View>
 		
@@ -258,7 +260,7 @@ export default function EditDayScreen() {
 		
 				<View style={styles.dangerSection}>
 				<Text style={styles.dangerLabel}>
-					DANGER ZONE
+					{t.day.dangerZone}
 				</Text>
 		
 				<Pressable
@@ -267,11 +269,11 @@ export default function EditDayScreen() {
 				>
 					<View>
 					<Text style={styles.deleteTitle}>
-						DELETE DAY
+						{t.day.deleteDay}
 					</Text>
 		
 					<Text style={styles.deleteDescription}>
-						Permanently remove this day and its POIs.
+						{t.day.deleteDescription}
 					</Text>
 					</View>
 		
@@ -284,10 +286,10 @@ export default function EditDayScreen() {
 		
 			<GameModal
 				visible={deleteModalVisible}
-				title="DELETE DAY?"
-				message="This day and its planned points of interest will be permanently removed. This action cannot be undone."
-				confirmText="DELETE"
-				cancelText="KEEP DAY"
+				title={t.day.deleteConfirmation.title}
+				message={t.day.deleteConfirmation.message}
+				confirmText={t.day.deleteConfirmation.confirm}
+				cancelText={t.day.deleteConfirmation.cancel}
 				destructive
 				onCancel={() => setDeleteModalVisible(false)}
 				onConfirm={deleteDay}

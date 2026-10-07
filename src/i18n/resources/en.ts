@@ -57,7 +57,7 @@ export const en = {
         descPlaceholder: "A few words about this adventure...",
         beginPlanning: "BEGIN PLANNING",
         createAdventure: "CREATE ADVENTURE",
-        
+
 
     },
 
@@ -86,13 +86,70 @@ export const en = {
     day: {
         day: "day",
         days: "days",
+        untitledDay: "UNTITLED DAY",
 
+        // Create screen
+        adventurePlanner: "ADVENTURE PLANNER",
+        planDay: "PLAN DAY",
+
+        details: "DAY DETAILS",
+
+        title: "DAY TITLE",
+        titlePlaceholder: "Through the Ardennes",
+
+        save: "SAVE DAY",
+
+        // Details screen
+        plannedDistance: "PLANNED DISTANCE",
+
+        pointsOfInterest: "POINTS OF INTEREST",
+        noWaypoints: "NO WAYPOINTS",
+        nothingPlanned: "Nothing has been planned for this day yet.",
+
+        addPointOfInterest: "ADD POINT OF INTEREST",
+        openMap: "OPEN MAP",
+        downloadOfflineMap: "DOWNLOAD OFFLINE MAP",
+        loadGPX: "Load GPX",
+        editDay: "EDIT DAY",
+
+        loading: "LOADING DAY...",
+        notFound: "DAY NOT FOUND",
+        unableToLoad: "Unable to load this day.",
+
+        // Edit screen
+        date: "DATE",
+
+        planning: "PLANNING",
+        distance: "DISTANCE",
+        elevation: "ELEVATION",
+        distancePlaceholder: "85",
+        elevationPlaceholder: "1200",
+
+        notesSection: "DAY NOTES",
+        notes: "NOTES",
+        notesPlaceholder: "What do you need to remember?",
+
+        saveChanges: "SAVE CHANGES",
+
+        dangerZone: "DANGER ZONE",
+        deleteDay: "DELETE DAY",
+        deleteDescription:
+            "Permanently remove this day and its POIs.",
+
+        deleteConfirmation: {
+            title: "DELETE DAY?",
+            message:
+                "This day and its planned points of interest will be permanently removed. This action cannot be undone.",
+            confirm: "DELETE",
+            cancel: "KEEP DAY",
+        },
     },
 
     time: {
-
         startDate: "start date",
         endDate: "end date",
+        date: "date",
+        datePlaceholder: "2026-08-28",
 
     },
 
@@ -153,6 +210,8 @@ export const en = {
         title: "title",
         description: "description",
         optional: "Optional",
+        distance: "distance",
+        elevation: "elevation",
 
         cancel: "cancel",
         confirm: "confirm",
@@ -162,38 +221,87 @@ export const en = {
         download: "download",
         dangerZone: "danger zone",
 
-        distance: "distance",
-        kmAbr: "km",
-        km: "kilometer",
-        elevation: "elevation",
-        mAbr: "m",
-        m: "meter",
-
         to: "to",
     },
 
+    units: {
+        kmAbr: "km",
+        km: "kilometer",
+
+        mAbr: "m",
+        m: "meter",
+    },
+
     alerts: {
-        noInternet: "No internet connection",
-        noInternetDesc: "In order to perform this action, please connect to the internet.",
+        noInternetConnection: {
+            title: "No internet connection",
+            message:
+                "In order to perform this action, please connect to the internet.",
+        },
 
-        noMapData: "No map data",
-        noMapDataDesc: "Unable to retrieve local data for the map. Have you downloaded it?",
+        downloadFailedNoDay: {
+            title: "Download failed",
+            message: "No day was selected.",
+        },
 
-        mapDataPresent: "Maps already downloaded",
-        mapDataPresentDesc: "The required map areas have already been downloaded and are available offline.",
+        noMapData: {
+            title: "No map data",
+            message: "Unable to retrieve local data for the map. Have you downloaded it?",
+        },
 
-        downloadComplete: "Download complete",
+        mapAlreadyDownloaded: {
+            title: "Map already downloaded",
+            message:
+                "The required map area is already available offline.",
+        },
 
-        downloadFailed: "Download failed",
-        downloadFailedDesc: "The offline maps could not be downloaded.",
-        
-        downloadMaps: "Download maps",
-        downloadMapsDesc: "Download offline map data for each planned day. " +
+        downloadComplete: {
+            title: "Download complete",
+            message:
+                "The map for this day is now available offline.",
+        },
+
+        downloadFailed: {
+            title: "Download failed",
+            message:
+                "The offline map could not be downloaded.",
+        },
+
+        gpxImported: {
+            title: "GPX imported",
+            message:
+                "The route was imported successfully.",
+        },
+
+        importFailed: {
+            title: "Import failed",
+            message:
+                "The GPX file could not be imported.",
+        },
+
+        downloadMaps: {
+            title: "Download maps",
+            message: "Download offline map data for each planned day. " +
 			"Areas that are already available offline will not be downloaded again.",
-		
-        invalidAdventure: "Invalid adventure",
-        savingAdventureError: "Could not save adventure",
-        savingAdventureErrorDesc: "The adventure contains invalid data."
+        },
         
+        invalidAdventure: {
+            title: "Invalid adventure",
+        },
+        
+        savingAdventureError: {
+            title: "Could not save adventure",
+            message: "The adventure contains invalid data."
+        }, 
+
+        invalidDayChange: {
+            title: "Invalid day change",
+        },
+
+        couldNotSaveDay: {
+            title: "Could not save day",
+            fallbackMessage:
+                "The day contains invalid data.",
+        },
     }
 };

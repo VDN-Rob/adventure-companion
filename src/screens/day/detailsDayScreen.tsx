@@ -1,7 +1,9 @@
 import { POICard } from "@/components/card/POICard";
 import { SectionLabel } from "@/components/forms/SectionLabel";
+import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import NetInfo from "@react-native-community/netinfo";
@@ -25,6 +27,8 @@ export default function DayDetailsScreen() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
 
 	// Load the right day everytime the screen is loaded
 	useFocusEffect(
@@ -67,28 +71,19 @@ export default function DayDetailsScreen() {
 			const networkState = await NetInfo.fetch();
 
 			if (!networkState.isConnected) {
-				Alert.alert(
-					"No internet connection",
-					"Connect to the internet before downloading the offline map."
-				);
+				Alert.alert(t.alerts.noInternetConnection.title, t.alerts.noInternetConnection.message);
 				return;
 			}
 
 			if (!dayId) {
-			Alert.alert(
-				"Download failed",
-				"No day was selected."
-			);
-			return;
-		}
+				Alert.alert(t.alerts.downloadFailedNoDay.title, t.alerts.downloadFailedNoDay.message);
+				return;
+			}
 
 			const region = await tripMapServices.getDayMapRegion(dayId);
 
 			if (!region) {
-				Alert.alert(
-					"No map data",
-					"There are no mapped locations for this day."
-				);
+				Alert.alert(t.alerts.noMapData.title, t.alerts.noMapData.message);
 				return;
 			}
 
@@ -96,27 +91,18 @@ export default function DayDetailsScreen() {
 				await mapServices.downloadRequiredRegions([region]);
 
 			if (downloadedMaps.length === 0) {
-				Alert.alert(
-					"Map already downloaded",
-					"The required map area is already available offline."
-				);
+				Alert.alert(t.alerts.mapAlreadyDownloaded.title, t.alerts.mapAlreadyDownloaded.message);
 				return;
 			}
 
-			Alert.alert(
-				"Download complete",
-				"The map for this day is now available offline."
-			);
+			Alert.alert(t.alerts.downloadComplete.title, t.alerts.downloadComplete.message);
 		} catch (error) {
 			console.error(
 				"Failed to download day map:",
 				error
 			);
 
-			Alert.alert(
-				"Download failed",
-				"The offline map could not be downloaded."
-			);
+			Alert.alert(t.alerts.downloadFailed.title, t.alerts.downloadFailed.message);
 		}
 	}
 
@@ -145,20 +131,14 @@ export default function DayDetailsScreen() {
 				file.uri
 			);
 	
-			Alert.alert(
-				"GPX imported",
-				"The route was imported successfully."
-			);
+			Alert.alert(t.alerts.gpxImported.title, t.alerts.gpxImported.message);
 		} catch (error) {
 			console.error(
 				"Failed to import GPX:",
 				error
 			);
 	
-			Alert.alert(
-				"Import failed",
-				"The GPX file could not be imported."
-			);
+			Alert.alert(t.alerts.importFailed.title, t.alerts.importFailed.message);
 		}
 	}
 
@@ -171,7 +151,7 @@ export default function DayDetailsScreen() {
 			/>
 
 			<Text style={styles.loadingText}>
-			LOADING DAY...
+				{t.day.loading}
 			</Text>
 		</View>
 		);
@@ -181,11 +161,11 @@ export default function DayDetailsScreen() {
 		return (
 		<View style={styles.centered}>
 			<Text style={styles.errorTitle}>
-			DAY NOT FOUND
+				{t.day.notFound}
 			</Text>
 
 			<Text style={styles.errorText}>
-			{error ?? "Unable to load this day."}
+			{error ?? t.day.unableToLoad}
 			</Text>
 		</View>
 		);
@@ -222,7 +202,7 @@ export default function DayDetailsScreen() {
 
 				<View>
 					<Text style={styles.eyebrow}>
-					DAY
+						{t.day.day.toUpperCase()}
 					</Text>
 
 					<Text style={styles.dayNumber}>
@@ -234,7 +214,7 @@ export default function DayDetailsScreen() {
 				{/* TITLE */}
 				<View style={styles.titleSection}>
 				<Text style={styles.title}>
-					{day.title ?? "UNTITLED DAY"}
+					{day.title ?? t.day.untitledDay}
 				</Text>
 				</View>
 
@@ -248,11 +228,11 @@ export default function DayDetailsScreen() {
 					</Text>
 
 					<Text style={styles.statUnit}>
-					KM
+						{t.units.kmAbr.toUpperCase()}
 					</Text>
 
 					<Text style={styles.statLabel}>
-					PLANNED DISTANCE
+						{t.day.plannedDistance}
 					</Text>
 				</View>
 
@@ -266,11 +246,11 @@ export default function DayDetailsScreen() {
 					</Text>
 
 					<Text style={styles.statUnit}>
-					M ↑
+						{t.units.mAbr.toUpperCase()}
 					</Text>
 
 					<Text style={styles.statLabel}>
-					ELEVATION
+						{t.common.elevation.toUpperCase()}
 					</Text>
 				</View>
 				</View>
@@ -278,25 +258,25 @@ export default function DayDetailsScreen() {
 				{/* NOTES */}
 				{day.notes && (
 				<View style={styles.notesSection}>
-					<SectionLabel title="NOTES" />
+					<SectionLabel title={t.day.notes} />
 
 					<Text style={styles.notes}>
-					{day.notes}
+						{day.notes}
 					</Text>
 				</View>
 				)}
 
 				{/* POIS */}
-				<SectionLabel title="POINTS OF INTEREST" />
+				<SectionLabel title={t.day.pointsOfInterest} />
 
 				{pois.length === 0 && (
 				<View style={styles.emptyPois}>
 					<Text style={styles.emptyTitle}>
-					NO WAYPOINTS
+						{t.day.noWaypoints}
 					</Text>
 
 					<Text style={styles.emptyText}>
-					Nothing has been planned for this day yet.
+						{t.day.nothingPlanned}
 					</Text>
 				</View>
 				)}
@@ -318,7 +298,7 @@ export default function DayDetailsScreen() {
 				</Text>
 
 				<Text style={styles.addPoiText}>
-					ADD POINT OF INTEREST
+					{t.day.addPointOfInterest}
 				</Text>
 				</Pressable>
 
@@ -332,7 +312,7 @@ export default function DayDetailsScreen() {
 				}}
 				>
 				<Text style={styles.mapButtonText}>
-					OPEN MAP
+					{t.day.openMap}
 				</Text>
 
 				<Text style={styles.mapArrow}>
@@ -345,7 +325,7 @@ export default function DayDetailsScreen() {
 					onPress={handleDayMapDownload}
 				>
 					<Text style={styles.mapButtonText}>
-						DOWNLOAD OFFLINE MAP
+						{t.day.downloadOfflineMap}
 					</Text>
 
 					<Text style={styles.mapArrow}>
@@ -357,7 +337,7 @@ export default function DayDetailsScreen() {
 					onPress={handleImportGPX}
 				>
 					<Text style={styles.mapButtonText}>
-						Load GPX
+						{t.day.loadGPX}
 					</Text>
 				</Pressable>
 
@@ -371,7 +351,7 @@ export default function DayDetailsScreen() {
 				}}
 				>
 				<Text style={styles.editButtonText}>
-					EDIT DAY
+					{t.day.editDay}
 				</Text>
 				</Pressable>
 			</View>

@@ -40,7 +40,7 @@ export default function CreateTripScreen() {
 		const firstError = Object.values(errors)[0];
 		
 		if (firstError) {
-			Alert.alert(t.alerts.invalidAdventure, firstError);
+			Alert.alert(t.alerts.invalidAdventure.title, firstError);
 			return;
 		}
 		
@@ -67,7 +67,7 @@ export default function CreateTripScreen() {
 		if (!result.success) {
 			const firstServiceError = Object.values(result.errors)[0];
 		
-			Alert.alert(t.alerts.savingAdventureError, firstServiceError ?? t.alerts.savingAdventureErrorDesc);
+			Alert.alert(t.alerts.savingAdventureError.title, firstServiceError ?? t.alerts.savingAdventureError.message);
 		
 			return;
 		}
