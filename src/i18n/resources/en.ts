@@ -17,6 +17,12 @@ export const en = {
         addExpense: "Add expense",
     },
 
+    dayCard: {
+        noTitle: "Untitled day",
+        today: "Today",
+        noPOIDesc: "No POIs planned for today"
+    },
+
     moreScreen: {
         title: "Menu",
         subTitle: "Pick your poison",
@@ -60,10 +66,17 @@ export const en = {
         adventures: "Adventures",
         finances: "Finances",
         home: "Home",
+        poi: "POI",
 
         cancel: "Cancel",
         confirm: "Confirm",
         save: "Save",
         delete: "Delete",
+        next: "Next",
+
+        kmAbr: "km",
+        km: "kilometer",
+        mAbr: "m",
+        m: "meter",
     },
 };
