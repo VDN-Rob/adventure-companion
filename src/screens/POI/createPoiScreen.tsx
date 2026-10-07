@@ -4,295 +4,382 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
 } from "react-native";
 
 import { InputField } from "@/components/forms/InputField";
 import { POITypeSelector } from "@/components/forms/POITypeSelector";
 import { SectionLabel } from "@/components/forms/SectionLabel";
+import { getTranslations } from "@/i18n";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { validatePOIFields } from "@/utils/validation/poiValidation";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const POI_TYPES: {
-  type: POIType;
-  label: string;
-  symbol: string;
-  description: string;
-}[] = [
-  {
-    type: "food",
-    label: "FOOD",
-    symbol: "🍴",
-    description: "Restaurant, café or meal stop",
-  },
-  {
-    type: "water",
-    label: "WATER",
-    symbol: "◆",
-    description: "Spring, fountain or refill",
-  },
-  {
-    type: "supermarket",
-    label: "SHOP",
-    symbol: "▣",
-    description: "Supplies and groceries",
-  },
-  {
-    type: "accommodation",
-    label: "CAMP",
-    symbol: "▲",
-    description: "Hotel, campsite or shelter",
-  },
-  {
-    type: "other",
-    label: "OTHER",
-    symbol: "●",
-    description: "Anything else worth marking",
-  },
-];
-
 export default function CreatePoiScreen() {
-	// Retrieve id from parameters
-	const { dayId } = useLocalSearchParams<{ dayId: string }>();
+    // Retrieve id from parameters
+    const { dayId } =
+        useLocalSearchParams<{ dayId: string }>();
 
-	const [name, setName] = useState("");
-	const [type, setType] = useState<POIType>("other");
-	const [latitude, setLatitude] = useState("");
-	const [longitude, setLongitude] = useState("");
-	const [notes, setNotes] = useState("");
-	const [visitedAt, setvisitedAt] = useState("");
+    const [name, setName] = useState("");
+    const [type, setType] =
+        useState<POIType>("other");
+    const [latitude, setLatitude] = useState("");
+    const [longitude, setLongitude] = useState("");
+    const [notes, setNotes] = useState("");
+    const [visitedAt, setvisitedAt] = useState("");
 
-	const { poiServices } = useAppServices();
+    const { poiServices } = useAppServices();
 
-	async function handleSavePOI() {
-	if (!dayId) {
-		return;
-	}
-		
-	const errors = validatePOIFields({
-		name,
-		latitude,
-		longitude,
-		visitedAt
-	});
+	const { settings } = useAppSettings();
+    const t = getTranslations(settings.language);
 
-	const firstError = Object.values(errors)[0];
-		
-	if (firstError) {
-		Alert.alert("Invalid adventure", firstError);
-		return;
-	}
+    const POI_TYPES: {
+        type: POIType;
+        label: string;
+        symbol: string;
+        description: string;
+    }[] = [
+        {
+            type: "food",
+            label: t.poi.types.food.label,
+            symbol: "🍴",
+            description: t.poi.types.food.description,
+        },
+        {
+            type: "water",
+            label: t.poi.types.water.label,
+            symbol: "◆",
+            description: t.poi.types.water.description,
+        },
+        {
+            type: "supermarket",
+            label: t.poi.types.supermarket.label,
+            symbol: "▣",
+            description: t.poi.types.supermarket.description,
+        },
+        {
+            type: "accommodation",
+            label: t.poi.types.accommodation.label,
+            symbol: "▲",
+            description: t.poi.types.accommodation.description,
+        },
+        {
+            type: "other",
+            label: t.poi.types.other.label,
+            symbol: "●",
+            description: t.poi.types.other.description,
+        },
+    ];
 
-	const parsedLatitude = latitude.trim() === "" ? null : Number(latitude);
-	const parsedLongitude = longitude.trim() === "" ? null : Number(longitude);
-	
-	
-	const newPoi: POI = {
-		id: Crypto.randomUUID(),
-		dayId,
-		name: name.trim(),
-		type,
-		latitude: parsedLatitude,
-		longitude: parsedLongitude,
-		notes: notes.trim() === "" ? null : notes.trim(),
-		visitedAt: null, 
-	};
-	
-	const result = await poiServices.createPOI(newPoi);
-	
-	if (!result.success) {
-		const firstServiceError = Object.values(result.errors)[0];
-	
-		Alert.alert(
-		"Could not save adventure",
-		firstServiceError ?? "The adventure contains invalid data."
-		);
-	
-		return;
-	}
+    async function handleSavePOI() {
+        if (!dayId) {
+            return;
+        }
 
-	router.back();
-	}
-	
-	if (!dayId) {
-	return (
-		<View style={styles.errorContainer}>
-		<Text style={styles.errorTitle}>
-			NO DAY SELECTED
-		</Text>
-	
-		<Text style={styles.errorText}>
-			This point of interest cannot be created
-			without a day.
-		</Text>
-	
-		<Pressable
-			style={styles.backButtonLarge}
-			onPress={() => router.back()}
-		>
-			<Text style={styles.backButtonText}>
-			GO BACK
-			</Text>
-		</Pressable>
-		</View>
-	);
-	}
-	
-	return (
-	<SafeAreaView style={styles.container}>
-		<KeyboardAvoidingView
-			style={styles.container}
-			behavior={Platform.OS === "ios" ? "padding" : undefined}
-		>
-			<ScrollView
-			contentContainerStyle={styles.content}
-			keyboardShouldPersistTaps="handled"
-			showsVerticalScrollIndicator={false}
-			>
-			{/* HEADER */}
-			<View style={styles.header}>
-				<Pressable
-				style={styles.backButton}
-				onPress={() => router.back()}
-				>
-				<Text style={styles.backArrow}>
-					←
-				</Text>
-				</Pressable>
-		
-				<View>
-				<Text style={styles.eyebrow}>
-					ADVENTURE PLANNER
-				</Text>
-		
-				<Text style={styles.headerTitle}>
-					NEW POI
-				</Text>
-				</View>
-			</View>
-		
-			{/* INTRO */}
-			<View style={styles.intro}>
-				<Text style={styles.introTitle}>
-				MARK A WAYPOINT
-				</Text>
-		
-				<Text style={styles.introText}>
-				Add something worth remembering along
-				today's route.
-				</Text>
-			</View>
-		
-			{/* NAME */}
-			<SectionLabel title="WAYPOINT DETAILS" />
-		
-			<InputField
-				label="NAME"
-				value={name}
-				onChangeText={setName}
-				placeholder="Mountain café"
-			/>
-		
-			{/* TYPE */}
-			<View style={styles.typeSection}>
-				<Text style={styles.label}>
-				TYPE
-				</Text>
-		
-				<POITypeSelector
-				value={type}
-				onChange={setType}
-				/>
-			</View>
-		
-			{/* LOCATION */}
-			<SectionLabel title="LOCATION" />
-		
-			<View style={styles.row}>
-				<View style={styles.half}>
-				<InputField
-					label="LATITUDE"
-					value={latitude}
-					onChangeText={setLatitude}
-					placeholder="50.1234"
-					keyboardType="numbers-and-punctuation"
-				/>
-				</View>
-		
-				<View style={styles.rowGap} />
-		
-				<View style={styles.half}>
-				<InputField
-					label="LONGITUDE"
-					value={longitude}
-					onChangeText={setLongitude}
-					placeholder="4.5678"
-					keyboardType="numbers-and-punctuation"
-				/>
-				</View>
-			</View>
-		
-			<Text style={styles.locationHint}>
-				Coordinates are optional. You can add them
-				later when the route/map is ready.
-			</Text>
-		
-			{/* NOTES */}
-			<View style={styles.notesContainer}>
-				<Text style={styles.label}>
-				NOTES
-				</Text>
-		
-				<TextInput
-				value={notes}
-				onChangeText={setNotes}
-				placeholder="What should you remember about this place?"
-				placeholderTextColor={theme.colours.textMuted}
-				multiline
-				textAlignVertical="top"
-				style={[
-					styles.input,
-					styles.notesInput,
-				]}
-				/>
-			</View>
-		
-			{/* SAVE */}
-			<Pressable
-				style={[
-				styles.saveButton,
-				name.trim() === "" && styles.saveButtonDisabled,
-				]}
-				onPress={handleSavePOI}
-				disabled={name.trim() === ""}
-			>
-				<View>
-				<Text style={styles.saveEyebrow}>
-					ADD TO TODAY
-				</Text>
-		
-				<Text style={styles.saveText}>
-					MARK WAYPOINT
-				</Text>
-				</View>
-		
-				<Text style={styles.saveArrow}>
-				+
-				</Text>
-			</Pressable>
-			</ScrollView>
-		</KeyboardAvoidingView>
-	</SafeAreaView>
-	);
+        const errors = validatePOIFields({
+            name,
+            latitude,
+            longitude,
+            visitedAt,
+        });
+
+        const firstError = Object.values(errors)[0];
+
+        if (firstError) {
+            Alert.alert(
+                t.alerts.invalidAdventure.title,
+                firstError
+            );
+            return;
+        }
+
+        const parsedLatitude =
+            latitude.trim() === ""
+                ? null
+                : Number(latitude);
+
+        const parsedLongitude =
+            longitude.trim() === ""
+                ? null
+                : Number(longitude);
+
+        const newPoi: POI = {
+            id: Crypto.randomUUID(),
+            dayId,
+            name: name.trim(),
+            type,
+            latitude: parsedLatitude,
+            longitude: parsedLongitude,
+            notes:
+                notes.trim() === ""
+                    ? null
+                    : notes.trim(),
+            visitedAt: null,
+        };
+
+        const result =
+            await poiServices.createPOI(newPoi);
+
+        if (!result.success) {
+            const firstServiceError =
+                Object.values(result.errors)[0];
+
+            Alert.alert(t.alerts.couldNotSavePOI.title, firstServiceError ?? t.alerts.couldNotSavePOI.fallbackMessage);
+
+            return;
+        }
+
+        router.back();
+    }
+
+    if (!dayId) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorTitle}>
+                    {t.poi.noDaySelected}
+                </Text>
+
+                <Text style={styles.errorText}>
+                    {t.poi.noDaySelectedMessage}
+                </Text>
+
+                <Pressable
+                    style={styles.backButtonLarge}
+                    onPress={() => router.back()}
+                >
+                    <Text style={styles.backButtonText}>
+                        {t.poi.goBack}
+                    </Text>
+                </Pressable>
+            </View>
+        );
+    }
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={
+                    Platform.OS === "ios"
+                        ? "padding"
+                        : undefined
+                }
+            >
+                <ScrollView
+                    contentContainerStyle={
+                        styles.content
+                    }
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
+                    {/* HEADER */}
+
+                    <View style={styles.header}>
+                        <Pressable
+                            style={styles.backButton}
+                            onPress={() =>
+                                router.back()
+                            }
+                        >
+                            <Text
+                                style={styles.backArrow}
+                            >
+                                ←
+                            </Text>
+                        </Pressable>
+
+                        <View>
+                            <Text
+                                style={styles.eyebrow}
+                            >
+                                {t.poi.adventurePlanner}
+                            </Text>
+
+                            <Text
+                                style={
+                                    styles.headerTitle
+                                }
+                            >
+                                {t.poi.newPoi}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* INTRO */}
+
+                    <View style={styles.intro}>
+                        <Text
+                            style={styles.introTitle}
+                        >
+                            {t.poi.markWaypoint}
+                        </Text>
+
+                        <Text
+                            style={styles.introText}
+                        >
+                            {t.poi.introText}
+                        </Text>
+                    </View>
+
+                    {/* NAME */}
+
+                    <SectionLabel
+                        title={t.poi.waypointDetails}
+                    />
+
+                    <InputField
+                        label={t.poi.name}
+                        value={name}
+                        onChangeText={setName}
+                        placeholder={
+                            t.poi.namePlaceholder
+                        }
+                    />
+
+                    {/* TYPE */}
+
+                    <View
+                        style={styles.typeSection}
+                    >
+                        <Text style={styles.label}>
+                            {t.poi.type}
+                        </Text>
+
+                        <POITypeSelector
+                            value={type}
+                            onChange={setType}
+                            options={POI_TYPES}
+                        />
+                    </View>
+
+                    {/* LOCATION */}
+
+                    <SectionLabel
+                        title={t.poi.location}
+                    />
+
+                    <View style={styles.row}>
+                        <View style={styles.half}>
+                            <InputField
+                                label={t.poi.latitude}
+                                value={latitude}
+                                onChangeText={
+                                    setLatitude
+                                }
+                                placeholder={
+                                    t.poi
+                                        .latitudePlaceholder
+                                }
+                                keyboardType="numbers-and-punctuation"
+                            />
+                        </View>
+
+                        <View
+                            style={styles.rowGap}
+                        />
+
+                        <View style={styles.half}>
+                            <InputField
+                                label={
+                                    t.poi.longitude
+                                }
+                                value={longitude}
+                                onChangeText={
+                                    setLongitude
+                                }
+                                placeholder={
+                                    t.poi
+                                        .longitudePlaceholder
+                                }
+                                keyboardType="numbers-and-punctuation"
+                            />
+                        </View>
+                    </View>
+
+                    <Text
+                        style={styles.locationHint}
+                    >
+                        {t.poi.locationHint}
+                    </Text>
+
+                    {/* NOTES */}
+
+                    <View
+                        style={styles.notesContainer}
+                    >
+                        <Text style={styles.label}>
+                            {t.poi.notes}
+                        </Text>
+
+                        <TextInput
+                            value={notes}
+                            onChangeText={setNotes}
+                            placeholder={
+                                t.poi.notesPlaceholder
+                            }
+                            placeholderTextColor={
+                                theme.colours.textMuted
+                            }
+                            multiline
+                            textAlignVertical="top"
+                            style={[
+                                styles.input,
+                                styles.notesInput,
+                            ]}
+                        />
+                    </View>
+
+                    {/* SAVE */}
+
+                    <Pressable
+                        style={[
+                            styles.saveButton,
+                            name.trim() === "" &&
+                                styles.saveButtonDisabled,
+                        ]}
+                        onPress={handleSavePOI}
+                        disabled={
+                            name.trim() === ""
+                        }
+                    >
+                        <View>
+                            <Text
+                                style={
+                                    styles.saveEyebrow
+                                }
+                            >
+                                {t.poi.addToToday}
+                            </Text>
+
+                            <Text
+                                style={styles.saveText}
+                            >
+                                {
+                                    t.poi
+                                        .markWaypointButton
+                                }
+                            </Text>
+                        </View>
+
+                        <Text
+                            style={styles.saveArrow}
+                        >
+                            +
+                        </Text>
+                    </Pressable>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({

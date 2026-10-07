@@ -2,300 +2,469 @@ import { InputField } from "@/components/forms/InputField";
 import { POITypeSelector } from "@/components/forms/POITypeSelector";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { GameModal } from "@/components/GameModal";
+import { getTranslations } from "@/i18n";
 import { POI, POIType } from "@/models/POI";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { validatePOIFields } from "@/utils/validation/poiValidation";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditPOIScreen() {
-    // Retrieve id from parameters
-    const { poiId } = useLocalSearchParams<{ poiId: string }>();
+    const { poiId } =
+        useLocalSearchParams<{ poiId: string }>();
 
-    // Load databank
     const { poiServices } = useAppServices();
 
-    // State
     const [poi, setPoi] = useState<POI | null>(null);
 
     const [name, setName] = useState("");
-    const [type, setType] = useState<POIType>("other");
+    const [type, setType] =
+        useState<POIType>("other");
 
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
 
     const [notes, setNotes] = useState("");
 
-    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [deleteModalVisible, setDeleteModalVisible] =
+        useState(false);
 
-    // Load the right Poi everytime the screen is loaded
+    const { settings } = useAppSettings();
+    const t = getTranslations(settings.language);
+
+    const poiTypeOptions = [
+        {
+            type: "food" as POIType,
+            label: t.poi.types.food.label,
+            symbol: "🍴",
+            description:
+                t.poi.types.food.description,
+        },
+        {
+            type: "water" as POIType,
+            label: t.poi.types.water.label,
+            symbol: "◆",
+            description:
+                t.poi.types.water.description,
+        },
+        {
+            type: "supermarket" as POIType,
+            label: t.poi.types.supermarket.label,
+            symbol: "▣",
+            description:
+                t.poi.types.supermarket.description,
+        },
+        {
+            type: "accommodation" as POIType,
+            label: t.poi.types.accommodation.label,
+            symbol: "▲",
+            description:
+                t.poi.types.accommodation.description,
+        },
+        {
+            type: "other" as POIType,
+            label: t.poi.types.other.label,
+            symbol: "●",
+            description:
+                t.poi.types.other.description,
+        },
+    ];
+
     useEffect(() => {
-		async function loadPOI() {
-			if (!poiId) {
-				return;
-			}
+        async function loadPOI() {
+            if (!poiId) {
+                return;
+            }
 
-			const poi = await poiServices.getPOIById(poiId);
+            const loadedPOI =
+                await poiServices.getPOIById(poiId);
 
-			if (poi) {
-				setPoi(poi);
-			
-				setName(poi.name);
-				setType(poi.type);
-			
-				setLatitude(
-				poi.latitude === null
-					? ""
-					: String(poi.latitude)
-				);
-			
-				setLongitude(
-				poi.longitude === null
-					? ""
-					: String(poi.longitude)
-				);
-			
-				setNotes(poi.notes ?? "");
-			}
-		}
+            if (loadedPOI) {
+                setPoi(loadedPOI);
 
-		loadPOI();
-		}, [poiId]
-    );
-    
+                setName(loadedPOI.name);
+                setType(loadedPOI.type);
+
+                setLatitude(
+                    loadedPOI.latitude === null
+                        ? ""
+                        : String(loadedPOI.latitude),
+                );
+
+                setLongitude(
+                    loadedPOI.longitude === null
+                        ? ""
+                        : String(loadedPOI.longitude),
+                );
+
+                setNotes(loadedPOI.notes ?? "");
+            }
+        }
+
+        loadPOI();
+    }, [poiId, poiServices]);
+
     async function handleSave() {
-		if (!poi) return;
+        if (!poi) return;
 
-		const errors = validatePOIFields({
-			name,
-			latitude,
-			longitude,
-			visitedAt: ""
-		});
+        const errors = validatePOIFields({
+            name,
+            latitude,
+            longitude,
+            visitedAt: "",
+        });
 
-		const firstError = Object.values(errors)[0];
-			
-		if (firstError) {
-			Alert.alert("Invalid poi", firstError);
-			return;
-		}
+        const firstError =
+            Object.values(errors)[0];
 
-		const parsedLatitude = latitude.trim() === "" ? null : Number(latitude);
-		const parsedLongitude = longitude.trim() === "" ? null : Number(longitude);
-		
-		
-		const updatedPOI: POI = {
-			...poi,
-			name: name.trim(),
-			type,
+        if (firstError) {
+            Alert.alert(
+                t.alerts.invalidPoi.title,
+                firstError,
+            );
+            return;
+        }
 
-			latitude: parsedLatitude,
-			longitude: parsedLongitude,
+        const parsedLatitude =
+            latitude.trim() === ""
+                ? null
+                : Number(latitude);
 
-			notes: notes.trim() === "" ? null : notes.trim(),
-		};
+        const parsedLongitude =
+            longitude.trim() === ""
+                ? null
+                : Number(longitude);
 
-		const result = await poiServices.updatePOI(updatedPOI);
+        const updatedPOI: POI = {
+            ...poi,
+            name: name.trim(),
+            type,
+            latitude: parsedLatitude,
+            longitude: parsedLongitude,
+            notes:
+                notes.trim() === ""
+                    ? null
+                    : notes.trim(),
+        };
 
-		if (!result.success) {
-			const firstServiceError = Object.values(result.errors)[0];
+        const result =
+            await poiServices.updatePOI(updatedPOI);
 
-			Alert.alert(
-				"Could not save adventure",
-				firstServiceError ?? "The adventure contains invalid data."
-			);
+        if (!result.success) {
+            const firstServiceError =
+                Object.values(result.errors)[0];
 
-			return;
-		}
+            Alert.alert(
+                t.alerts.couldNotSavePOI.title,
+                firstServiceError ??
+                    t.alerts.couldNotSavePOI
+                        .fallbackMessage,
+            );
 
-		router.back();
+            return;
+        }
+
+        router.back();
+    }
+
+    async function deletePOI() {
+        if (!poiId) return;
+
+        setDeleteModalVisible(false);
+
+        await poiServices.deletePOI(poiId);
+
+        router.back();
     }
 
     if (!poi) {
-			return <Text>Loading...</Text>;
-		}
+        return (
+            <Text>
+                {t.poi.loading}
+            </Text>
+        );
+    }
 
-		async function deletePOI() {
-			if (!poiId) return;
-		
-			setDeleteModalVisible(false);
-		
-			await poiServices.deletePOI(poiId);
-		
-			router.back();
-		}
-			
-		return (
-		<SafeAreaView>
-			<KeyboardAvoidingView
-			style={styles.container}
-			behavior={
-				Platform.OS === "ios"
-				? "padding"
-				: undefined
-			}
-			>
-			<ScrollView
-				contentContainerStyle={styles.content}
-				keyboardShouldPersistTaps="handled"
-				showsVerticalScrollIndicator={false}
-			>
-				{/* HEADER */}
-		
-				<View style={styles.header}>
-				<Pressable
-					style={styles.backButton}
-					onPress={() => router.back()}
-				>
-					<Text style={styles.backArrow}>
-					←
-					</Text>
-				</Pressable>
-		
-				<View>
-					<Text style={styles.eyebrow}>
-					ADVENTURE PLANNER
-					</Text>
-		
-					<Text style={styles.headerTitle}>
-					EDIT POI
-					</Text>
-				</View>
-				</View>
-		
-				{/* DETAILS */}
-		
-				<SectionLabel title="WAYPOINT DETAILS" />
-		
-				<InputField
-				label="NAME"
-				value={name}
-				onChangeText={setName}
-				placeholder="Mountain café"
-				/>
-		
-				{/* TYPE */}
-		
-				<SectionLabel title="WAYPOINT TYPE" />
-		
-				<POITypeSelector
-				value={type}
-				onChange={setType}
-				/>
-		
-				{/* LOCATION */}
-		
-				<SectionLabel title="LOCATION" />
-		
-				<View style={styles.row}>
-				<View style={styles.half}>
-					<InputField
-					label="LATITUDE"
-					value={latitude}
-					onChangeText={setLatitude}
-					placeholder="50.1234"
-					keyboardType="numbers-and-punctuation"
-					/>
-				</View>
-		
-				<View style={styles.rowGap} />
-		
-				<View style={styles.half}>
-					<InputField
-					label="LONGITUDE"
-					value={longitude}
-					onChangeText={setLongitude}
-					placeholder="4.5678"
-					keyboardType="numbers-and-punctuation"
-					/>
-				</View>
-				</View>
-		
-				<Text style={styles.locationHint}>
-				Coordinates are optional.
-				</Text>
-		
-				{/* NOTES */}
-		
-				<SectionLabel title="NOTES" />
-		
-				<View style={styles.notesWrapper}>
-				<TextInput
-					value={notes}
-					onChangeText={setNotes}
-					placeholder="What should you remember about this place?"
-					placeholderTextColor={theme.colours.textMuted}
-					multiline
-					textAlignVertical="top"
-					style={styles.notesInput}
-				/>
-				</View>
-		
-				{/* SAVE */}
-		
-				<Pressable
-				style={styles.saveButton}
-				onPress={handleSave}
-				>
-				<View>
-					<Text style={styles.saveEyebrow}>
-					WAYPOINT DATA
-					</Text>
-		
-					<Text style={styles.saveText}>
-					SAVE CHANGES
-					</Text>
-				</View>
-		
-				<Text style={styles.saveSymbol}>
-					✓
-				</Text>
-				</Pressable>
-		
-				{/* DELETE */}
-		
-				<View style={styles.dangerSection}>
-				<Text style={styles.dangerLabel}>
-					DANGER ZONE
-				</Text>
-		
-				<Pressable
-					style={styles.deleteButton}
-					onPress={() => setDeleteModalVisible(true)}
-				>
-					<View>
-					<Text style={styles.deleteTitle}>
-						DELETE POI
-					</Text>
-		
-					<Text style={styles.deleteDescription}>
-						Permanently remove this waypoint.
-					</Text>
-					</View>
-		
-					<Text style={styles.deleteSymbol}>
-					×
-					</Text>
-				</Pressable>
-				</View>
-			</ScrollView>
-		
-			<GameModal
-				visible={deleteModalVisible}
-				title="DELETE POI?"
-				message="This point of interest will be permanently removed from the day. This action cannot be undone."
-				confirmText="DELETE"
-				cancelText="KEEP POI"
-				destructive
-				onCancel={() => setDeleteModalVisible(false)}
-				onConfirm={deletePOI}
-			/>
-			</KeyboardAvoidingView>
-		</SafeAreaView>
-	);
+    return (
+        <SafeAreaView>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={
+                    Platform.OS === "ios"
+                        ? "padding"
+                        : undefined
+                }
+            >
+                <ScrollView
+                    contentContainerStyle={
+                        styles.content
+                    }
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
+                    {/* HEADER */}
+
+                    <View style={styles.header}>
+                        <Pressable
+                            style={styles.backButton}
+                            onPress={() =>
+                                router.back()
+                            }
+                        >
+                            <Text
+                                style={styles.backArrow}
+                            >
+                                ←
+                            </Text>
+                        </Pressable>
+
+                        <View>
+                            <Text
+                                style={styles.eyebrow}
+                            >
+                                {t.poi.adventurePlanner}
+                            </Text>
+
+                            <Text
+                                style={
+                                    styles.headerTitle
+                                }
+                            >
+                                {t.poi.editPoi}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* DETAILS */}
+
+                    <SectionLabel
+                        title={t.poi.waypointDetails}
+                    />
+
+                    <InputField
+                        label={t.poi.name}
+                        value={name}
+                        onChangeText={setName}
+                        placeholder={
+                            t.poi.namePlaceholder
+                        }
+                    />
+
+                    {/* TYPE */}
+
+                    <SectionLabel
+                        title={t.poi.waypointType}
+                    />
+
+                    <POITypeSelector
+                        value={type}
+                        onChange={setType}
+                        options={poiTypeOptions}
+                    />
+
+                    {/* LOCATION */}
+
+                    <SectionLabel
+                        title={t.poi.location}
+                    />
+
+                    <View style={styles.row}>
+                        <View style={styles.half}>
+                            <InputField
+                                label={t.poi.latitude}
+                                value={latitude}
+                                onChangeText={
+                                    setLatitude
+                                }
+                                placeholder={
+                                    t.poi
+                                        .latitudePlaceholder
+                                }
+                                keyboardType="numbers-and-punctuation"
+                            />
+                        </View>
+
+                        <View
+                            style={styles.rowGap}
+                        />
+
+                        <View style={styles.half}>
+                            <InputField
+                                label={
+                                    t.poi.longitude
+                                }
+                                value={longitude}
+                                onChangeText={
+                                    setLongitude
+                                }
+                                placeholder={
+                                    t.poi
+                                        .longitudePlaceholder
+                                }
+                                keyboardType="numbers-and-punctuation"
+                            />
+                        </View>
+                    </View>
+
+                    <Text
+                        style={styles.locationHint}
+                    >
+                        {t.poi.locationHintShort}
+                    </Text>
+
+                    {/* NOTES */}
+
+                    <SectionLabel
+                        title={t.poi.notes}
+                    />
+
+                    <View
+                        style={styles.notesWrapper}
+                    >
+                        <TextInput
+                            value={notes}
+                            onChangeText={setNotes}
+                            placeholder={
+                                t.poi.notesPlaceholder
+                            }
+                            placeholderTextColor={
+                                theme.colours.textMuted
+                            }
+                            multiline
+                            textAlignVertical="top"
+                            style={
+                                styles.notesInput
+                            }
+                        />
+                    </View>
+
+                    {/* SAVE */}
+
+                    <Pressable
+                        style={styles.saveButton}
+                        onPress={handleSave}
+                    >
+                        <View>
+                            <Text
+                                style={
+                                    styles.saveEyebrow
+                                }
+                            >
+                                {t.poi.waypointData}
+                            </Text>
+
+                            <Text
+                                style={styles.saveText}
+                            >
+                                {t.poi.saveChanges}
+                            </Text>
+                        </View>
+
+                        <Text
+                            style={styles.saveSymbol}
+                        >
+                            ✓
+                        </Text>
+                    </Pressable>
+
+                    {/* DELETE */}
+
+                    <View
+                        style={styles.dangerSection}
+                    >
+                        <Text
+                            style={styles.dangerLabel}
+                        >
+                            {t.poi.dangerZone}
+                        </Text>
+
+                        <Pressable
+                            style={
+                                styles.deleteButton
+                            }
+                            onPress={() =>
+                                setDeleteModalVisible(
+                                    true,
+                                )
+                            }
+                        >
+                            <View>
+                                <Text
+                                    style={
+                                        styles.deleteTitle
+                                    }
+                                >
+                                    {t.poi.deletePoi}
+                                </Text>
+
+                                <Text
+                                    style={
+                                        styles.deleteDescription
+                                    }
+                                >
+                                    {
+                                        t.poi
+                                            .deleteDescription
+                                    }
+                                </Text>
+                            </View>
+
+                            <Text
+                                style={
+                                    styles.deleteSymbol
+                                }
+                            >
+                                ×
+                            </Text>
+                        </Pressable>
+                    </View>
+                </ScrollView>
+
+                <GameModal
+                    visible={
+                        deleteModalVisible
+                    }
+                    title={
+                        t.poi.deleteConfirmation
+                            .title
+                    }
+                    message={
+                        t.poi.deleteConfirmation
+                            .message
+                    }
+                    confirmText={
+                        t.poi.deleteConfirmation
+                            .confirm
+                    }
+                    cancelText={
+                        t.poi.deleteConfirmation
+                            .cancel
+                    }
+                    destructive
+                    onCancel={() =>
+                        setDeleteModalVisible(
+                            false,
+                        )
+                    }
+                    onConfirm={deletePOI}
+                />
+            </KeyboardAvoidingView>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({

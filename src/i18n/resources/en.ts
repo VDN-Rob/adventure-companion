@@ -145,6 +145,85 @@ export const en = {
         },
     },
 
+    poi: {
+        types: {
+            food: {
+                label: "FOOD",
+                description: "Restaurant, café or meal stop",
+            },
+            water: {
+                label: "WATER",
+                description: "Spring, fountain or refill",
+            },
+            supermarket: {
+                label: "SHOP",
+                description: "Supplies and groceries",
+            },
+            accommodation: {
+                label: "CAMP",
+                description: "Hotel, campsite or shelter",
+            },
+            other: {
+                label: "OTHER",
+                description: "Anything else worth marking",
+            },
+        },
+
+        adventurePlanner: "ADVENTURE PLANNER",
+        newPoi: "NEW POI",
+
+        markWaypoint: "MARK A WAYPOINT",
+        introText:
+            "Add something worth remembering along today's route.",
+
+        waypointDetails: "WAYPOINT DETAILS",
+        name: "NAME",
+        namePlaceholder: "Mountain café",
+        waypointType: "WAYPOINT TYPE",
+
+        type: "TYPE",
+
+        location: "LOCATION",
+        latitude: "LATITUDE",
+        latitudePlaceholder: "50.1234",
+        longitude: "LONGITUDE",
+        longitudePlaceholder: "4.5678",
+
+        locationHint:
+            "Coordinates are optional. You can add them later when the route/map is ready.",
+
+        notes: "NOTES",
+        notesPlaceholder:
+            "What should you remember about this place?",
+
+        addToToday: "ADD TO TODAY",
+        markWaypointButton: "MARK WAYPOINT",
+
+        noDaySelected: "NO DAY SELECTED",
+        noDaySelectedMessage: "This point of interest cannot be created without a day.",
+        goBack: "GO BACK",
+
+        editPoi: "EDIT POI",
+
+        locationHintShort: "Coordinates are optional.",
+
+        waypointData: "WAYPOINT DATA",
+        saveChanges: "SAVE CHANGES",
+
+        dangerZone: "DANGER ZONE",
+        deletePoi: "DELETE POI",
+        deleteDescription: "Permanently remove this waypoint.",
+
+        deleteConfirmation: {
+            title: "DELETE POI?",
+            message: "This point of interest will be permanently removed from the day. This action cannot be undone.",
+            confirm: "DELETE",
+            cancel: "KEEP POI",
+        },
+
+        loading: "Loading...",
+    },
+
     time: {
         startDate: "start date",
         endDate: "end date",
@@ -302,6 +381,12 @@ export const en = {
             title: "Could not save day",
             fallbackMessage:
                 "The day contains invalid data.",
+        },
+
+        couldNotSavePOI: {
+            title: "Could not save POI",
+            fallbackMessage:
+                "The POI contains invalid data.",
         },
     }
 };

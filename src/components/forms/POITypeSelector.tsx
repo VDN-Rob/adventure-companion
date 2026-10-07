@@ -3,56 +3,28 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { theme } from "@/styling/theme";
 
-type POITypeSelectorProps = {
-  value: POIType;
-  onChange: (value: POIType) => void;
+type POITypeOption = {
+    type: POIType;
+    label: string;
+    symbol: string;
+    description: string;
 };
 
-const POI_TYPES: {
-  type: POIType;
-  label: string;
-  symbol: string;
-  description: string;
-}[] = [
-  {
-    type: "food",
-    label: "FOOD",
-    symbol: "🍴",
-    description: "Restaurant, café or meal stop",
-  },
-  {
-    type: "water",
-    label: "WATER",
-    symbol: "◆",
-    description: "Spring, fountain or refill",
-  },
-  {
-    type: "supermarket",
-    label: "SHOP",
-    symbol: "▣",
-    description: "Supplies and groceries",
-  },
-  {
-    type: "accommodation",
-    label: "CAMP",
-    symbol: "▲",
-    description: "Hotel, campsite or shelter",
-  },
-  {
-    type: "other",
-    label: "OTHER",
-    symbol: "●",
-    description: "Anything else worth marking",
-  },
-];
+type POITypeSelectorProps = {
+    value: POIType;
+    onChange: (value: POIType) => void;
+    options: POITypeOption[];
+};
+
 
 export function POITypeSelector({
   value,
   onChange,
+  options
 }: POITypeSelectorProps) {
   return (
     <View style={styles.typeGrid}>
-      {POI_TYPES.map((poiType) => {
+      {options.map((poiType) => {
         const selected = value === poiType.type;
 
         return (
