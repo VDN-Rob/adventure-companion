@@ -1,6 +1,8 @@
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
+import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { validateTripFields } from "@/utils/validation/tripValidation";
@@ -19,6 +21,8 @@ export default function CreateTripScreen() {
     const [description, setDescription] = useState("");
     const [budget, setBudget] = useState("");
     const [budgetCurrency, setBudgetCurrency] = useState("EUR");
+    const { settings } = useAppSettings();
+    const t = getTranslations(settings.language)
     
     
     // Access application layer
@@ -36,7 +40,7 @@ export default function CreateTripScreen() {
 		const firstError = Object.values(errors)[0];
 		
 		if (firstError) {
-			Alert.alert("Invalid adventure", firstError);
+			Alert.alert(t.alerts.invalidAdventure, firstError);
 			return;
 		}
 		
@@ -63,10 +67,7 @@ export default function CreateTripScreen() {
 		if (!result.success) {
 			const firstServiceError = Object.values(result.errors)[0];
 		
-			Alert.alert(
-			"Could not save adventure",
-			firstServiceError ?? "The adventure contains invalid data."
-			);
+			Alert.alert(t.alerts.savingAdventureError, firstServiceError ?? t.alerts.savingAdventureErrorDesc);
 		
 			return;
 		}
@@ -75,7 +76,7 @@ export default function CreateTripScreen() {
     }
     
       return (
-		<SafeAreaView>
+		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
 			style={styles.container}
 			behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -98,11 +99,11 @@ export default function CreateTripScreen() {
 		
 				<View>
 					<Text style={styles.eyebrow}>
-					ADVENTURE SYSTEM
+						{t.adventures.adventureSystem.toUpperCase()}
 					</Text>
 		
 					<Text style={styles.headerTitle}>
-					NEW ADVENTURE
+						{t.adventures.newAdventure}
 					</Text>
 				</View>
 				</View>
@@ -110,32 +111,30 @@ export default function CreateTripScreen() {
 				{/* INTRO */}
 				<View style={styles.intro}>
 				<Text style={styles.introTitle}>
-					PLAN YOUR NEXT JOURNEY
+					{t.adventures.planJourney.toUpperCase()}
 				</Text>
 		
 				<Text style={styles.introText}>
-					Set the basics now. You can add days,
-					routes, points of interest and diary
-					entries later.
+					{t.adventures.planJourneyDesc}
 				</Text>
 				</View>
 		
 				{/* DETAILS */}
-				<SectionLabel title="ADVENTURE DETAILS" />
+				<SectionLabel title={t.adventures.detailsAdventure.toUpperCase()} />
 		
 				{/* NAME */}
 				<InputField
-				label="NAME"
+				label={t.common.title.toUpperCase()}
 				value={name}
 				onChangeText={setName}
-				placeholder="2026 Cycling Trip"
+				placeholder={t.adventures.defaultAdventure}
 				/>
 		
 				{/* DATES */}
 				<View style={styles.row}>
 				<View style={styles.half}>
 					<InputField
-					label="START DATE"
+					label={t.time.startDate.toUpperCase()}
 					value={startDate}
 					onChangeText={setStartDate}
 					placeholder="2026-08-08"
@@ -147,10 +146,10 @@ export default function CreateTripScreen() {
 		
 				<View style={styles.half}>
 					<InputField
-					label="END DATE"
+					label={t.time.endDate.toUpperCase()}
 					value={endDate}
 					onChangeText={setEndDate}
-					placeholder="Optional"
+					placeholder={t.common.optional}
 					keyboardType="numbers-and-punctuation"
 					/>
 				</View>
@@ -159,13 +158,13 @@ export default function CreateTripScreen() {
 				{/* DESCRIPTION */}
 				<View style={styles.notesContainer}>
 				<Text style={styles.label}>
-					DESCRIPTION
+					{t.common.description.toUpperCase()}
 				</Text>
 		
 				<TextInput
 					value={description}
 					onChangeText={setDescription}
-					placeholder="A few words about this adventure..."
+					placeholder={t.adventures.descPlaceholder}
 					placeholderTextColor={theme.colours.textMuted}
 					multiline
 					textAlignVertical="top"
@@ -180,7 +179,7 @@ export default function CreateTripScreen() {
 				<View style={styles.row}>
 				<View style={styles.half}>
 					<InputField
-					label="Budget"
+					label={t.finance.budget.toUpperCase()}
 					value={budget}
 					onChangeText={setBudget}
 					placeholder="0.00"
@@ -192,10 +191,10 @@ export default function CreateTripScreen() {
 		
 				<View style={styles.half}>
 					<InputField
-					label="Budget Currency"
+					label={t.finance.currency.toUpperCase()}
 					value={budgetCurrency}
 					onChangeText={setBudgetCurrency}
-					placeholder="EUR"
+					placeholder={settings.currency}
 					/>
 				</View>
 				</View>
@@ -207,11 +206,11 @@ export default function CreateTripScreen() {
 				>
 				<View>
 					<Text style={styles.createEyebrow}>
-					BEGIN PLANNING
+						{t.adventures.beginPlanning}
 					</Text>
 		
 					<Text style={styles.createText}>
-					CREATE ADVENTURE
+						{t.adventures.createAdventure}
 					</Text>
 				</View>
 		

@@ -160,7 +160,7 @@ export default function EditTripScreen() {
 				</View>
 			
 				{/* DETAILS */}
-				<SectionLabel title={t.adventures.details.toUpperCase()} />
+				<SectionLabel title={t.adventures.detailsAdventure.toUpperCase()} />
 			
 				<InputField
 					label={t.common.title.toUpperCase()}

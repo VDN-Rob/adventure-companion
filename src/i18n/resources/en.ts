@@ -6,6 +6,9 @@ export const en = {
 
         // Common
         editAdventure: "edit adventure",
+        adventureSystem: "adventure system",
+        newAdventure: "New adventure",
+        detailsAdventure: "adventure details",
 
         // Main screen
         activeAdventureTitle: "Active adventure",
@@ -15,7 +18,7 @@ export const en = {
         upcomingAdventureTitle: "Upcoming adventure",
         noUpcomingAdventure: "No upcoming adventure",
         noUpcomingAdventureDesc: "You have no pending adventures. Get to planning!",
-        newAdventure: "New adventure",
+
 
         pastAdventureTitle: "Past adventure",
         noPastAdventure: "No past adventures",
@@ -38,19 +41,23 @@ export const en = {
         offlineMapDesc: "Download map data before heading out of range.",
 
         // Edit screen
-        adventureSystem: "adventure system",
         currentAdventure: "current adventure",
-        details: "adventure details",
         adventureTitle: "adventure title",
-
-        startDate: "start date",
-        endDate: "end date",
 
         adventureDesc: "Describe this adventure...",
 
         delDesc: "Permanently remove this adventure and its associated data.",
         delAdventure: "DELETE ADVENTURE",
         delAdventureDesc: "This adventure and its planned days, POIs and other data will be permanently removed. This action cannot be undone.",
+
+        // Create screen
+        planJourney: "plan your next journey",
+        planJourneyDesc: "Set the basics now. You can add days, routes, points of interest and diary entries later.",
+        defaultAdventure: "Cycling trip",
+        descPlaceholder: "A few words about this adventure...",
+        beginPlanning: "BEGIN PLANNING",
+        createAdventure: "CREATE ADVENTURE",
+        
 
     },
 
@@ -79,6 +86,13 @@ export const en = {
     day: {
         day: "day",
         days: "days",
+
+    },
+
+    time: {
+
+        startDate: "start date",
+        endDate: "end date",
 
     },
 
