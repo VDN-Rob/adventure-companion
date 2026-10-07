@@ -11,15 +11,15 @@ import { validatePOIFields } from "@/utils/validation/poiValidation";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-	Alert,
-	KeyboardAvoidingView,
-	Platform,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -225,17 +225,13 @@ export default function EditPOIScreen() {
                                 router.back()
                             }
                         >
-                            <Text
-                                style={styles.backArrow}
-                            >
+                            <Text style={styles.backArrow}>
                                 ←
                             </Text>
                         </Pressable>
 
                         <View>
-                            <Text
-                                style={styles.eyebrow}
-                            >
+                            <Text style={styles.eyebrow}>
                                 {t.poi.adventurePlanner}
                             </Text>
 
@@ -320,9 +316,7 @@ export default function EditPOIScreen() {
                         </View>
                     </View>
 
-                    <Text
-                        style={styles.locationHint}
-                    >
+                    <Text style={styles.locationHint}>
                         {t.poi.locationHintShort}
                     </Text>
 
@@ -332,9 +326,7 @@ export default function EditPOIScreen() {
                         title={t.poi.notes}
                     />
 
-                    <View
-                        style={styles.notesWrapper}
-                    >
+                    <View style={styles.notesWrapper}>
                         <TextInput
                             value={notes}
                             onChangeText={setNotes}
@@ -367,28 +359,20 @@ export default function EditPOIScreen() {
                                 {t.poi.waypointData}
                             </Text>
 
-                            <Text
-                                style={styles.saveText}
-                            >
+                            <Text style={styles.saveText}>
                                 {t.poi.saveChanges}
                             </Text>
                         </View>
 
-                        <Text
-                            style={styles.saveSymbol}
-                        >
+                        <Text style={styles.saveSymbol}>
                             ✓
                         </Text>
                     </Pressable>
 
                     {/* DELETE */}
 
-                    <View
-                        style={styles.dangerSection}
-                    >
-                        <Text
-                            style={styles.dangerLabel}
-                        >
+                    <View style={styles.dangerSection}>
+                        <Text style={styles.dangerLabel}>
                             {t.poi.dangerZone}
                         </Text>
 

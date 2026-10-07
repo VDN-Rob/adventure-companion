@@ -80,7 +80,54 @@ export const en = {
     },
 
     diary: {
-        diary: "diary"
+        diary: "diary",
+        back: "BACK",
+        newEntry: "NEW DIARY ENTRY",
+
+        date: "DATE",
+        entryDate: "ENTRY DATE",
+
+        entry: "ENTRY",
+        title: "Title",
+        titlePlaceholder: "A day worth remembering",
+
+        story: "Story",
+        optional: "OPTIONAL",
+        storyPlaceholder: "What happened today?",
+
+        photos: "PHOTOS",
+        addPhoto: "ADD PHOTO",
+        photoCount: (count: number) => `${count}/3 photos`,
+
+        saving: "SAVING...",
+        saveEntry: "SAVE ENTRY",
+
+        loadingAdventure: "Loading adventure...",
+        adventureNotFound: "The selected adventure could not be found.",
+
+        loading: "Loading diary...",
+
+        somethingWentWrong: "SOMETHING WENT WRONG",
+
+        memories: "MEMORIES",
+        intro: "Revisit the days, places and moments that made each adventure yours.",
+
+        yourAdventures: "YOUR ADVENTURES",
+
+        noAdventuresYet: "NO ADVENTURES YET",
+        noAdventuresMessage: "Create an adventure first and your memories will appear here.",
+
+        editEntry: "EDIT DIARY ENTRY",
+
+        saveChanges: "SAVE CHANGES",
+        deleteEntry: "DELETE ENTRY",
+
+        deleteConfirmation: {
+            title: "Delete diary entry?",
+            message: "This memory will be permanently deleted.",
+            cancel: "Cancel",
+            confirm: "Delete",
+        },
     },
 
     day: {
@@ -387,6 +434,80 @@ export const en = {
             title: "Could not save POI",
             fallbackMessage:
                 "The POI contains invalid data.",
+        },
+
+        invalidPoi: {
+            title: "Invalid POI",
+        },
+
+        photoLimit: {
+            title: "Photo limit",
+            message:
+                "A diary entry can contain up to three photos.",
+        },
+
+        photoPermissionRequired: {
+            title: "Permission required",
+            message:
+                "Please allow access to your photos to add pictures to your diary.",
+        },
+
+        missingAdventure: {
+            title: "Missing adventure",
+            message: "No adventure was specified.",
+        },
+
+        adventureUnavailable: {
+            title: "Adventure unavailable",
+            message:
+                "The selected adventure could not be found.",
+        },
+
+        missingDiaryTitle: {
+            title: "Missing title",
+            message:
+                "Please give your diary entry a title.",
+        },
+
+        invalidDiaryDate: {
+            title: "Invalid date",
+            message:
+                "The diary entry date must be inside the adventure.",
+        },
+
+        diaryEntryAlreadyExists: {
+            title: "Diary entry already exists",
+            message:
+                "There is already a diary entry for this date. Please choose another date.",
+        },
+
+        couldNotSaveDiaryEntry: {
+            title: "Could not save diary entry",
+            message:
+                "Something went wrong while saving your diary entry.",
+        },
+
+        diaryEntryNotFound: {
+            title: "Diary entry not found",
+            message: "This diary entry could not be found.",
+        },
+
+        couldNotLoadDiaryEntry: {
+            title: "Could not load diary entry",
+            message:
+                "Something went wrong while loading the diary entry.",
+        },
+
+        couldNotSaveDiaryEntryChanges: {
+            title: "Could not save diary entry",
+            message:
+                "Something went wrong while saving your changes.",
+        },
+
+        couldNotDeleteDiaryEntry: {
+            title: "Could not delete diary entry",
+            message:
+                "Something went wrong while deleting the entry.",
         },
     }
 };

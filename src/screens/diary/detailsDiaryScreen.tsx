@@ -1,7 +1,9 @@
 import { DiaryDetail } from "@/components/diary/DiaryDetail";
 import { DiaryOverview } from "@/components/diary/DiaryOverview";
+import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
 import { DiaryEntry } from "@/models/DiaryEntry";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect, useLocalSearchParams, } from "expo-router";
@@ -25,6 +27,9 @@ export default function DetailsDiaryScreen() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	const [error, setError] = useState<string | null>(null);
+
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
 
 	const loadDiary = useCallback(async () => {
 		if (!tripId) {
@@ -134,7 +139,7 @@ export default function DetailsDiaryScreen() {
 			<ActivityIndicator />
 
 			<Text style={styles.loading}>
-				Loading diary...
+				{t.diary.loading}
 			</Text>
 			</View>
 		</SafeAreaView>

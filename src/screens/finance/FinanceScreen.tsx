@@ -291,13 +291,9 @@ export default function FinanceScreen() {
 					currency={financeCurrency}
 				/>
 
-				<View
-				style={styles.expensesHeader}
-				>
+				<View style={styles.expensesHeader}>
 				<View>
-					<Text
-					style={styles.sectionLabel}
-					>
+					<Text style={styles.sectionLabel}>
 					ADVENTURE LOG
 					</Text>
 
@@ -310,18 +306,14 @@ export default function FinanceScreen() {
 					</Text>
 				</View>
 
-				<Text
-					style={styles.expenseCount}
-				>
+				<Text style={styles.expenseCount}>
 					{expenses.length}
 				</Text>
 				</View>
 			</>
 			}
 			ListEmptyComponent={
-			<View
-				style={styles.emptyExpenses}
-			>
+			<View style={styles.emptyExpenses}>
 				<Text
 				style={
 					styles.emptyExpensesTitle
@@ -356,9 +348,7 @@ export default function FinanceScreen() {
 				styles.addButtonPressed,
 			]}
 		>
-			<Text
-			style={styles.addButtonText}
-			>
+			<Text style={styles.addButtonText}>
 			+ ADD EXPENSE
 			</Text>
 		</Pressable>

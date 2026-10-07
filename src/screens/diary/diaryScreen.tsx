@@ -1,4 +1,6 @@
+import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { formatDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
@@ -20,6 +22,9 @@ export default function DiaryScreen() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	const [error, setError] = useState<string | null>(null);
+
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -97,7 +102,7 @@ export default function DiaryScreen() {
 			<View style={styles.loading}>
 			<ActivityIndicator />
 			<Text style={styles.loadingText}>
-				Loading adventures...
+				{t.diary.loading}
 			</Text>
 			</View>
 		</SafeAreaView>
@@ -106,80 +111,78 @@ export default function DiaryScreen() {
 
 	if (error) {
 		return (
-		<SafeAreaView style={styles.container}>
-			<View style={styles.empty}>
-			<Text style={styles.emptyTitle}>
-				SOMETHING WENT WRONG
-			</Text>
+			<SafeAreaView style={styles.container}>
+				<View style={styles.empty}>
+					<Text style={styles.emptyTitle}>
+						{t.diary.somethingWentWrong}
+					</Text>
 
-			<Text style={styles.emptyText}>
-				{error}
-			</Text>
-			</View>
-		</SafeAreaView>
+					<Text style={styles.emptyText}>
+						{error}
+					</Text>
+				</View>
+			</SafeAreaView>
 		);
 	}
 
 	return (
 		<SafeAreaView style={styles.container}>
-		<ScrollView
-			contentContainerStyle={styles.content}
-		>
-			<View style={styles.header}>
-			<View>
-				<Text style={styles.kicker}>
-				MEMORIES
+			<ScrollView
+				contentContainerStyle={styles.content}
+			>
+				<View style={styles.header}>
+					<View>
+						<Text style={styles.kicker}>
+							{t.diary.memories}
+						</Text>
+
+						<Text style={styles.title}>
+							{t.diary.diary.toUpperCase()}
+						</Text>
+					</View>
+				</View>
+
+				<Text style={styles.intro}>
+					{t.diary.intro}
 				</Text>
 
-				<Text style={styles.title}>
-				DIARY
-				</Text>
-			</View>
-			</View>
+				<View style={styles.sectionHeader}>
+					<Text style={styles.sectionLabel}>
+						{t.diary.yourAdventures}
+					</Text>
 
-			<Text style={styles.intro}>
-			Revisit the days, places and moments
-			that made each adventure yours.
-			</Text>
+					<Text style={styles.adventureCount}>
+						{adventures.length}
+					</Text>
+				</View>
 
-			<View style={styles.sectionHeader}>
-			<Text style={styles.sectionLabel}>
-				YOUR ADVENTURES
-			</Text>
+				{adventures.length === 0 ? (
+					<View style={styles.empty}>
+						<Text style={styles.emptyTitle}>
+							{t.diary.noAdventuresYet}
+						</Text>
 
-			<Text style={styles.adventureCount}>
-				{adventures.length}
-			</Text>
-			</View>
-
-			{adventures.length === 0 ? (
-			<View style={styles.empty}>
-				<Text style={styles.emptyTitle}>
-				NO ADVENTURES YET
-				</Text>
-
-				<Text style={styles.emptyText}>
-				Create an adventure first and your
-				memories will appear here.
-				</Text>
-			</View>
-			) : (
-			<View style={styles.adventureList}>
-				{adventures.map(
-				({ trip, entryCount }) => (
-					<AdventureCard
-					key={trip.id}
-					trip={trip}
-					entryCount={entryCount}
-					onPress={() =>
-						openAdventure(trip.id)
-					}
-					/>
-				)
+						<Text style={styles.emptyText}>
+							{t.diary.noAdventuresMessage}
+						</Text>
+					</View>
+				) : (
+					<View style={styles.adventureList}>
+						{adventures.map(
+							({ trip, entryCount }) => (
+								<AdventureCard
+									key={trip.id}
+									trip={trip}
+									entryCount={entryCount}
+									onPress={() =>
+										openAdventure(trip.id)
+									}
+								/>
+							),
+						)}
+					</View>
 				)}
-			</View>
-			)}
-		</ScrollView>
+			</ScrollView>
 		</SafeAreaView>
 	);
 }

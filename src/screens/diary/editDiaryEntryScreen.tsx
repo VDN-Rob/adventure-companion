@@ -1,6 +1,8 @@
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
+import { getTranslations } from "@/i18n";
 import { DiaryEntry } from "@/models/DiaryEntry";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import * as ImagePicker from "expo-image-picker";
@@ -20,290 +22,322 @@ export default function EditDiaryEntryScreen() {
 	const [text, setText] = useState("");
 	const [photos, setPhotos] = useState<string[]>([]);
 
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
+
 	useEffect(() => {
-		async function loadEntry() {
-			if (!diaryEntryId) {
-				return;
-			}
+    async function loadEntry() {
+        if (!diaryEntryId) {
+            return;
+        }
 
-			try {
-				const result =
-				await diaryEntryServices.getDiaryEntryById(diaryEntryId);
+        try {
+            const result =
+                await diaryEntryServices.getDiaryEntryById(
+                    diaryEntryId,
+                );
 
-				if (!result) {
-					Alert.alert(
-						"Diary entry not found",
-						"This diary entry could not be found."
-					);
-					router.back();
-					return;
-				}
+            if (!result) {
+                Alert.alert(
+                    t.alerts.diaryEntryNotFound.title,
+                    t.alerts.diaryEntryNotFound.message,
+                );
 
-				setEntry(result);
-				setTitle(result.title);
-				setText(result.text ?? "");
+                router.back();
+                return;
+            }
 
-				setPhotos(
-					[
-						result.photo1,
-						result.photo2,
-						result.photo3,
-					].filter(
-						(photo): photo is string => photo !== null
-					)
-				);
-			} catch {
-				Alert.alert(
-					"Could not load diary entry",
-					"Something went wrong while loading the diary entry."
-					);
-				router.back();
-			}
-		}
+            setEntry(result);
+            setTitle(result.title);
+            setText(result.text ?? "");
 
-		loadEntry();
-	}, [diaryEntryId]);
+            setPhotos(
+                [
+                    result.photo1,
+                    result.photo2,
+                    result.photo3,
+                ].filter(
+                    (photo): photo is string =>
+                        photo !== null,
+                ),
+            );
+        } catch {
+            Alert.alert(
+                t.alerts.couldNotLoadDiaryEntry.title,
+                t.alerts.couldNotLoadDiaryEntry.message,
+            );
 
-	async function handleAddPhoto() {
-		if (photos.length >= 3) {
-			Alert.alert(
-				"Photo limit",
-				"A diary entry can contain up to three photos."
-			);
-			return;
-		}
+            router.back();
+        }
+    }
 
-		const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    loadEntry();
+}, [diaryEntryId]);
 
-		if (!permission.granted) {
-			Alert.alert(
-				"Permission required",
-				"Please allow access to your photos to add pictures to your diary."
-			);
-			return;
-		}
+async function handleAddPhoto() {
+    if (photos.length >= 3) {
+        Alert.alert(
+            t.alerts.photoLimit.title,
+            t.alerts.photoLimit.message,
+        );
+        return;
+    }
 
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ["images"],
-			allowsEditing: true,
-			quality: 0.85,
-		});
+    const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-		if (result.canceled) {
-			return;
-		}
+    if (!permission.granted) {
+        Alert.alert(
+            t.alerts.photoPermissionRequired.title,
+            t.alerts.photoPermissionRequired.message,
+        );
+        return;
+    }
 
-		const uri = result.assets[0]?.uri;
+    const result =
+        await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images"],
+            allowsEditing: true,
+            quality: 0.85,
+        });
 
-		if (!uri) {
-			return;
-		}
+    if (result.canceled) {
+        return;
+    }
 
-		setPhotos((current) => [...current, uri]);
-	}
+    const uri = result.assets[0]?.uri;
 
-	function handleRemovePhoto(index: number) {
-		setPhotos((current) => current.filter((_, photoIndex) => photoIndex !== index));
-	}
+    if (!uri) {
+        return;
+    }
 
-	async function handleSave() {
-		if (!entry) {
-			return;
-		}
+    setPhotos((current) => [
+        ...current,
+        uri,
+    ]);
+}
 
-		if (!title.trim()) {
-			Alert.alert(
-				"Missing title",
-				"Please give your diary entry a title."
-			);
-			return;
-		}
+function handleRemovePhoto(index: number) {
+    setPhotos((current) =>
+        current.filter(
+            (_, photoIndex) =>
+                photoIndex !== index,
+        ),
+    );
+}
 
-		const updatedEntry: DiaryEntry = {
-			...entry,
+async function handleSave() {
+    if (!entry) {
+        return;
+    }
 
-			title: title.trim(),
-			text: text.trim() || null,
+    if (!title.trim()) {
+        Alert.alert(
+            t.alerts.missingDiaryTitle.title,
+            t.alerts.missingDiaryTitle.message,
+        );
+        return;
+    }
 
-			photo1: photos[0] ?? null,
-			photo2: photos[1] ?? null,
-			photo3: photos[2] ?? null,
+    const updatedEntry: DiaryEntry = {
+        ...entry,
 
-			updatedAt: new Date().toISOString(),
-		};
+        title: title.trim(),
+        text: text.trim() || null,
 
-		try {
-			await diaryEntryServices.updateDiaryEntry(updatedEntry);
-			router.back();
-		} catch {
-			Alert.alert(
-				"Could not save diary entry",
-				"Something went wrong while saving your changes."
-			);
-		}
-	}
+        photo1: photos[0] ?? null,
+        photo2: photos[1] ?? null,
+        photo3: photos[2] ?? null,
 
-	function handleDelete() {
-		Alert.alert(
-		"Delete diary entry?",
-		"This memory will be permanently deleted.",
-		[
-			{
-			text: "Cancel",
-			style: "cancel",
-			},
-			{
-			text: "Delete",
-			style: "destructive",
-			onPress: deleteEntry,
-			},
-		]
-		);
-	}
+        updatedAt: new Date().toISOString(),
+    };
 
-	async function deleteEntry() {
-		if (!diaryEntryId) {
-			return;
-		}
+    try {
+        await diaryEntryServices.updateDiaryEntry(
+            updatedEntry,
+        );
 
-		try {
-			await diaryEntryServices.deleteDiaryEntry(
-				diaryEntryId
-			);
+        router.back();
+    } catch {
+        Alert.alert(
+            t.alerts.couldNotSaveDiaryEntryChanges.title,
+            t.alerts.couldNotSaveDiaryEntryChanges.message,
+        );
+    }
+}
 
-			router.back();
-		} catch {
-			Alert.alert(
-				"Could not delete diary entry",
-				"Something went wrong while deleting the entry."
-			);
-		}
-	}
+function handleDelete() {
+    Alert.alert(
+        t.diary.deleteConfirmation.title,
+        t.diary.deleteConfirmation.message,
+        [
+            {
+                text: t.diary.deleteConfirmation.cancel,
+                style: "cancel",
+            },
+            {
+                text: t.diary.deleteConfirmation.confirm,
+                style: "destructive",
+                onPress: deleteEntry,
+            },
+        ],
+    );
+}
 
-	if (!entry) {
-		return (
-		<SafeAreaView style={styles.container}>
-			<Text style={styles.loading}>
-			Loading...
-			</Text>
-		</SafeAreaView>
-		);
-	}
+async function deleteEntry() {
+    if (!diaryEntryId) {
+        return;
+    }
 
-	return (
-		<SafeAreaView style={styles.container}>
-		<ScrollView
-			contentContainerStyle={styles.content}
-			keyboardShouldPersistTaps="handled"
-		>
-			<Text style={styles.title}>EDIT DIARY ENTRY</Text>
+    try {
+        await diaryEntryServices.deleteDiaryEntry(
+            diaryEntryId,
+        );
 
-			<SectionLabel title="ENTRY" />
+        router.back();
+    } catch {
+        Alert.alert(
+            t.alerts.couldNotDeleteDiaryEntry.title,
+            t.alerts.couldNotDeleteDiaryEntry.message,
+        );
+    }
+}
 
-			<InputField
-			label="Title"
-			value={title}
-			onChangeText={setTitle}
-			placeholder="A day worth remembering"
-			/>
+if (!entry) {
+    return (
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.loading}>
+                {t.diary.loading}
+            </Text>
+        </SafeAreaView>
+    );
+}
 
-			<View style={styles.textContainer}>
-			<Text style={styles.textLabel}>Story</Text>
+return (
+    <SafeAreaView style={styles.container}>
+        <ScrollView
+            contentContainerStyle={styles.content}
+            keyboardShouldPersistTaps="handled"
+        >
+            <Text style={styles.title}>
+                {t.diary.editEntry}
+            </Text>
 
-			<Text style={styles.optional}>
-				OPTIONAL
-			</Text>
+            <SectionLabel title={t.diary.entry} />
 
-			<View style={styles.textInputWrapper}>
-				<TextInput
-				value={text}
-				onChangeText={setText}
-				placeholder="What happened today?"
-				placeholderTextColor={
-					theme.colours.textMuted
-				}
-				multiline
-				textAlignVertical="top"
-				style={styles.textInput}
-				/>
-			</View>
-			</View>
+            <InputField
+                label={t.diary.title}
+                value={title}
+                onChangeText={setTitle}
+                placeholder={
+                    t.diary.titlePlaceholder
+                }
+            />
 
-			<SectionLabel title="PHOTOS" />
+            <View style={styles.textContainer}>
+                <Text style={styles.textLabel}>
+                    {t.diary.story}
+                </Text>
 
-			<View style={styles.photoGrid}>
-			{photos.map((uri, index) => (
-				<View
-				key={`${uri}-${index}`}
-				style={styles.photoContainer}
-				>
-				<Image
-					source={{ uri }}
-					style={styles.photo}
-				/>
+                <Text style={styles.optional}>
+                    {t.diary.optional}
+                </Text>
 
-				<Pressable
-					onPress={() =>
-					handleRemovePhoto(index)
-					}
-					style={styles.removeButton}
-				>
-					<Text style={styles.removeText}>
-					×
-					</Text>
-				</Pressable>
-				</View>
-			))}
+                <View style={styles.textInputWrapper}>
+                    <TextInput
+                        value={text}
+                        onChangeText={setText}
+                        placeholder={
+                            t.diary.storyPlaceholder
+                        }
+                        placeholderTextColor={
+                            theme.colours.textMuted
+                        }
+                        multiline
+                        textAlignVertical="top"
+                        style={styles.textInput}
+                    />
+                </View>
+            </View>
 
-			{photos.length < 3 && (
-				<Pressable
-				onPress={handleAddPhoto}
-				style={({ pressed }) => [
-					styles.addPhoto,
-					pressed && styles.addPhotoPressed,
-				]}
-				>
-				<Text style={styles.addPhotoIcon}>
-					+
-				</Text>
+            <SectionLabel title={t.diary.photos} />
 
-				<Text style={styles.addPhotoText}>
-					ADD PHOTO
-				</Text>
-				</Pressable>
-			)}
-			</View>
+            <View style={styles.photoGrid}>
+                {photos.map((uri, index) => (
+                    <View
+                        key={`${uri}-${index}`}
+                        style={styles.photoContainer}
+                    >
+                        <Image
+                            source={{ uri }}
+                            style={styles.photo}
+                        />
 
-			<Text style={styles.photoHint}>
-			{photos.length}/3 photos
-			</Text>
+                        <Pressable
+                            onPress={() =>
+                                handleRemovePhoto(index)
+                            }
+                            style={styles.removeButton}
+                        >
+                            <Text style={styles.removeText}>
+                                ×
+                            </Text>
+                        </Pressable>
+                    </View>
+                ))}
 
-			<Pressable
-			onPress={handleSave}
-			style={({ pressed }) => [
-				styles.saveButton,
-				pressed && styles.saveButtonPressed,
-			]}
-			>
-			<Text style={styles.saveText}>
-				SAVE CHANGES
-			</Text>
-			</Pressable>
+                {photos.length < 3 && (
+                    <Pressable
+                        onPress={handleAddPhoto}
+                        style={({ pressed }) => [
+                            styles.addPhoto,
+                            pressed &&
+                                styles.addPhotoPressed,
+                        ]}
+                    >
+                        <Text style={styles.addPhotoIcon}>
+                            +
+                        </Text>
 
-			<Pressable
-			onPress={handleDelete}
-			style={({ pressed }) => [
-				styles.deleteButton,
-				pressed && styles.deleteButtonPressed,
-			]}
-			>
-			<Text style={styles.deleteText}>
-				DELETE ENTRY
-			</Text>
-			</Pressable>
-		</ScrollView>
-		</SafeAreaView>
-	);
+                        <Text style={styles.addPhotoText}>
+                            {t.diary.addPhoto}
+                        </Text>
+                    </Pressable>
+                )}
+            </View>
+
+            <Text style={styles.photoHint}>
+                {t.diary.photoCount(photos.length)}
+            </Text>
+
+            <Pressable
+                onPress={handleSave}
+                style={({ pressed }) => [
+                    styles.saveButton,
+                    pressed &&
+                        styles.saveButtonPressed,
+                ]}
+            >
+                <Text style={styles.saveText}>
+                    {t.diary.saveChanges}
+                </Text>
+            </Pressable>
+
+            <Pressable
+                onPress={handleDelete}
+                style={({ pressed }) => [
+                    styles.deleteButton,
+                    pressed &&
+                        styles.deleteButtonPressed,
+                ]}
+            >
+                <Text style={styles.deleteText}>
+                    {t.diary.deleteEntry}
+                </Text>
+            </Pressable>
+        </ScrollView>
+    </SafeAreaView>
+);
 }
 
 const styles = StyleSheet.create({

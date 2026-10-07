@@ -4,15 +4,15 @@ import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-	Alert,
-	KeyboardAvoidingView,
-	Platform,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
 import { InputField } from "@/components/forms/InputField";
@@ -190,17 +190,13 @@ export default function CreatePoiScreen() {
                                 router.back()
                             }
                         >
-                            <Text
-                                style={styles.backArrow}
-                            >
+                            <Text style={styles.backArrow}>
                                 ←
                             </Text>
                         </Pressable>
 
                         <View>
-                            <Text
-                                style={styles.eyebrow}
-                            >
+                            <Text style={styles.eyebrow}>
                                 {t.poi.adventurePlanner}
                             </Text>
 
@@ -217,15 +213,11 @@ export default function CreatePoiScreen() {
                     {/* INTRO */}
 
                     <View style={styles.intro}>
-                        <Text
-                            style={styles.introTitle}
-                        >
+                        <Text style={styles.introTitle}>
                             {t.poi.markWaypoint}
                         </Text>
 
-                        <Text
-                            style={styles.introText}
-                        >
+                        <Text style={styles.introText}>
                             {t.poi.introText}
                         </Text>
                     </View>
@@ -247,9 +239,7 @@ export default function CreatePoiScreen() {
 
                     {/* TYPE */}
 
-                    <View
-                        style={styles.typeSection}
-                    >
+                    <View style={styles.typeSection}>
                         <Text style={styles.label}>
                             {t.poi.type}
                         </Text>
@@ -305,17 +295,13 @@ export default function CreatePoiScreen() {
                         </View>
                     </View>
 
-                    <Text
-                        style={styles.locationHint}
-                    >
+                    <Text style={styles.locationHint}>
                         {t.poi.locationHint}
                     </Text>
 
                     {/* NOTES */}
 
-                    <View
-                        style={styles.notesContainer}
-                    >
+                    <View style={styles.notesContainer}>
                         <Text style={styles.label}>
                             {t.poi.notes}
                         </Text>
@@ -360,9 +346,7 @@ export default function CreatePoiScreen() {
                                 {t.poi.addToToday}
                             </Text>
 
-                            <Text
-                                style={styles.saveText}
-                            >
+                            <Text style={styles.saveText}>
                                 {
                                     t.poi
                                         .markWaypointButton
@@ -370,9 +354,7 @@ export default function CreatePoiScreen() {
                             </Text>
                         </View>
 
-                        <Text
-                            style={styles.saveArrow}
-                        >
+                        <Text style={styles.saveArrow}>
                             +
                         </Text>
                     </Pressable>

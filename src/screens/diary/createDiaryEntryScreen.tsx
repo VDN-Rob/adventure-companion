@@ -17,7 +17,9 @@ import {
 	View,
 } from "react-native";
 
+import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -27,21 +29,17 @@ export default function CreateDiaryEntryScreen() {
 	const { diaryEntryServices, tripServices } = useAppServices();
 
 	const [trip, setTrip] = useState<Trip | null>(null);
-
 	const [title, setTitle] = useState("");
-
 	const [text, setText] = useState("");
-
 	const [photos, setPhotos] = useState<string[]>([]);
-
 	const [date, setDate] = useState<string>(getTodayDate());
-
 	const [showDatePicker, setShowDatePicker] = useState(false);
-
 	const [isSaving, setIsSaving] = useState(false);
-
 	const [isLoadingTrip, setIsLoadingTrip] = useState(true);
 
+	const { settings } = useAppSettings();
+	const t = getTranslations(settings.language);
+	
 	useEffect(() => {
 		let cancelled = false;
 
@@ -89,45 +87,43 @@ export default function CreateDiaryEntryScreen() {
 	}, [tripId, tripServices]);
 
 	async function handleAddPhoto() {
-		if (photos.length >= 3) {
-			Alert.alert(
-				"Photo limit",
-				"A diary entry can contain up to three photos."
-			);
-			return;
-		}
+        if (photos.length >= 3) {
+            Alert.alert(t.alerts.photoLimit.title, t.alerts.photoLimit.message);
+            return;
+        }
 
-		const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-		if (!permission.granted) {
-			Alert.alert(
-				"Permission required",
-				"Please allow access to your photos to add pictures to your diary."
-			);
-			return;
-		}
+        if (!permission.granted) {
+            Alert.alert(t.alerts.photoPermissionRequired.title, t.alerts.photoPermissionRequired.message);
+            return;
+        }
 
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ["images"],
-			allowsEditing: true,
-			quality: 0.85,
-		});
+        const result =
+            await ImagePicker.launchImageLibraryAsync(
+                {
+                    mediaTypes: ["images"],
+                    allowsEditing: true,
+                    quality: 0.85,
+                },
+            );
 
-		if (result.canceled) {
-			return;
-		}
+        if (result.canceled) {
+            return;
+        }
 
-		const uri = result.assets[0]?.uri;
+        const uri =
+            result.assets[0]?.uri;
 
-		if (!uri) {
-			return;
-		}
+        if (!uri) {
+            return;
+        }
 
-		setPhotos((current) => [
-			...current,
-			uri,
-		]);
-	}
+        setPhotos((current) => [
+            ...current,
+            uri,
+        ]);
+    }
 
 	function handleRemovePhoto(index: number) {
 		setPhotos((current) =>
@@ -149,91 +145,67 @@ export default function CreateDiaryEntryScreen() {
 	}
 
 	async function handleSave() {
-		if (!tripId) {
-			Alert.alert(
-				"Missing adventure",
-				"No adventure was specified."
-			);
-			return;
-		}
+        if (!tripId) {
+            Alert.alert(t.alerts.missingAdventure.title,t.alerts.missingAdventure.message);
+            return;
+        }
 
-		if (!trip) {
-			Alert.alert(
-				"Adventure unavailable",
-				"The selected adventure could not be found."
-			);
-			return;
-		}
+        if (!trip) {
+            Alert.alert(t.alerts.adventureUnavailable.title,t.alerts.adventureUnavailable.message);
+            return;
+        }
 
-		if (!title.trim()) {
-			Alert.alert(
-				"Missing title",
-				"Please give your diary entry a title."
-			);
-			return;
-		}
+        if (!title.trim()) {
+            Alert.alert(t.alerts.missingDiaryTitle.title,t.alerts.missingDiaryTitle.message);
+            return;
+        }
 
-		if (date < trip.startDate || (trip.endDate !== null && date > trip.endDate)) {
-			Alert.alert(
-				"Invalid date",
-				"The diary entry date must be inside the adventure."
-			);
-			return;
-		}
+        if (date < trip.startDate || (trip.endDate !== null &&date > trip.endDate)) {
+            Alert.alert(t.alerts.invalidDiaryDate.title,t.alerts.invalidDiaryDate.message);
+            return;
+        }
 
-		try {
-			setIsSaving(true);
+        try {
+            setIsSaving(true);
 
-			await diaryEntryServices.createDiaryEntry({
-				tripId,
-				date,
+            await diaryEntryServices.createDiaryEntry(
+                {
+                    tripId,
+                    date,
 
-				title: title.trim(),
-				text: text.trim() || null,
+                    title: title.trim(),
+                    text: text.trim() || null,
 
-				photo1: photos[0] ?? null,
-				photo2: photos[1] ?? null,
-				photo3: photos[2] ?? null,
-			});
+                    photo1: photos[0] ?? null,
+                    photo2: photos[1] ?? null,
+                    photo3: photos[2] ?? null,
+                },
+            );
 
-			router.back();
-		} catch (error) {
-			const message =
-				error instanceof Error
-				? error.message
-				: "Something went wrong while saving your diary entry.";
-		
-			if (message === "A diary entry already exists for this date.") {
-				Alert.alert(
-				"Diary entry already exists",
-				"There is already a diary entry for this date. Please choose another date."
-				);
-			
+            router.back();
+        } catch (error) {
+            const message =error instanceof Error ? error.message : t.alerts.couldNotSaveDiaryEntry.message;
+
+            if (message ==="A diary entry already exists for this date.") {
+                Alert.alert(t.alerts.diaryEntryAlreadyExists.title, t.alerts.diaryEntryAlreadyExists.message);
 				return;
-			}
-			
-			console.error(
-				"Failed to create diary entry:",
-				error
-			);
-			
-			Alert.alert(
-				"Could not save diary entry",
-				"Something went wrong while saving your diary entry."
-			);
-		} finally {
-			setIsSaving(false);
-		}
-	}
+            }
+
+            console.error("Failed to create diary entry:", error);
+
+            Alert.alert(t.alerts.couldNotSaveDiaryEntry.title, t.alerts.couldNotSaveDiaryEntry.message);
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
 
 	if (isLoadingTrip) {
 		return (
-		<SafeAreaView
-			style={styles.container}
-		>
+		<SafeAreaView style={styles.container}>
 			<View style={styles.loading}>
 			<Text style={styles.loadingText}>
-				Loading adventure...
+				{t.diary.loadingAdventure}
 			</Text>
 			</View>
 		</SafeAreaView>
@@ -242,231 +214,282 @@ export default function CreateDiaryEntryScreen() {
 
 	if (!trip) {
 		return (
-		<SafeAreaView
-			style={styles.container}
-		>
+		<SafeAreaView style={styles.container}>
 			<View style={styles.loading}>
 			<Text style={styles.error}>
-				The selected adventure could not
-				be found.
+				{t.diary.adventureNotFound}
 			</Text>
 			</View>
 		</SafeAreaView>
 		);
 	}
 
-	const minimumDate =
-		dateStringToLocalDate(
-		trip.startDate
-		);
+	const minimumDate = dateStringToLocalDate(trip.startDate);
 
-	const maximumDate =
-		trip.endDate !== null
-		? dateStringToLocalDate(
-			trip.endDate
-			)
-		: undefined;
+	const maximumDate = trip.endDate !== null ? dateStringToLocalDate(trip.endDate) : undefined;
 
-	const selectedDate =
-		dateStringToLocalDate(date);
+	const selectedDate = dateStringToLocalDate(date);
 
 	return (
-		<SafeAreaView
-		style={styles.container}
-		>
-			<ScrollView
-				contentContainerStyle={
-				styles.content
-				}
-				keyboardShouldPersistTaps="handled"
-			>
-				<Pressable
-				onPress={() => router.back()}
-				style={styles.backButton}
-				>
-				<Text style={styles.backText}>
-					← BACK
-				</Text>
-				</Pressable>
+        <SafeAreaView style={styles.container}>
+            <ScrollView
+                contentContainerStyle={
+                    styles.content
+                }
+                keyboardShouldPersistTaps="handled"
+            >
+                <Pressable
+                    onPress={() =>
+                        router.back()
+                    }
+                    style={styles.backButton}
+                >
+                    <Text style={styles.backText}>
+                        ← {t.diary.back}
+                    </Text>
+                </Pressable>
 
-				<Text style={styles.kicker}>
-				{trip.name}
-				</Text>
+                <Text style={styles.kicker}>
+                    {trip.name}
+                </Text>
 
-				<Text style={styles.title}>
-				NEW DIARY ENTRY
-				</Text>
+                <Text style={styles.title}>
+                    {t.diary.newEntry}
+                </Text>
 
-				<SectionLabel title="DATE" />
+                <SectionLabel
+                    title={t.diary.date}
+                />
 
-				<Pressable
-				onPress={() =>
-					setShowDatePicker(true)
-				}
-				style={({ pressed }) => [
-					styles.dateButton,
-					pressed &&
-					styles.dateButtonPressed,
-				]}
-				>
-				<View>
-					<Text style={styles.dateLabel}>
-					ENTRY DATE
-					</Text>
+                <Pressable
+                    onPress={() =>
+                        setShowDatePicker(true)
+                    }
+                    style={({ pressed }) => [
+                        styles.dateButton,
+                        pressed &&
+                            styles.dateButtonPressed,
+                    ]}
+                >
+                    <View>
+                        <Text
+                            style={
+                                styles.dateLabel
+                            }
+                        >
+                            {t.diary.entryDate}
+                        </Text>
 
-					<Text style={styles.dateValue}>
-					{formatDate(date)}
-					</Text>
-				</View>
+                        <Text
+                            style={
+                                styles.dateValue
+                            }
+                        >
+                            {formatDate(date)}
+                        </Text>
+                    </View>
 
-				<Text style={styles.dateArrow}>
-					▼
-				</Text>
-				</Pressable>
+                    <Text
+                        style={
+                            styles.dateArrow
+                        }
+                    >
+                        ▼
+                    </Text>
+                </Pressable>
 
-				{showDatePicker && (
-				<View style={styles.datePicker}>
-					<DateTimePicker
-					value={selectedDate}
-					mode="date"
-					display="default"
-					minimumDate={minimumDate}
-					maximumDate={maximumDate}
-					onValueChange={handleDateChange}
-					onDismiss={handleDateDismiss}
-					/>
-				</View>
-				)}
+                {showDatePicker && (
+                    <View
+                        style={
+                            styles.datePicker
+                        }
+                    >
+                        <DateTimePicker
+                            value={
+                                selectedDate
+                            }
+                            mode="date"
+                            display="default"
+                            minimumDate={
+                                minimumDate
+                            }
+                            maximumDate={
+                                maximumDate
+                            }
+                            onValueChange={
+                                handleDateChange
+                            }
+                            onDismiss={
+                                handleDateDismiss
+                            }
+                        />
+                    </View>
+                )}
 
-				<SectionLabel title="ENTRY" />
+                <SectionLabel
+                    title={t.diary.entry}
+                />
 
-				<InputField
-				label="Title"
-				value={title}
-				onChangeText={setTitle}
-				placeholder="A day worth remembering"
-				/>
+                <InputField
+                    label={t.diary.title}
+                    value={title}
+                    onChangeText={setTitle}
+                    placeholder={
+                        t.diary
+                            .titlePlaceholder
+                    }
+                />
 
-				<View
-				style={styles.textContainer}
-				>
-				<Text style={styles.textLabel}>
-					Story
-				</Text>
+                <View
+                    style={
+                        styles.textContainer
+                    }
+                >
+                    <Text
+                        style={
+                            styles.textLabel
+                        }
+                    >
+                        {t.diary.story}
+                    </Text>
 
-				<Text style={styles.optional}>
-					OPTIONAL
-				</Text>
+                    <Text
+                        style={
+                            styles.optional
+                        }
+                    >
+                        {t.diary.optional}
+                    </Text>
 
-				<View
-					style={styles.textInputWrapper}
-				>
-					<TextInput
-					value={text}
-					onChangeText={setText}
-					placeholder="What happened today?"
-					placeholderTextColor={
-						theme.colours.textMuted
-					}
-					multiline
-					textAlignVertical="top"
-					style={styles.textInput}
-					/>
-				</View>
-				</View>
+                    <View
+                        style={
+                            styles.textInputWrapper
+                        }
+                    >
+                        <TextInput
+                            value={text}
+                            onChangeText={setText}
+                            placeholder={
+                                t.diary
+                                    .storyPlaceholder
+                            }
+                            placeholderTextColor={
+                                theme.colours
+                                    .textMuted
+                            }
+                            multiline
+                            textAlignVertical="top"
+                            style={
+                                styles.textInput
+                            }
+                        />
+                    </View>
+                </View>
 
-				<SectionLabel title="PHOTOS" />
+                <SectionLabel
+                    title={t.diary.photos}
+                />
 
-				<View style={styles.photoGrid}>
-				{photos.map(
-					(uri, index) => (
-					<View
-						key={`${uri}-${index}`}
-						style={
-						styles.photoContainer
-						}
-					>
-						<Image
-						source={{ uri }}
-						style={styles.photo}
-						/>
+                <View style={styles.photoGrid}>
+                    {photos.map(
+                        (uri, index) => (
+                            <View
+                                key={`${uri}-${index}`}
+                                style={
+                                    styles.photoContainer
+                                }
+                            >
+                                <Image
+                                    source={{
+                                        uri,
+                                    }}
+                                    style={
+                                        styles.photo
+                                    }
+                                />
 
-						<Pressable
-						onPress={() =>
-							handleRemovePhoto(
-							index
-							)
-						}
-						style={
-							styles.removeButton
-						}
-						>
-						<Text
-							style={
-							styles.removeText
-							}
-						>
-							×
-						</Text>
-						</Pressable>
-					</View>
-					)
-				)}
+                                <Pressable
+                                    onPress={() =>
+                                        handleRemovePhoto(
+                                            index,
+                                        )
+                                    }
+                                    style={
+                                        styles.removeButton
+                                    }
+                                >
+                                    <Text
+                                        style={
+                                            styles.removeText
+                                        }
+                                    >
+                                        ×
+                                    </Text>
+                                </Pressable>
+                            </View>
+                        ),
+                    )}
 
-				{photos.length < 3 && (
-					<Pressable
-					onPress={handleAddPhoto}
-					style={({
-						pressed,
-					}) => [
-						styles.addPhoto,
-						pressed &&
-						styles.addPhotoPressed,
-					]}
-					>
-					<Text
-						style={
-						styles.addPhotoIcon
-						}
-					>
-						+
-					</Text>
+                    {photos.length < 3 && (
+                        <Pressable
+                            onPress={
+                                handleAddPhoto
+                            }
+                            style={({
+                                pressed,
+                            }) => [
+                                styles.addPhoto,
+                                pressed &&
+                                    styles.addPhotoPressed,
+                            ]}
+                        >
+                            <Text
+                                style={
+                                    styles.addPhotoIcon
+                                }
+                            >
+                                +
+                            </Text>
 
-					<Text
-						style={
-						styles.addPhotoText
-						}
-					>
-						ADD PHOTO
-					</Text>
-					</Pressable>
-				)}
-				</View>
+                            <Text
+                                style={
+                                    styles.addPhotoText
+                                }
+                            >
+                                {t.diary.addPhoto}
+                            </Text>
+                        </Pressable>
+                    )}
+                </View>
 
-				<Text style={styles.photoHint}>
-				{photos.length}/3 photos
-				</Text>
+                <Text style={styles.photoHint}>
+                    {t.diary.photoCount(
+                        photos.length,
+                    )}
+                </Text>
 
-				<Pressable
-				onPress={handleSave}
-				disabled={isSaving}
-				style={({ pressed }) => [
-					styles.saveButton,
-					pressed &&
-					styles.saveButtonPressed,
-					isSaving &&
-					styles.saveButtonDisabled,
-				]}
-				>
-				<Text style={styles.saveText}>
-					{isSaving
-					? "SAVING..."
-					: "SAVE ENTRY"}
-				</Text>
-				</Pressable>
-			</ScrollView>
-		</SafeAreaView>
-	);
+                <Pressable
+                    onPress={handleSave}
+                    disabled={isSaving}
+                    style={({
+                        pressed,
+                    }) => [
+                        styles.saveButton,
+                        pressed &&
+                            styles.saveButtonPressed,
+                        isSaving &&
+                            styles.saveButtonDisabled,
+                    ]}
+                >
+                    <Text style={styles.saveText}>
+                        {isSaving
+                            ? t.diary.saving
+                            : t.diary.saveEntry}
+                    </Text>
+                </Pressable>
+            </ScrollView>
+        </SafeAreaView>
+    );
 }
 
 function getDefaultDiaryDate(trip: Trip): string {
