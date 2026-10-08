@@ -134,7 +134,7 @@ export default function EditDayScreen() {
 	}
 	
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={styles.container}>
 			<KeyboardAvoidingView
 			style={styles.container}
 			behavior={Platform.OS === "ios" ? "padding" : undefined}

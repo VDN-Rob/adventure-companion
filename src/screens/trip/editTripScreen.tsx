@@ -272,22 +272,22 @@ export default function EditTripScreen() {
 				</View>
 				</ScrollView>
 				<GameModal
-				visible={deleteModalVisible}
-				title={t.adventures.delAdventure + "?"}
-				message={t.adventures.delAdventureDesc}
-				confirmText={t.common.delete.toUpperCase()}
-				cancelText={t.common.cancel.toUpperCase()}
-				destructive
-				onCancel={() => setDeleteModalVisible(false)}
-				onConfirm={async () => {
-					if (!id) return;
+					visible={deleteModalVisible}
+					title={t.adventures.delAdventure + "?"}
+					message={t.adventures.delAdventureDesc}
+					confirmText={t.common.delete.toUpperCase()}
+					cancelText={t.common.cancel.toUpperCase()}
+					destructive
+					onCancel={() => setDeleteModalVisible(false)}
+					onConfirm={async () => {
+						if (!id) return;
 
-					setDeleteModalVisible(false);
+						setDeleteModalVisible(false);
 
-					await tripServices.deleteTrip(id);
+						await tripServices.deleteTrip(id);
 
-					router.dismiss(2);
-				}}
+						router.dismiss(2);
+					}}
 				/>
 			</KeyboardAvoidingView>
 		</SafeAreaView>

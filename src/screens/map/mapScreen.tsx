@@ -27,9 +27,31 @@ function formatDistance(meters: number): string {
 	return `${Math.round(meters)} m`;
 }
 
+function getRequestedRouteIds(
+	routeId?: string,
+	routeIds?: string | string[],
+): string[] | null {
+	if (routeIds) {
+		return Array.isArray(routeIds)
+			? routeIds
+			: routeIds.split(",");
+	}
+
+	if (routeId) {
+		return [routeId];
+	}
+
+	return null;
+}
+
 export default function MapScreen() {
 	// Retrieve id from parameters
-	const { dayId } = useLocalSearchParams<{ dayId: string }>();
+	const { dayId, routeId, routeIds } =
+		useLocalSearchParams<{
+			dayId: string;
+			routeId?: string;
+			routeIds?: string | string[];
+	}>();
 
 	// Load services
 	const {
@@ -139,15 +161,23 @@ export default function MapScreen() {
 				return;
 			}
 
-			const pois =
-				await poiServices.getPOIsForDay(dayId);
-
+			const pois = await poiServices.getPOIsForDay(dayId);
 			setPois(pois);
 
-			const routes =
-				await routeService.getRoutesForDay(dayId);
+			const routes = await routeService.getRoutesForDay(dayId);
 
-			setRoutes(routes);
+			const requestedRouteIds = getRequestedRouteIds(routeId, routeIds);
+
+			const visibleRoutes =
+				requestedRouteIds === null
+					? routes
+					: routes.filter((route) =>
+							requestedRouteIds.includes(
+								route.id,
+							),
+						);
+
+			setRoutes(visibleRoutes);
 
 			const coordinates = [
 				...pois
@@ -161,21 +191,15 @@ export default function MapScreen() {
 						longitude: poi.longitude!,
 					})),
 
-				...routes.flatMap((route) =>
-					route.trackPoints.map(
-						(point) => ({
-							latitude:
-								point.latitude,
-							longitude:
-								point.longitude,
-						}),
-					),
+				...visibleRoutes.flatMap((route) =>
+					route.trackPoints.map((point) => ({
+						latitude: point.latitude,
+						longitude: point.longitude,
+					})),
 				),
 			];
 
-			setBounds(
-				calculateBounds(coordinates),
-			);
+			setBounds(calculateBounds(coordinates));
 		}
 
 		setupLocationTracking();
@@ -186,6 +210,8 @@ export default function MapScreen() {
 		};
 	}, [
 		dayId,
+		routeId,
+		routeIds,
 		poiServices,
 		routeService,
 	]);

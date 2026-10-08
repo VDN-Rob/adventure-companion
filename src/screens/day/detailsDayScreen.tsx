@@ -1,8 +1,10 @@
 import { POICard } from "@/components/card/POICard";
+import { RouteCard } from "@/components/card/RouteCard";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
+import { Route } from "@/models/Route";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
@@ -24,6 +26,7 @@ export default function DayDetailsScreen() {
 	// State
 	const [day, setDay] = useState<Day | null>(null);
 	const [pois, setPois] = useState<POI[]>([]);
+	const [routes, setRoutes] = useState<Route[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -41,29 +44,32 @@ export default function DayDetailsScreen() {
 			}
 
 			try {
-			setIsLoading(true);
-			setError(null);
+				setIsLoading(true);
+				setError(null);
 
-			const day = await dayServices.getDayById(dayId);
-		
-			if (!day) {
-				setError("Day not Found");
-				return;
-			}
+				const day = await dayServices.getDayById(dayId);
+			
+				if (!day) {
+					setError("Day not Found");
+					return;
+				}
 
-			setDay(day);
+				setDay(day);
 
-			const pois = await poiServices.getPOIsForDay(dayId);
-			setPois(pois);
+				const pois = await poiServices.getPOIsForDay(dayId);
+				setPois(pois);
+
+				const routes = await routeService.getRoutesForDay(dayId);
+				setRoutes(routes);
 			} catch {
-			setError("Unable to load day");
+				setError("Unable to load day");
 			} finally {
-			setIsLoading(false);
+				setIsLoading(false);
 			}
 		}
 
 		loadData();
-		}, [dayId])
+		}, [dayId, dayServices, poiServices, routeService])
 	);
 
 	async function handleDayMapDownload() {
@@ -119,26 +125,41 @@ export default function DayDetailsScreen() {
 					copyToCacheDirectory: true,
 					multiple: false,
 				});
-	
+
 			if (result.canceled) {
 				return;
 			}
-	
+
 			const file = result.assets[0];
-	
+
 			await routeService.importGPX(
 				dayId,
 				file.uri
 			);
-	
-			Alert.alert(t.alerts.gpxImported.title, t.alerts.gpxImported.message);
+
+			if (dayId) {
+				const routes =
+					await routeService.getRoutesForDay(
+						dayId
+					);
+
+				setRoutes(routes);
+			}
+
+			Alert.alert(
+				t.alerts.gpxImported.title,
+				t.alerts.gpxImported.message
+			);
 		} catch (error) {
 			console.error(
 				"Failed to import GPX:",
 				error
 			);
-	
-			Alert.alert(t.alerts.importFailed.title, t.alerts.importFailed.message);
+
+			Alert.alert(
+				t.alerts.importFailed.title,
+				t.alerts.importFailed.message
+			);
 		}
 	}
 
@@ -187,7 +208,7 @@ export default function DayDetailsScreen() {
 			ItemSeparatorComponent={() => (
 			<View style={styles.poiSeparator} />
 			)}
-			ListHeaderComponent={
+			ListHeaderComponent={ () => (
 			<>
 				{/* HEADER */}
 				<View style={styles.header}>
@@ -266,6 +287,49 @@ export default function DayDetailsScreen() {
 				</View>
 				)}
 
+				{/* GPX */}
+				<SectionLabel title="GPX ROUTES" />
+
+				{routes.length === 0 ? (
+					<View style={styles.emptyRoutes}>
+						<Text style={styles.emptyTitle}>
+							No GPX routes
+						</Text>
+
+						<Text style={styles.emptyText}>
+							Import a GPX file to add a route to this day.
+						</Text>
+					</View>
+				) : (
+					<View style={styles.routesList}>
+						{routes.map((route) => (
+							<RouteCard
+								key={route.id}
+								route={route}
+								onPress={() => {
+									router.push({
+										pathname: "/route/routeDetails",
+										params: {
+											routeId: route.id,
+										},
+									});
+								}}
+							/>
+						))}
+					</View>
+				)}
+				<Pressable
+					style={styles.addPoiButton}
+					onPress={handleImportGPX}>
+					<Text style={styles.addPoiPlus}>
+						+
+					</Text>
+
+					<Text style={styles.addPoiText}>
+						{t.day.loadGPX}
+					</Text>
+				</Pressable>
+
 				{/* POIS */}
 				<SectionLabel title={t.day.pointsOfInterest} />
 
@@ -281,6 +345,7 @@ export default function DayDetailsScreen() {
 				</View>
 				)}
 			</>
+			)
 			}
 			ListFooterComponent={
 			<View style={styles.footer}>
@@ -330,14 +395,6 @@ export default function DayDetailsScreen() {
 
 					<Text style={styles.mapArrow}>
 						↓
-					</Text>
-				</Pressable>
-				<Pressable
-					style={styles.mapButton}
-					onPress={handleImportGPX}
-				>
-					<Text style={styles.mapButtonText}>
-						{t.day.loadGPX}
 					</Text>
 				</Pressable>
 
@@ -712,4 +769,27 @@ const styles = StyleSheet.create({
 
 		textAlign: "center",
 	},
+
+	routesList: {
+		gap: theme.spacing.sm,
+
+		marginBottom: theme.spacing.xl,
+	},
+
+	emptyRoutes: {
+		paddingVertical: theme.spacing.lg,
+		paddingHorizontal: theme.spacing.md,
+
+		marginBottom: theme.spacing.xl,
+
+		backgroundColor: theme.colours.surface,
+
+		borderWidth: 1,
+		borderColor: theme.colours.border,
+
+		borderRadius: theme.radius.md,
+
+		alignItems: "center",
+	},
+
 });
