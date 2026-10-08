@@ -1,20 +1,21 @@
+import { RouteProgress } from "@/services/RouteNavigationService";
 import { StyleSheet, Text, View } from "react-native";
 
-import { RouteProgress } from "@/services/RouteNavigationService";
-
 interface RouteNavigationInfoProps {
+    routeName?: string;
     progress: RouteProgress | null;
 }
 
 function formatDistance(meters: number): string {
-    if (meters < 1000) {
-        return `${Math.round(meters)} m`;
+    if (meters >= 1000) {
+        return `${(meters / 1000).toFixed(1)} km`;
     }
 
-    return `${(meters / 1000).toFixed(1)} km`;
+    return `${Math.round(meters)} m`;
 }
 
 export function RouteNavigationInfo({
+    routeName,
     progress,
 }: RouteNavigationInfoProps) {
     if (!progress) {
@@ -23,29 +24,55 @@ export function RouteNavigationInfo({
 
     return (
         <View style={styles.container}>
-            <View style={styles.row}>
+            <View style={styles.header}>
+                <Text style={styles.routeName} numberOfLines={1}>
+                    {routeName ?? "Route"}
+                </Text>
+
+                <Text style={styles.percentage}>
+                    {Math.round(progress.percentage)}%
+                </Text>
+            </View>
+
+            <View style={styles.progressTrack}>
+                <View
+                    style={[
+                        styles.progressFill,
+                        {
+                            width: `${progress.percentage}%`,
+                        },
+                    ]}
+                />
+            </View>
+
+            <View style={styles.stats}>
                 <View>
-                    <Text style={styles.label}>Remaining</Text>
-                    <Text style={styles.distance}>
-                        {formatDistance(progress.distanceRemainingMeters)}
+                    <Text style={styles.label}>Distance</Text>
+                    <Text style={styles.value}>
+                        {formatDistance(
+                            progress.distanceFromStartMeters,
+                        )}
                     </Text>
                 </View>
 
-                <View style={styles.progressContainer}>
-                    <Text style={styles.label}>Progress</Text>
-                    <Text style={styles.progress}>
-                        {Math.round(progress.progress * 100)}%
+                <View>
+                    <Text style={styles.label}>Remaining</Text>
+                    <Text style={styles.value}>
+                        {formatDistance(
+                            progress.distanceRemainingMeters,
+                        )}
+                    </Text>
+                </View>
+
+                <View>
+                    <Text style={styles.label}>Off route</Text>
+                    <Text style={styles.value}>
+                        {formatDistance(
+                            progress.distanceFromRouteMeters,
+                        )}
                     </Text>
                 </View>
             </View>
-
-            {progress.offRoute && (
-                <View style={styles.warning}>
-                    <Text style={styles.warningText}>
-                        You are off route
-                    </Text>
-                </View>
-            )}
         </View>
     );
 }
@@ -57,55 +84,64 @@ const styles = StyleSheet.create({
         right: 16,
         bottom: 24,
         padding: 16,
-        borderRadius: 14,
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderRadius: 16,
+        backgroundColor: "white",
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 4,
         },
-        shadowOpacity: 0.15,
-        shadowRadius: 6,
-        elevation: 4,
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 5,
     },
 
-    row: {
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 12,
+    },
+
+    routeName: {
+        flex: 1,
+        marginRight: 12,
+        fontSize: 18,
+        fontWeight: "600",
+    },
+
+    percentage: {
+        fontSize: 16,
+        fontWeight: "600",
+    },
+
+    progressTrack: {
+        height: 6,
+        overflow: "hidden",
+        borderRadius: 3,
+        backgroundColor: "#E5E5E5",
+    },
+
+    progressFill: {
+        height: "100%",
+        borderRadius: 3,
+        backgroundColor: "#007AFF",
+    },
+
+    stats: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
-    },
-
-    progressContainer: {
-        alignItems: "flex-end",
+        marginTop: 14,
     },
 
     label: {
+        marginBottom: 3,
         fontSize: 12,
-        color: "#666",
-        marginBottom: 2,
+        color: "#777",
     },
 
-    distance: {
-        fontSize: 22,
+    value: {
+        fontSize: 15,
         fontWeight: "600",
-    },
-
-    progress: {
-        fontSize: 22,
-        fontWeight: "600",
-    },
-
-    warning: {
-        marginTop: 12,
-        paddingTop: 10,
-        borderTopWidth: 1,
-        borderTopColor: "#eee",
-    },
-
-    warningText: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#d00",
-        textAlign: "center",
     },
 });
