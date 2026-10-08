@@ -138,10 +138,9 @@ export default function MapScreen() {
 			return;
 		}
 	
-		const progress = routeNavigationService.getProgress(
+		const progress = routeNavigationService.calculateProgress(
 			activeRoute,
-			location.coords.latitude,
-			location.coords.longitude,
+			{latitude: location.coords.latitude, longitude: location.coords.longitude},
 		);
 	
 		setRouteProgress(progress);
@@ -228,10 +227,29 @@ export default function MapScreen() {
 			{routes.map((route) => (
 				<Button
 					key={route.id}
-					title={route.name ?? "Follow route"}
-					onPress={() => setActiveRoute(route)}
+					title={
+						activeRoute?.id === route.id
+							? `Following ${route.name ?? "route"}`
+							: route.name ?? "Follow route"
+					}
+					onPress={() => {
+						routeNavigationService.reset(route.id);
+						setActiveRoute(route);
+						setRouteProgress(null);
+					}}
 				/>
 			))}
+
+			{activeRoute && (
+				<Button
+					title="Stop navigation"
+					onPress={() => {
+						routeNavigationService.reset(activeRoute.id);
+						setActiveRoute(null);
+						setRouteProgress(null);
+					}}
+				/>
+			)}
 			<RouteNavigationInfo progress={routeProgress} />
 			
 			<GeoJSONSource

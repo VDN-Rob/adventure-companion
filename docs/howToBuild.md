@@ -8,4 +8,4 @@ eas build --platform android --profile preview --local
 
 adb devices
 
-adb -s ABC123456789 install path/to/your.apk
+adb -s device install path/to/your.apk

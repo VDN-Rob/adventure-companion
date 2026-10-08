@@ -1,136 +1,214 @@
 import { Route, TrackPoint } from "@/models/Route";
+import { projectPointOntoSegment } from "@/utils/map/projectPointOntoSegment";
 
 export interface RouteProgress {
-    routeId: string;
-    nearestPoint: TrackPoint;
-    nearestPointIndex: number;
-    distanceFromRouteMeters: number;
-    distanceTravelledMeters: number;
+    distanceFromStartMeters: number;
     distanceRemainingMeters: number;
-    progress: number;
-    offRoute: boolean;
+    percentage: number;
+
+    nearestPoint: TrackPoint;
+    distanceFromRouteMeters: number;
+
+    segmentIndex: number;
 }
 
+interface PreparedRouteSegment {
+    start: TrackPoint;
+    end: TrackPoint;
+    lengthMeters: number;
+    distanceFromStartMeters: number;
+}
+
+interface PreparedRoute {
+    segments: PreparedRouteSegment[];
+    totalDistanceMeters: number;
+}
+
+interface NavigationState {
+    segmentIndex: number;
+    distanceFromStartMeters: number;
+    distanceFromRouteMeters: number;
+}
+
+const EARTH_RADIUS_METERS = 6_371_000;
+const PROGRESS_BACKTRACK_TOLERANCE_METERS = 15;
+const MAX_ROUTE_DISTANCE_FOR_PROGRESS_METERS = 100;
+
+
 export class RouteNavigationService {
-    private readonly offRouteThresholdMeters = 50;
-
-    getProgress(
-        route: Route,
-        latitude: number,
-        longitude: number,
-    ): RouteProgress | null {
-        if (route.trackPoints.length < 2) {
-            return null;
-        }
-
-        let nearestPointIndex = 0;
-        let nearestDistance = Infinity;
-
-        for (let i = 0; i < route.trackPoints.length; i++) {
-            const point = route.trackPoints[i];
-
-            const distance = this.distanceMeters(
-                latitude,
-                longitude,
-                point.latitude,
-                point.longitude,
-            );
-
-            if (distance < nearestDistance) {
-                nearestDistance = distance;
-                nearestPointIndex = i;
-            }
-        }
-
-        const distanceTravelled = this.calculateDistanceUntil(
-            route.trackPoints,
-            nearestPointIndex,
-        );
-
-        const totalDistance =
-            route.distanceMeters ??
-            this.calculateRouteDistance(route.trackPoints);
-
-        const distanceRemaining = Math.max(
-            0,
-            totalDistance - distanceTravelled,
-        );
-
-        return {
-            routeId: route.id,
-            nearestPoint: route.trackPoints[nearestPointIndex],
-            nearestPointIndex,
-            distanceFromRouteMeters: nearestDistance,
-            distanceTravelledMeters: distanceTravelled,
-            distanceRemainingMeters: distanceRemaining,
-            progress:
-                totalDistance > 0
-                    ? distanceTravelled / totalDistance
-                    : 0,
-            offRoute:
-                nearestDistance > this.offRouteThresholdMeters,
-        };
-    }
-
-    private calculateDistanceUntil(
-        points: TrackPoint[],
-        endIndex: number,
-    ): number {
-        let distance = 0;
-
-        for (let i = 1; i <= endIndex; i++) {
-            distance += this.distanceMeters(
-                points[i - 1].latitude,
-                points[i - 1].longitude,
-                points[i].latitude,
-                points[i].longitude,
-            );
-        }
-
-        return distance;
-    }
-
-    private calculateRouteDistance(points: TrackPoint[]): number {
-        let distance = 0;
-
-        for (let i = 1; i < points.length; i++) {
-            distance += this.distanceMeters(
-                points[i - 1].latitude,
-                points[i - 1].longitude,
-                points[i].latitude,
-                points[i].longitude,
-            );
-        }
-
-        return distance;
-    }
-
-    private distanceMeters(
-        latitude1: number,
-        longitude1: number,
-        latitude2: number,
-        longitude2: number,
-    ): number {
-        const earthRadius = 6_371_000;
-
-        const lat1 = this.toRadians(latitude1);
-        const lat2 = this.toRadians(latitude2);
-        const deltaLat = this.toRadians(latitude2 - latitude1);
-        const deltaLng = this.toRadians(longitude2 - longitude1);
-
-        const a =
-            Math.sin(deltaLat / 2) ** 2 +
-            Math.cos(lat1) *
-                Math.cos(lat2) *
-                Math.sin(deltaLng / 2) ** 2;
-
-        const c =
-            2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return earthRadius * c;
-    }
+    private preparedRoutes = new Map<string, PreparedRoute>();
+    private navigationStates = new Map<string, NavigationState>();
 
     private toRadians(value: number): number {
         return (value * Math.PI) / 180;
+    }
+
+    private stabilizeDistance(
+        routeId: string,
+        distanceFromStartMeters: number,
+        segmentIndex: number,
+        distanceFromRouteMeters: number,
+    ): number {
+        const previous = this.navigationStates.get(routeId);
+
+        if (!previous) {
+            this.navigationStates.set(routeId, {
+                segmentIndex,
+                distanceFromStartMeters,
+                distanceFromRouteMeters,
+            });
+
+            return distanceFromStartMeters;
+        }
+
+        const difference = distanceFromStartMeters - previous.distanceFromStartMeters;
+
+        const isCloseToRoute = distanceFromRouteMeters <= MAX_ROUTE_DISTANCE_FOR_PROGRESS_METERS;
+
+        if (isCloseToRoute && difference < -PROGRESS_BACKTRACK_TOLERANCE_METERS) {
+            this.navigationStates.set(routeId, {
+                segmentIndex,
+                distanceFromStartMeters: previous.distanceFromStartMeters,
+                distanceFromRouteMeters,
+            });
+
+            return previous.distanceFromStartMeters;
+        }
+
+        this.navigationStates.set(routeId, {
+            segmentIndex,
+            distanceFromStartMeters,
+            distanceFromRouteMeters,
+        });
+
+        return distanceFromStartMeters;
+    }
+
+    private distanceBetween(first: TrackPoint, second: TrackPoint,): number {
+        const lat1 = this.toRadians(first.latitude);
+        const lat2 = this.toRadians(second.latitude);
+
+        const deltaLat = this.toRadians(second.latitude - first.latitude,);
+
+        const deltaLng = this.toRadians(second.longitude - first.longitude);
+
+        const a = Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+
+        return (2 * EARTH_RADIUS_METERS * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    }
+
+    private prepareRoute(route: Route): PreparedRoute {
+        const cached = this.preparedRoutes.get(route.id);
+
+        if (cached) {
+            return cached;
+        }
+
+        const segments: PreparedRouteSegment[] = [];
+        let totalDistanceMeters = 0;
+
+        for (
+            let index = 0;
+            index < route.trackPoints.length - 1;
+            index++
+        ) {
+            const start = route.trackPoints[index];
+            const end = route.trackPoints[index + 1];
+
+            const lengthMeters = this.distanceBetween(start, end);
+
+            segments.push({
+                start,
+                end,
+                lengthMeters,
+                distanceFromStartMeters:
+                    totalDistanceMeters,
+            });
+
+            totalDistanceMeters += lengthMeters;
+        }
+
+        const preparedRoute: PreparedRoute = {
+            segments,
+            totalDistanceMeters,
+        };
+
+        this.preparedRoutes.set(
+            route.id,
+            preparedRoute,
+        );
+
+        return preparedRoute;
+    }
+
+    calculateProgress(route: Route, location: TrackPoint): RouteProgress | null {
+        const preparedRoute = this.prepareRoute(route);
+
+        if (preparedRoute.segments.length === 0) {
+            return null;
+        }
+
+        let bestSegment:
+            | PreparedRouteSegment
+            | null = null;
+
+        let bestSegmentIndex = -1;
+        let bestSegmentProgress = 0;
+        let bestDistanceFromRoute = Infinity;
+
+        for (
+            let index = 0;
+            index < preparedRoute.segments.length;
+            index++
+        ) {
+            const segment = preparedRoute.segments[index];
+
+            const projection =
+                projectPointOntoSegment(location, segment.start, segment.end);
+
+            if (projection.distanceMeters < bestDistanceFromRoute) {
+                bestDistanceFromRoute = projection.distanceMeters;
+
+                bestSegment = segment;
+                bestSegmentIndex = index;
+                bestSegmentProgress = projection.segmentProgress;
+            }
+        }
+
+        if (!bestSegment) {
+            return null;
+        }
+
+        const distanceFromStartMeters = bestSegment.distanceFromStartMeters + bestSegment.lengthMeters * bestSegmentProgress;
+        const stabilizedDistance = this.stabilizeDistance(
+            route.id,
+            distanceFromStartMeters,
+            bestSegmentIndex,
+            bestDistanceFromRoute,
+        );
+
+        const totalDistanceMeters = route.distanceMeters ?? preparedRoute.totalDistanceMeters;
+
+        if (totalDistanceMeters <= 0) {
+            return null;
+        }
+
+        const percentage = Math.max(0, Math.min(100, (stabilizedDistance / totalDistanceMeters) * 100));
+
+        return {
+            distanceFromStartMeters: stabilizedDistance,
+                distanceRemainingMeters: Math.max(0, totalDistanceMeters - stabilizedDistance),
+            percentage,
+            nearestPoint: {
+                latitude: bestSegment.start.latitude + (bestSegment.end.latitude - bestSegment.start.latitude) * bestSegmentProgress,
+                longitude: bestSegment.start.longitude + (bestSegment.end.longitude - bestSegment.start.longitude) * bestSegmentProgress,
+            },
+            distanceFromRouteMeters: bestDistanceFromRoute,
+            segmentIndex: bestSegmentIndex,
+        };
+    }
+
+    reset(routeId: string): void {
+        this.navigationStates.delete(routeId);
     }
 }
