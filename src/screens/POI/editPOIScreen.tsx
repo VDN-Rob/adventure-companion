@@ -200,7 +200,7 @@ export default function EditPOIScreen() {
     }
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView
                 style={styles.container}
                 behavior={
