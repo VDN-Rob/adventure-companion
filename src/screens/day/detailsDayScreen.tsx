@@ -403,7 +403,7 @@ export default function DayDetailsScreen() {
 				onPress={() => {
 					router.push({
 					pathname: "/day/editDay",
-					params: { dayId },
+					params: { dayId, tripId: day.tripId },
 					});
 				}}
 				>

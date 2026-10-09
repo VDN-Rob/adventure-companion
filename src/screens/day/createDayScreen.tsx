@@ -33,13 +33,13 @@ export default function CreateDayScreen() {
     const [notes, setNotes] = useState("");
     const [plannedElevation, setPlannedElevation] = useState("");
     const [plannedDistance, setPlannedDistance] = useState("");
-	const [trip, setTrip] = useState<Trip | null>(null);
 
     const { dayServices, tripServices } = useAppServices();
 
     const { settings } = useAppSettings();
     const t = getTranslations(settings.language);
 
+	const [trip, setTrip] = useState<Trip | null>(null);
 	const selectedDate = date ? dateStringToLocalDate(date) : undefined;
 
 	useEffect(() => {
