@@ -76,7 +76,7 @@ export function DayCard({
 				</Text>
 
 				<Text style={styles.statUnit}>
-					{t.common.kmAbr}
+					{t.units.kmAbr}
 				</Text>
 				</View>
 			)}
@@ -88,7 +88,7 @@ export function DayCard({
 				</Text>
 
 				<Text style={styles.statUnit}>
-					{t.common.mAbr}
+					{t.units.mAbr}
 				</Text>
 				</View>
 			)}

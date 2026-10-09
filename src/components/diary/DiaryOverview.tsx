@@ -9,13 +9,13 @@ type DiaryOverviewProps = {
     items: DiaryItem[];
     onEntryPress: (item: DiaryItem) => void;
     onCreatePress: () => void;
-  };
+};
   
 export function DiaryOverview({
 		items,
 		onEntryPress,
 		onCreatePress,
-	}: DiaryOverviewProps) {
+}: DiaryOverviewProps) {
 		return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView

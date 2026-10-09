@@ -3,17 +3,17 @@ import { StyleSheet, Text, View } from "react-native";
 
 export function SectionLabel({ title }: { title: string }) {
     return (
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>
-          {title}
-        </Text>
-  
-        <View style={styles.sectionLine} />
-      </View>
-    );
-  }
+		<View style={styles.sectionHeader}>
+			<Text style={styles.sectionTitle}>
+				{title}
+			</Text>
 
-  const styles = StyleSheet.create({
+			<View style={styles.sectionLine} />
+		</View>
+    );
+}
+
+const styles = StyleSheet.create({
     sectionHeader: {
       flexDirection: "row",
       alignItems: "center",
