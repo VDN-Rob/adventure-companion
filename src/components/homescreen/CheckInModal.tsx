@@ -1,5 +1,5 @@
-import { appSettings } from "@/config/appSetting";
 import { POI } from "@/models/POI";
+import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
 import {
 	Modal,
@@ -157,10 +157,12 @@ export function CheckInModal({
 }
 
 function formatTime(value: string) {
+	const { settings } = useAppSettings();
+
 	return new Date(value).toLocaleTimeString([], {
 		hour: "2-digit",
 		minute: "2-digit",
-		hour12: appSettings.timeFormat !== "24",
+		hour12: settings.timeFormat !== "24",
 	});
 }
 
