@@ -1,5 +1,5 @@
 import { Selector } from "@/components/forms/Selector";
-import { AppCurrency, AppLanguage, AppTimeFormat } from "@/config/appSetting";
+import { AppCurrency, AppDateFormat, AppLanguage, AppTimeFormat } from "@/config/appSetting";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { styles } from "@/styling/styles";
 import { ScrollView, View } from "react-native";
@@ -68,37 +68,57 @@ const currencyOptions = [
     description: string;
 }[];
 
+const dateFormatOptions = [
+    {
+        value: "en",
+        label: "MM/DD/YYYY",
+    },
+    {
+        value: "fr",
+        label: "DD/MM/YYYY",
+    },
+    {
+        value: "nl",
+        label: "DD-MM-YYYY",
+    },
+    {
+        value: "de",
+        label: "DD.MM.YYYY"
+    },
+] satisfies {
+    value: AppDateFormat,
+    label: string
+}[];
+
 
 export default function SettingsScreen() {
     const { settings, updateSettings } = useAppSettings();
 
     async function handleTimeFormatChange(value: AppTimeFormat) {
-		await updateSettings({
-			timeFormat: value,
-		});
+		await updateSettings({timeFormat: value});
     }
 
     async function handleLanguageChange(value: AppLanguage) {
-		await updateSettings({
-			language: value,
-		});
+		await updateSettings({language: value });
     }
 
     async function handleCurrencyChange(value: AppCurrency) {
-		await updateSettings({
-			currency: value,
-		});
+		await updateSettings({currency: value});
+    }
+
+    async function handleDateFormatChange(value: AppDateFormat) {
+        await updateSettings({dateFormat: value})
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <View style={styles.content}>
-                    <Selector
-						label="TIME FORMAT"
-						options={timeFormatOptions}
-						selectedValue={settings.timeFormat}
-						onSelect={handleTimeFormatChange}
+					<Selector
+						label="CURRENCY"
+						options={currencyOptions}
+						selectedValue={settings.currency}
+						onSelect={handleCurrencyChange}
 					/>
 
 					<Selector
@@ -108,12 +128,20 @@ export default function SettingsScreen() {
 						onSelect={handleLanguageChange}
 					/>
 
-					<Selector
-						label="CURRENCY"
-						options={currencyOptions}
-						selectedValue={settings.currency}
-						onSelect={handleCurrencyChange}
+                    <Selector
+						label="TIME FORMAT"
+						options={timeFormatOptions}
+						selectedValue={settings.timeFormat}
+						onSelect={handleTimeFormatChange}
 					/>
+
+					<Selector
+						label="DATE FORMAT"
+						options={dateFormatOptions}
+						selectedValue={settings.dateFormat}
+						onSelect={handleDateFormatChange}
+					/>
+
                 </View>
             </ScrollView>
         </SafeAreaView>

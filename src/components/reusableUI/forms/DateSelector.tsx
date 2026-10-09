@@ -49,7 +49,7 @@ export function DateSelector({
                     </Text>
 
                     <Text style={styles.dateValue}>
-                        {date.toLocaleDateString(settings.language)}
+                        {date.toLocaleDateString(settings.dateFormat)}
                     </Text>
                 </View>
 
