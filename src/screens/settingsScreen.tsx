@@ -111,7 +111,7 @@ export default function SettingsScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.mainContainer}>
             <ScrollView>
                 <View style={styles.content}>
 					<Selector

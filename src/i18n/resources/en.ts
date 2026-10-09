@@ -327,11 +327,12 @@ export const en = {
 
     homeScreen: {
         noAdventure: "No active adventure",
-        noAdventureDesc: "Start or join an adventure to begin your journey.",
+        noAdventureDesc: "Create an adventure below or continue planning.",
         currentAdventure: "Current adventure",
         selectAdventure: "Select adventure",
         multAdventuresDesc: "You have multiple active adventures today.",
-        viewAdventures: "View adventures",
+        continuePlanning: "CONTINUE PLANNING",
+        createAdventure: "CREATE NEW ADVENTURE",
         infinity: "To Infinity!",
 
         restDayTitle: "Rest day",

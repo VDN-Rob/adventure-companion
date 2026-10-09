@@ -1,3 +1,4 @@
+import { styles } from '@/styling/styles';
 import { theme } from '@/styling/theme';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -15,42 +16,41 @@ export function AppHeader({
 	totalDays,
 }: AppHeaderProps) {
 	return (
-		<View style={styles.container}>
-		<View style={styles.topRow}>
-			<View style={styles.titleContainer}>
-			<Text style={styles.appName}>{appName}</Text>
+		<View style={localStyles.container}>
+			<View style={localStyles.topRow}>
+				<View style={styles.simpleContainer}>
+					<Text style={styles.headerTitle}>{appName}</Text>
+					<View style={localStyles.accentLine} />
+				</View>
 
-			<View style={styles.accentLine} />
+				{currentDay !== undefined && (
+					<View style={localStyles.dayContainer}>
+						<Text style={localStyles.dayLabel}>
+						DAY
+						</Text>
+
+						<Text style={localStyles.dayNumber}>
+						{String(currentDay).padStart(2, "0")}
+						</Text>
+
+						<Text style={localStyles.dayTotal}>
+						/{" "}
+						{typeof totalDays === "number"
+							? String(totalDays).padStart(2, "0")
+							: totalDays}
+						</Text>
+					</View>
+				)}
 			</View>
 
-			{currentDay !== undefined && (
-			<View style={styles.dayContainer}>
-				<Text style={styles.dayLabel}>
-				DAY
-				</Text>
-
-				<Text style={styles.dayNumber}>
-				{String(currentDay).padStart(2, "0")}
-				</Text>
-
-				<Text style={styles.dayTotal}>
-				/{" "}
-				{typeof totalDays === "number"
-					? String(totalDays).padStart(2, "0")
-					: totalDays}
-				</Text>
-			</View>
-			)}
-		</View>
-
-		<Text style={styles.tripName}>
-			{tripName}
-		</Text>
+			<Text style={styles.headerSubTitle}>
+				{tripName}
+			</Text>
 		</View>
 	);
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
 	container: {
 		paddingHorizontal: theme.spacing.lg,
 		paddingTop: theme.spacing.md,
@@ -66,20 +66,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'flex-end',
 		justifyContent: 'space-between',
-	},
-
-	titleContainer: {
-		flex: 1,
-	},
-
-	appName: {
-		fontFamily: theme.fonts.displayBold,
-		fontSize: theme.fontSize.xxl,
-
-		color: theme.colours.text,
-
-		letterSpacing: 3,
-		textTransform: 'uppercase',
 	},
 
 	accentLine: {
@@ -125,17 +111,5 @@ const styles = StyleSheet.create({
 		fontSize: theme.fontSize.md,
 
 		color: theme.colours.textMuted,
-	},
-
-	tripName: {
-		marginTop: theme.spacing.sm,
-
-		fontFamily: theme.fonts.body,
-		fontSize: theme.fontSize.sm,
-
-		color: theme.colours.textSecondary,
-
-		letterSpacing: 1,
-		textTransform: 'uppercase',
 	},
 });

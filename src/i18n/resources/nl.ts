@@ -343,13 +343,11 @@ export const nl = {
 
     homeScreen: {
         noAdventure: "Geen lopend avontuur",
-        noAdventureDesc:
-            "Start of neem deel aan een avontuur om je reis te beginnen.",
+        noAdventureDesc: "Start of neem deel aan een avontuur om je reis te beginnen.",
         currentAdventure: "Huidig avontuur",
         selectAdventure: "Avontuur selecteren",
-        multAdventuresDesc:
-            "Je hebt vandaag meerdere actieve avonturen.",
-        viewAdventures: "Avonturen bekijken",
+        multAdventuresDesc: "Je hebt vandaag meerdere actieve avonturen.",
+        continuePlanning: "Avonturen bekijken",
         infinity: "Tot in het oneindige!",
 
         restDayTitle: "Rustdag",
@@ -358,6 +356,7 @@ export const nl = {
         dayPlanner: "Dagplanner",
         checkIn: "Inchecken",
         addExpense: "Uitgave toevoegen",
+        createAdventure: "Nieuw avontuur"
     },
 
     dayCard: {

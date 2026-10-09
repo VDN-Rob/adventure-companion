@@ -350,13 +350,11 @@ export const fr = {
 
     homeScreen: {
         noAdventure: "Aucune aventure en cours",
-        noAdventureDesc:
-            "Commencez ou rejoignez une aventure pour débuter votre voyage.",
+        noAdventureDesc: "Commencez ou rejoignez une aventure pour débuter votre voyage.",
         currentAdventure: "Aventure actuelle",
         selectAdventure: "Sélectionner une aventure",
-        multAdventuresDesc:
-            "Vous avez plusieurs aventures actives aujourd'hui.",
-        viewAdventures: "Voir les aventures",
+        multAdventuresDesc: "Vous avez plusieurs aventures actives aujourd'hui.",
+        continuePlanning: "Voir les aventures",
         infinity: "À l'infini !",
 
         restDayTitle: "Jour de repos",
@@ -365,6 +363,7 @@ export const fr = {
         dayPlanner: "Planificateur de journée",
         checkIn: "Pointer",
         addExpense: "Ajouter une dépense",
+        createAdventure: "Nouvelle aventure"
     },
 
     dayCard: {
