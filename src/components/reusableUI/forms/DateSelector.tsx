@@ -14,6 +14,10 @@ type DateSelectorProps = {
     onDateChange: (date: Date) => void;
 };
 
+// function handleDateChange(selectedDate: Date) {
+//     setDate(dateToDateString(selectedDate));
+// }
+
 export function DateSelector({
     label,
     date,

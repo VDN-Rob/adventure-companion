@@ -1,13 +1,16 @@
 import { InputField } from "@/components/forms/InputField";
+import { DateSelector } from "@/components/reusableUI/forms/DateSelector";
 import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
+import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
+import { dateStringToLocalDate, dateToDateString } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { validateDayFields } from "@/utils/validation/dayValidation";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Alert,
 	KeyboardAvoidingView,
@@ -30,12 +33,66 @@ export default function CreateDayScreen() {
     const [notes, setNotes] = useState("");
     const [plannedElevation, setPlannedElevation] = useState("");
     const [plannedDistance, setPlannedDistance] = useState("");
+	const [trip, setTrip] = useState<Trip | null>(null);
 
-    const { dayServices} = useAppServices();
+    const { dayServices, tripServices } = useAppServices();
 
-	const { settings } = useAppSettings();
-	const t = getTranslations(settings.language);
+    const { settings } = useAppSettings();
+    const t = getTranslations(settings.language);
 
+	const selectedDate = date ? dateStringToLocalDate(date) : undefined;
+
+	useEffect(() => {
+		let cancelled = false;
+
+		async function loadTrip() {
+			if (!tripId) {
+				return;
+			}
+
+			try {
+				const loadedTrip = await tripServices.getTripById(tripId);
+
+				if (cancelled) {
+					return;
+				}
+
+				if (!loadedTrip) {
+					Alert.alert(
+						"Adventure not found",
+						"The selected adventure could not be found."
+					);
+					return;
+				}
+
+				setTrip(loadedTrip);
+
+				// Default the new Day to the start of the adventure.
+				setDate(loadedTrip.startDate);
+			} catch (error) {
+				console.error(
+					"Failed to load adventure:",
+					error
+				);
+
+				Alert.alert(
+					"Unable to load adventure",
+					"The adventure details could not be loaded."
+				);
+			}
+		}
+
+		loadTrip();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [tripId, tripServices]);
+	
+	function handleDateChange(selectedDate: Date) {
+		setDate(dateToDateString(selectedDate));
+	}
+	
     async function handleSaveDay() {
 		const errors = validateDayFields({
 			title,
@@ -119,13 +176,15 @@ export default function CreateDayScreen() {
 			/>
 
 			{/* DATE */}
-			<InputField
-				label={t.time.date.toUpperCase()}
-				value={date}
-				onChangeText={setDate}
-				placeholder={t.time.datePlaceholder}
-				keyboardType="numbers-and-punctuation"
-			/>
+			{trip && selectedDate && (
+				<DateSelector
+					label={t.time.date.toUpperCase()}
+					date={selectedDate}
+					minimumDate={dateStringToLocalDate(trip.startDate)}
+					maximumDate={trip.endDate ? dateStringToLocalDate(trip.endDate) : undefined}
+					onDateChange={handleDateChange}
+				/>
+			)}
 
 			{/* DISTANCE + ELEVATION */}
 			<View style={styles.row}>

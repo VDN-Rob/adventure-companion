@@ -43,39 +43,39 @@ export default function CreateDiaryEntryScreen() {
 		let cancelled = false;
 
 		async function loadTrip() {
-		if (!tripId) {
-			setIsLoadingTrip(false);
-			return;
-		}
-
-		try {
-			const trips = await tripServices.getAllTrips();
-
-			const selectedTrip = trips.find((item) => item.id === tripId) ?? null;
-
-			if (cancelled) {
+			if (!tripId) {
+				setIsLoadingTrip(false);
 				return;
 			}
 
-			setTrip(selectedTrip);
+			try {
+				const trips = await tripServices.getAllTrips();
 
-			if (selectedTrip) {
-				setDate(
-					getDefaultDiaryDate(
-					selectedTrip
-					)
+				const selectedTrip = trips.find((item) => item.id === tripId) ?? null;
+
+				if (cancelled) {
+					return;
+				}
+
+				setTrip(selectedTrip);
+
+				if (selectedTrip) {
+					setDate(
+						getDefaultDiaryDate(
+						selectedTrip
+						)
+					);
+				}
+			} catch (error) {
+				console.error(
+				"Failed to load adventure:",
+				error
 				);
+			} finally {
+				if (!cancelled) {
+					setIsLoadingTrip(false);
+				}
 			}
-		} catch (error) {
-			console.error(
-			"Failed to load adventure:",
-			error
-			);
-		} finally {
-			if (!cancelled) {
-				setIsLoadingTrip(false);
-			}
-		}
 		}
 
 		loadTrip();
