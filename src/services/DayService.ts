@@ -81,7 +81,7 @@ export class DayService {
 		// Check for date overlap
 		const dateResult = await this.checkDateOverlap(updatedDay);
 
-		if (Object.keys(dateResult).length > 0) {
+		if (!dateResult.success) {
 			return {
 				success: false,
 				errors,

@@ -17,18 +17,21 @@ import {
 	View,
 } from "react-native";
 
+import { DateSelector } from "@/components/reusableUI/forms/DateSelector";
 import { getTranslations } from "@/i18n";
+import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
+import { dateStringToLocalDate, dateToDateString } from "@/utils/date";
 import { validateDayFields } from "@/utils/validation/dayValidation";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditDayScreen() {
 	// Retrieve id from parameters
-	const { dayId } = useLocalSearchParams<{ dayId: string }>();
+	const { dayId, tripId } = useLocalSearchParams<{ dayId: string, tripId: string }>();
 
 	// Load databank
-	const { dayServices } = useAppServices();
+	const { dayServices, tripServices } = useAppServices();
 
 	// State
 	const [day, setDay] = useState<Day>();
@@ -42,7 +45,60 @@ export default function EditDayScreen() {
 	const { settings } = useAppSettings();
 	const t = getTranslations(settings.language);
 	
-	// Load the right trip when screen finishes loading
+	const [trip, setTrip] = useState<Trip | null>(null);
+	const selectedDate = date ? dateStringToLocalDate(date) : undefined;
+
+	useEffect(() => {
+		let cancelled = false;
+
+		async function loadTrip() {
+			if (!tripId) {
+				return;
+			}
+
+			try {
+				const loadedTrip = await tripServices.getTripById(tripId);
+
+				if (cancelled) {
+					return;
+				}
+
+				if (!loadedTrip) {
+					Alert.alert(
+						"Adventure not found",
+						"The selected adventure could not be found."
+					);
+					return;
+				}
+
+				setTrip(loadedTrip);
+
+				// Default the new Day to the start of the adventure.
+				setDate(loadedTrip.startDate);
+			} catch (error) {
+				console.error(
+					"Failed to load adventure:",
+					error
+				);
+
+				Alert.alert(
+					"Unable to load adventure",
+					"The adventure details could not be loaded."
+				);
+			}
+		}
+
+		loadTrip();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [tripId, tripServices]);
+	
+	function handleDateChange(selectedDate: Date) {
+		setDate(dateToDateString(selectedDate));
+	}
+
 	useEffect(() => {
 		async function loadDay() {
 			if (!dayId) return;
@@ -104,6 +160,7 @@ export default function EditDayScreen() {
 
 		if (!result.success) {
 			const firstServiceError = Object.values(result.errors)[0];
+			console.log(firstServiceError);
 		
 			Alert.alert(t.alerts.couldNotSaveDay.title, firstServiceError ?? t.alerts.couldNotSaveDay.fallbackMessage);
 		
@@ -178,12 +235,15 @@ export default function EditDayScreen() {
 				placeholder={t.day.titlePlaceholder}
 				/>
 		
-				<InputField
-				label={t.day.date}
-				value={date}
-				onChangeText={setDate}
-				placeholder={t.time.datePlaceholder}
-				/>
+				{trip && selectedDate && (
+					<DateSelector
+						label={t.time.date.toUpperCase()}
+						date={selectedDate}
+						minimumDate={dateStringToLocalDate(trip.startDate)}
+						maximumDate={trip.endDate ? dateStringToLocalDate(trip.endDate) : undefined}
+						onDateChange={handleDateChange}
+					/>
+				)}
 		
 				{/* PLANNING */}
 		
