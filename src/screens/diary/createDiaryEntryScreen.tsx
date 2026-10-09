@@ -1,8 +1,7 @@
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
-import { formatDate, getTodayDate } from "@/utils/date";
+import { getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -17,6 +16,7 @@ import {
 	View,
 } from "react-native";
 
+import { DateSelector } from "@/components/reusableUI/forms/DateSelector";
 import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
@@ -134,14 +134,22 @@ export default function CreateDiaryEntryScreen() {
 		);
 	}
 
-	function handleDateChange(_: unknown, selectedDate: Date) {
+	function handleDateChange(selectedDate: Date) {
 		setDate(dateToDateString(selectedDate));
-
-		setShowDatePicker(false);
 	}
 
-	function handleDateDismiss() {
-		setShowDatePicker(false);
+	function dateToDateString(date: Date): string {
+		const year = date.getFullYear();
+
+		const month = String(
+			date.getMonth() + 1
+		).padStart(2, "0");
+
+		const day = String(
+			date.getDate()
+		).padStart(2, "0");
+
+		return `${year}-${month}-${day}`;
 	}
 
 	async function handleSave() {
@@ -238,12 +246,7 @@ export default function CreateDiaryEntryScreen() {
                 }
                 keyboardShouldPersistTaps="handled"
             >
-                <Pressable
-                    onPress={() =>
-                        router.back()
-                    }
-                    style={styles.backButton}
-                >
+                <Pressable onPress={() => router.back()} style={styles.backButton}>
                     <Text style={styles.backText}>
                         ← {t.diary.back}
                     </Text>
@@ -261,70 +264,13 @@ export default function CreateDiaryEntryScreen() {
                     title={t.diary.date}
                 />
 
-                <Pressable
-                    onPress={() =>
-                        setShowDatePicker(true)
-                    }
-                    style={({ pressed }) => [
-                        styles.dateButton,
-                        pressed &&
-                            styles.dateButtonPressed,
-                    ]}
-                >
-                    <View>
-                        <Text
-                            style={
-                                styles.dateLabel
-                            }
-                        >
-                            {t.diary.entryDate}
-                        </Text>
-
-                        <Text
-                            style={
-                                styles.dateValue
-                            }
-                        >
-                            {formatDate(date)}
-                        </Text>
-                    </View>
-
-                    <Text
-                        style={
-                            styles.dateArrow
-                        }
-                    >
-                        ▼
-                    </Text>
-                </Pressable>
-
-                {showDatePicker && (
-                    <View
-                        style={
-                            styles.datePicker
-                        }
-                    >
-                        <DateTimePicker
-                            value={
-                                selectedDate
-                            }
-                            mode="date"
-                            display="default"
-                            minimumDate={
-                                minimumDate
-                            }
-                            maximumDate={
-                                maximumDate
-                            }
-                            onValueChange={
-                                handleDateChange
-                            }
-                            onDismiss={
-                                handleDateDismiss
-                            }
-                        />
-                    </View>
-                )}
+                <DateSelector
+					label={t.diary.entryDate}
+					date={selectedDate} 
+					minimumDate={minimumDate}
+					maximumDate={maximumDate}
+					onDateChange={handleDateChange}				
+				/>
 
                 <SectionLabel
                     title={t.diary.entry}
@@ -573,53 +519,6 @@ const styles = StyleSheet.create({
 		fontFamily: theme.fonts.displayBold,
 		fontSize: theme.fontSize.xl,
 		color: theme.colours.text,
-	},
-
-	dateButton: {
-		minHeight: 64,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginBottom: theme.spacing.md,
-		paddingHorizontal: theme.spacing.md,
-		paddingVertical: theme.spacing.sm,
-		borderWidth: 1,
-		borderColor: theme.colours.border,
-		borderRadius: theme.radius.md,
-		backgroundColor:
-		theme.colours.surface,
-	},
-
-	dateButtonPressed: {
-		backgroundColor:
-		theme.colours.surfaceRaised,
-		borderColor:
-		theme.colours.accent,
-	},
-
-	dateLabel: {
-		marginBottom: 2,
-		fontFamily: theme.fonts.bodyBold,
-		fontSize: theme.fontSize.xs,
-		letterSpacing: 1,
-		color: theme.colours.textMuted,
-	},
-
-	dateValue: {
-		fontFamily: theme.fonts.displayBold,
-		fontSize: theme.fontSize.lg,
-		color: theme.colours.text,
-	},
-
-	dateArrow: {
-		fontFamily: theme.fonts.displayBold,
-		fontSize: theme.fontSize.sm,
-		color: theme.colours.textMuted,
-	},
-
-	datePicker: {
-		alignItems: "center",
-		marginBottom: theme.spacing.lg,
 	},
 
 	textContainer: {
