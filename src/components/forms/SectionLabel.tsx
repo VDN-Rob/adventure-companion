@@ -39,4 +39,4 @@ const styles = StyleSheet.create({
   
       backgroundColor: theme.colours.border,
     },
-  });
+});
