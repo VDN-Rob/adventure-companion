@@ -26,318 +26,318 @@ export default function EditDiaryEntryScreen() {
 	const t = getTranslations(settings.language);
 
 	useEffect(() => {
-    async function loadEntry() {
+        async function loadEntry() {
+            if (!diaryEntryId) {
+                return;
+            }
+
+            try {
+                const result =
+                    await diaryEntryServices.getDiaryEntryById(
+                        diaryEntryId,
+                    );
+
+                if (!result) {
+                    Alert.alert(
+                        t.alerts.diaryEntryNotFound.title,
+                        t.alerts.diaryEntryNotFound.message,
+                    );
+
+                    router.back();
+                    return;
+                }
+
+                setEntry(result);
+                setTitle(result.title);
+                setText(result.text ?? "");
+
+                setPhotos(
+                    [
+                        result.photo1,
+                        result.photo2,
+                        result.photo3,
+                    ].filter(
+                        (photo): photo is string =>
+                            photo !== null,
+                    ),
+                );
+            } catch {
+                Alert.alert(
+                    t.alerts.couldNotLoadDiaryEntry.title,
+                    t.alerts.couldNotLoadDiaryEntry.message,
+                );
+
+                router.back();
+            }
+        }
+
+        loadEntry();
+    }, [diaryEntryId]);
+
+    async function handleAddPhoto() {
+        if (photos.length >= 3) {
+            Alert.alert(
+                t.alerts.photoLimit.title,
+                t.alerts.photoLimit.message,
+            );
+            return;
+        }
+
+        const permission =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (!permission.granted) {
+            Alert.alert(
+                t.alerts.photoPermissionRequired.title,
+                t.alerts.photoPermissionRequired.message,
+            );
+            return;
+        }
+
+        const result =
+            await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ["images"],
+                allowsEditing: true,
+                quality: 0.85,
+            });
+
+        if (result.canceled) {
+            return;
+        }
+
+        const uri = result.assets[0]?.uri;
+
+        if (!uri) {
+            return;
+        }
+
+        setPhotos((current) => [
+            ...current,
+            uri,
+        ]);
+    }
+
+    function handleRemovePhoto(index: number) {
+        setPhotos((current) =>
+            current.filter(
+                (_, photoIndex) =>
+                    photoIndex !== index,
+            ),
+        );
+    }
+
+    async function handleSave() {
+        if (!entry) {
+            return;
+        }
+
+        if (!title.trim()) {
+            Alert.alert(
+                t.alerts.missingDiaryTitle.title,
+                t.alerts.missingDiaryTitle.message,
+            );
+            return;
+        }
+
+        const updatedEntry: DiaryEntry = {
+            ...entry,
+
+            title: title.trim(),
+            text: text.trim() || null,
+
+            photo1: photos[0] ?? null,
+            photo2: photos[1] ?? null,
+            photo3: photos[2] ?? null,
+
+            updatedAt: new Date().toISOString(),
+        };
+
+        try {
+            await diaryEntryServices.updateDiaryEntry(
+                updatedEntry,
+            );
+
+            router.back();
+        } catch {
+            Alert.alert(
+                t.alerts.couldNotSaveDiaryEntryChanges.title,
+                t.alerts.couldNotSaveDiaryEntryChanges.message,
+            );
+        }
+    }
+
+    function handleDelete() {
+        Alert.alert(
+            t.diary.deleteConfirmation.title,
+            t.diary.deleteConfirmation.message,
+            [
+                {
+                    text: t.diary.deleteConfirmation.cancel,
+                    style: "cancel",
+                },
+                {
+                    text: t.diary.deleteConfirmation.confirm,
+                    style: "destructive",
+                    onPress: deleteEntry,
+                },
+            ],
+        );
+    }
+
+    async function deleteEntry() {
         if (!diaryEntryId) {
             return;
         }
 
         try {
-            const result =
-                await diaryEntryServices.getDiaryEntryById(
-                    diaryEntryId,
-                );
-
-            if (!result) {
-                Alert.alert(
-                    t.alerts.diaryEntryNotFound.title,
-                    t.alerts.diaryEntryNotFound.message,
-                );
-
-                router.back();
-                return;
-            }
-
-            setEntry(result);
-            setTitle(result.title);
-            setText(result.text ?? "");
-
-            setPhotos(
-                [
-                    result.photo1,
-                    result.photo2,
-                    result.photo3,
-                ].filter(
-                    (photo): photo is string =>
-                        photo !== null,
-                ),
-            );
-        } catch {
-            Alert.alert(
-                t.alerts.couldNotLoadDiaryEntry.title,
-                t.alerts.couldNotLoadDiaryEntry.message,
+            await diaryEntryServices.deleteDiaryEntry(
+                diaryEntryId,
             );
 
             router.back();
+        } catch {
+            Alert.alert(
+                t.alerts.couldNotDeleteDiaryEntry.title,
+                t.alerts.couldNotDeleteDiaryEntry.message,
+            );
         }
     }
 
-    loadEntry();
-}, [diaryEntryId]);
-
-async function handleAddPhoto() {
-    if (photos.length >= 3) {
-        Alert.alert(
-            t.alerts.photoLimit.title,
-            t.alerts.photoLimit.message,
-        );
-        return;
-    }
-
-    const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permission.granted) {
-        Alert.alert(
-            t.alerts.photoPermissionRequired.title,
-            t.alerts.photoPermissionRequired.message,
-        );
-        return;
-    }
-
-    const result =
-        await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images"],
-            allowsEditing: true,
-            quality: 0.85,
-        });
-
-    if (result.canceled) {
-        return;
-    }
-
-    const uri = result.assets[0]?.uri;
-
-    if (!uri) {
-        return;
-    }
-
-    setPhotos((current) => [
-        ...current,
-        uri,
-    ]);
-}
-
-function handleRemovePhoto(index: number) {
-    setPhotos((current) =>
-        current.filter(
-            (_, photoIndex) =>
-                photoIndex !== index,
-        ),
-    );
-}
-
-async function handleSave() {
     if (!entry) {
-        return;
-    }
-
-    if (!title.trim()) {
-        Alert.alert(
-            t.alerts.missingDiaryTitle.title,
-            t.alerts.missingDiaryTitle.message,
-        );
-        return;
-    }
-
-    const updatedEntry: DiaryEntry = {
-        ...entry,
-
-        title: title.trim(),
-        text: text.trim() || null,
-
-        photo1: photos[0] ?? null,
-        photo2: photos[1] ?? null,
-        photo3: photos[2] ?? null,
-
-        updatedAt: new Date().toISOString(),
-    };
-
-    try {
-        await diaryEntryServices.updateDiaryEntry(
-            updatedEntry,
-        );
-
-        router.back();
-    } catch {
-        Alert.alert(
-            t.alerts.couldNotSaveDiaryEntryChanges.title,
-            t.alerts.couldNotSaveDiaryEntryChanges.message,
+        return (
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.loading}>
+                    {t.diary.loading}
+                </Text>
+            </SafeAreaView>
         );
     }
-}
 
-function handleDelete() {
-    Alert.alert(
-        t.diary.deleteConfirmation.title,
-        t.diary.deleteConfirmation.message,
-        [
-            {
-                text: t.diary.deleteConfirmation.cancel,
-                style: "cancel",
-            },
-            {
-                text: t.diary.deleteConfirmation.confirm,
-                style: "destructive",
-                onPress: deleteEntry,
-            },
-        ],
-    );
-}
-
-async function deleteEntry() {
-    if (!diaryEntryId) {
-        return;
-    }
-
-    try {
-        await diaryEntryServices.deleteDiaryEntry(
-            diaryEntryId,
-        );
-
-        router.back();
-    } catch {
-        Alert.alert(
-            t.alerts.couldNotDeleteDiaryEntry.title,
-            t.alerts.couldNotDeleteDiaryEntry.message,
-        );
-    }
-}
-
-if (!entry) {
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.loading}>
-                {t.diary.loading}
-            </Text>
-        </SafeAreaView>
-    );
-}
-
-return (
-    <SafeAreaView style={styles.container}>
-        <ScrollView
-            contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
-        >
-            <Text style={styles.title}>
-                {t.diary.editEntry}
-            </Text>
-
-            <SectionLabel title={t.diary.entry} />
-
-            <InputField
-                label={t.diary.title}
-                value={title}
-                onChangeText={setTitle}
-                placeholder={
-                    t.diary.titlePlaceholder
-                }
-            />
-
-            <View style={styles.textContainer}>
-                <Text style={styles.textLabel}>
-                    {t.diary.story}
+            <ScrollView
+                contentContainerStyle={styles.content}
+                keyboardShouldPersistTaps="handled"
+            >
+                <Text style={styles.title}>
+                    {t.diary.editEntry}
                 </Text>
 
-                <Text style={styles.optional}>
-                    {t.diary.optional}
-                </Text>
+                <SectionLabel title={t.diary.entry} />
 
-                <View style={styles.textInputWrapper}>
-                    <TextInput
-                        value={text}
-                        onChangeText={setText}
-                        placeholder={
-                            t.diary.storyPlaceholder
-                        }
-                        placeholderTextColor={
-                            theme.colours.textMuted
-                        }
-                        multiline
-                        textAlignVertical="top"
-                        style={styles.textInput}
-                    />
-                </View>
-            </View>
+                <InputField
+                    label={t.diary.title}
+                    value={title}
+                    onChangeText={setTitle}
+                    placeholder={
+                        t.diary.titlePlaceholder
+                    }
+                />
 
-            <SectionLabel title={t.diary.photos} />
+                <View style={styles.textContainer}>
+                    <Text style={styles.textLabel}>
+                        {t.diary.story}
+                    </Text>
 
-            <View style={styles.photoGrid}>
-                {photos.map((uri, index) => (
-                    <View
-                        key={`${uri}-${index}`}
-                        style={styles.photoContainer}
-                    >
-                        <Image
-                            source={{ uri }}
-                            style={styles.photo}
-                        />
+                    <Text style={styles.optional}>
+                        {t.diary.optional}
+                    </Text>
 
-                        <Pressable
-                            onPress={() =>
-                                handleRemovePhoto(index)
+                    <View style={styles.textInputWrapper}>
+                        <TextInput
+                            value={text}
+                            onChangeText={setText}
+                            placeholder={
+                                t.diary.storyPlaceholder
                             }
-                            style={styles.removeButton}
+                            placeholderTextColor={
+                                theme.colours.textMuted
+                            }
+                            multiline
+                            textAlignVertical="top"
+                            style={styles.textInput}
+                        />
+                    </View>
+                </View>
+
+                <SectionLabel title={t.diary.photos} />
+
+                <View style={styles.photoGrid}>
+                    {photos.map((uri, index) => (
+                        <View
+                            key={`${uri}-${index}`}
+                            style={styles.photoContainer}
                         >
-                            <Text style={styles.removeText}>
-                                ×
+                            <Image
+                                source={{ uri }}
+                                style={styles.photo}
+                            />
+
+                            <Pressable
+                                onPress={() =>
+                                    handleRemovePhoto(index)
+                                }
+                                style={styles.removeButton}
+                            >
+                                <Text style={styles.removeText}>
+                                    ×
+                                </Text>
+                            </Pressable>
+                        </View>
+                    ))}
+
+                    {photos.length < 3 && (
+                        <Pressable
+                            onPress={handleAddPhoto}
+                            style={({ pressed }) => [
+                                styles.addPhoto,
+                                pressed &&
+                                    styles.addPhotoPressed,
+                            ]}
+                        >
+                            <Text style={styles.addPhotoIcon}>
+                                +
+                            </Text>
+
+                            <Text style={styles.addPhotoText}>
+                                {t.diary.addPhoto}
                             </Text>
                         </Pressable>
-                    </View>
-                ))}
+                    )}
+                </View>
 
-                {photos.length < 3 && (
-                    <Pressable
-                        onPress={handleAddPhoto}
-                        style={({ pressed }) => [
-                            styles.addPhoto,
-                            pressed &&
-                                styles.addPhotoPressed,
-                        ]}
-                    >
-                        <Text style={styles.addPhotoIcon}>
-                            +
-                        </Text>
-
-                        <Text style={styles.addPhotoText}>
-                            {t.diary.addPhoto}
-                        </Text>
-                    </Pressable>
-                )}
-            </View>
-
-            <Text style={styles.photoHint}>
-                {t.diary.photoCount(photos.length)}
-            </Text>
-
-            <Pressable
-                onPress={handleSave}
-                style={({ pressed }) => [
-                    styles.saveButton,
-                    pressed &&
-                        styles.saveButtonPressed,
-                ]}
-            >
-                <Text style={styles.saveText}>
-                    {t.diary.saveChanges}
+                <Text style={styles.photoHint}>
+                    {t.diary.photoCount(photos.length)}
                 </Text>
-            </Pressable>
 
-            <Pressable
-                onPress={handleDelete}
-                style={({ pressed }) => [
-                    styles.deleteButton,
-                    pressed &&
-                        styles.deleteButtonPressed,
-                ]}
-            >
-                <Text style={styles.deleteText}>
-                    {t.diary.deleteEntry}
-                </Text>
-            </Pressable>
-        </ScrollView>
-    </SafeAreaView>
-);
+                <Pressable
+                    onPress={handleSave}
+                    style={({ pressed }) => [
+                        styles.saveButton,
+                        pressed &&
+                            styles.saveButtonPressed,
+                    ]}
+                >
+                    <Text style={styles.saveText}>
+                        {t.diary.saveChanges}
+                    </Text>
+                </Pressable>
+
+                <Pressable
+                    onPress={handleDelete}
+                    style={({ pressed }) => [
+                        styles.deleteButton,
+                        pressed &&
+                            styles.deleteButtonPressed,
+                    ]}
+                >
+                    <Text style={styles.deleteText}>
+                        {t.diary.deleteEntry}
+                    </Text>
+                </Pressable>
+            </ScrollView>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({

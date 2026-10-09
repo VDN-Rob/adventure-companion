@@ -128,6 +128,7 @@ export default function DetailsDiaryScreen() {
 			pathname: "/diary/editDiaryEntry",
 			params: {
 				diaryEntryId: entry.id,
+				tripId,
 			},
 		});
 	}

@@ -8,7 +8,7 @@ type DateSelectorProps = {
     label: string,
 
     date: Date;
-    minimumDate: Date;
+    minimumDate?: Date;
     maximumDate?: Date;
 
     onDateChange: (date: Date) => void;

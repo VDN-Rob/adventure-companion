@@ -1,6 +1,6 @@
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
-import { getTodayDate } from "@/utils/date";
+import { dateStringToLocalDate, dateToDateString, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
@@ -33,7 +33,6 @@ export default function CreateDiaryEntryScreen() {
 	const [text, setText] = useState("");
 	const [photos, setPhotos] = useState<string[]>([]);
 	const [date, setDate] = useState<string>(getTodayDate());
-	const [showDatePicker, setShowDatePicker] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [isLoadingTrip, setIsLoadingTrip] = useState(true);
 
@@ -138,20 +137,6 @@ export default function CreateDiaryEntryScreen() {
 		setDate(dateToDateString(selectedDate));
 	}
 
-	function dateToDateString(date: Date): string {
-		const year = date.getFullYear();
-
-		const month = String(
-			date.getMonth() + 1
-		).padStart(2, "0");
-
-		const day = String(
-			date.getDate()
-		).padStart(2, "0");
-
-		return `${year}-${month}-${day}`;
-	}
-
 	async function handleSave() {
         if (!tripId) {
             Alert.alert(t.alerts.missingAdventure.title,t.alerts.missingAdventure.message);
@@ -233,9 +218,7 @@ export default function CreateDiaryEntryScreen() {
 	}
 
 	const minimumDate = dateStringToLocalDate(trip.startDate);
-
 	const maximumDate = trip.endDate !== null ? dateStringToLocalDate(trip.endDate) : undefined;
-
 	const selectedDate = dateStringToLocalDate(date);
 
 	return (
@@ -260,9 +243,7 @@ export default function CreateDiaryEntryScreen() {
                     {t.diary.newEntry}
                 </Text>
 
-                <SectionLabel
-                    title={t.diary.date}
-                />
+                <SectionLabel title={t.diary.date}/>
 
                 <DateSelector
 					label={t.diary.entryDate}
@@ -454,32 +435,6 @@ function getDefaultDiaryDate(trip: Trip): string {
 	}
 
 	return trip.endDate ?? today;
-}
-
-function dateStringToLocalDate(value: string): Date {
-	const [
-		year,
-		month,
-		day,
-	] = value
-		.split("-")
-		.map(Number);
-
-	return new Date(
-		year,
-		month - 1,
-		day
-	);
-}
-
-function dateToDateString(value: Date): string {
-	const year = value.getFullYear();
-
-	const month = String(value.getMonth() + 1).padStart(2, "0");
-
-	const day = String(value.getDate()).padStart(2, "0");
-
-	return `${year}-${month}-${day}`;
 }
 
 const styles = StyleSheet.create({
