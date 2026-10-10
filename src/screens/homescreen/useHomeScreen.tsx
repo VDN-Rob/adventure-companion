@@ -175,6 +175,14 @@ export function useHomeScreen() {
             onPress: () => router.push("/map/map"),
         });
 
+        items.push({
+            key: "adventures",
+            icon: "◇",
+            label: "Adventures",
+            onPress: () =>
+            router.push("/trip/trips"),
+        })
+
         setBottomItems(items);
         }
 

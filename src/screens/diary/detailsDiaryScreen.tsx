@@ -1,5 +1,3 @@
-import { DiaryDetail } from "@/components/diary/DiaryDetail";
-import { DiaryOverview } from "@/components/diary/DiaryOverview";
 import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
 import { DiaryEntry } from "@/models/DiaryEntry";
@@ -10,6 +8,8 @@ import { router, useFocusEffect, useLocalSearchParams, } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { DiaryDetail } from "./components/DiaryDetail";
+import { DiaryOverview } from "./components/DiaryOverview";
 
 export type DiaryItem = {
 	entry: DiaryEntry;
@@ -171,9 +171,9 @@ export default function DetailsDiaryScreen() {
 
 	return (
 		<DiaryOverview
-		items={items}
-		onEntryPress={openEntry}
-		onCreatePress={createEntry}
+			items={items}
+			onEntryPress={openEntry}
+			onCreatePress={createEntry}
 		/>
 	);
 }
