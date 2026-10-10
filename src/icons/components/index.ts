@@ -1,0 +1,10 @@
+export { default as CalendarIcon } from "./CalendarIcon";
+export { default as CameraIcon } from "./CameraIcon";
+export { default as DiarySimpleIcon } from "./DiarySimpleIcon";
+export { default as MapIcon } from "./MapIcon";
+export { default as PictureIcon } from "./PictureIcon";
+export { default as PlanetEarthIcon } from "./PlanetEarthIcon";
+export { default as PlusFilledIcon } from "./PlusFilledIcon";
+export { default as PlusEmptyIcon } from "./PlusEmptyIcon";
+export { default as SettingsIcon } from "./SettingsIcon";
+export { default as WalletIcon } from "./WalletIcon";

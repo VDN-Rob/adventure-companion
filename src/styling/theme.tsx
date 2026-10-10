@@ -37,6 +37,15 @@ const spacing = {
   xxxl: 48,
 };
 
+const iconSize = {
+  xs: 10,
+  sm: 30,
+  md: 90,
+  lg: 120,
+  xl: 150,
+  xxl: 180
+}
+
 const typography = {
   display: {
     fontFamily: "Rajdhani-SemiBold",
@@ -87,4 +96,5 @@ export const theme = {
     headerHeight: 72,
     bottomBarHeight: 72,
   },
+  iconSize
 };

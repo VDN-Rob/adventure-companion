@@ -35,11 +35,13 @@
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.10.1",
     "uuid": "^14.0.1"
   },
   "devDependencies": {
+    "@svgr/cli": "^8.1.0",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.2.2",
     "jest": "^30.5.2",
@@ -51,7 +53,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "icons:generate": "svgr --native --typescript --out-dir src/icons/components -- src/icons/svgs"
   },
   "private": true
 }

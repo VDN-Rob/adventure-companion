@@ -1,9 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { theme } from "@/styling/theme";
+import { ReactNode } from "react";
 
 type MenuItemProps = {
-  icon: string;
+  icon: ReactNode;
   title: string;
   description?: string;
   onPress: () => void;
@@ -24,9 +25,15 @@ export function MenuItem({
 		]}
 		>
 		<View style={styles.iconContainer}>
-			<Text style={styles.icon}>
-			{icon}
-			</Text>
+			{typeof icon === "string" ? (
+				<Text style={styles.icon}>
+				{icon}
+				</Text>
+			) : (
+				<View>
+				{icon}
+				</View>
+			)}
 		</View>
 
 		<View style={styles.textContainer}>

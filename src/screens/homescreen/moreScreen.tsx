@@ -1,5 +1,6 @@
 import { MenuItem } from "@/components/oldForms/MenuItem";
 import { getTranslations } from "@/i18n";
+import { DiarySimpleIcon, MapIcon, PlanetEarthIcon, SettingsIcon, WalletIcon } from "@/icons/components";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { BottomNavigation } from "@/screens/homescreen/components/BottomNavigation";
 import { theme } from "@/styling/theme";
@@ -25,35 +26,35 @@ export default function MoreScreen() {
 
 				<View style={styles.menu}>
 					<MenuItem
-					icon="⚑"
-					title={t.adventures.adventure}
-					description={t.moreScreen.adventuresDesc}
-					onPress={() => { router.push("/trip/trips") }}
+						icon={<PlanetEarthIcon height={theme.iconSize.sm} width={theme.iconSize.sm} color={theme.colours.accent}/>}
+						title={t.adventures.adventure}
+						description={t.moreScreen.adventuresDesc}
+						onPress={() => { router.push("/trip/trips") }}
 					/>
 
 					<MenuItem
-					icon="◇"
-					title={t.finance.finances}
-					description={t.moreScreen.financesDesc}
-					onPress={() => { router.push("/finance/finance")}}
+						icon={<WalletIcon height={theme.iconSize.sm} width={theme.iconSize.sm} color={theme.colours.accent}/>}
+						title={t.finance.finances}
+						description={t.moreScreen.financesDesc}
+						onPress={() => { router.push("/finance/finance")}}
 					/>
 
 					<MenuItem
-					icon="✎"
-					title={t.diary.diary}
-					description={t.moreScreen.diaryDesc}
-					onPress={() => { router.push("/diary/diary") }}
+						icon={<DiarySimpleIcon height={theme.iconSize.sm} width={theme.iconSize.sm} color={theme.colours.accent}/>}
+						title={t.diary.diary}
+						description={t.moreScreen.diaryDesc}
+						onPress={() => { router.push("/diary/diary") }}
 					/>
 
 					<MenuItem
-					icon="[]"
-					title={t.maps.maps}
-					description={t.moreScreen.mapsDesc}
-					onPress={() => { router.push("/map/offlineMap") }}
+						icon={<MapIcon height={theme.iconSize.sm} width={theme.iconSize.sm} color={theme.colours.accent}/>}
+						title={t.maps.maps}
+						description={t.moreScreen.mapsDesc}
+						onPress={() => { router.push("/map/offlineMap") }}
 					/>
 
 					<MenuItem
-						icon="⚙"
+						icon={<SettingsIcon height={theme.iconSize.sm} width={theme.iconSize.sm} color={theme.colours.accent}/>}
 						title={t.moreScreen.settings}
 						onPress={() => { router.push("/settings")}}
 					/>
