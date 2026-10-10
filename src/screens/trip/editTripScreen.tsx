@@ -17,9 +17,11 @@ import {
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
 import { GameModal } from "@/components/GameModal";
+import { StartEndDateSelector } from "@/components/reusableUI/combinations/startEndDateSelector";
 import { getTranslations } from "@/i18n";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
+import { dateStringToLocalDate, dateToDateString } from "@/utils/date";
 import { capitalize } from "@/utils/string/capitalize";
 import { validateTripFields } from "@/utils/validation/tripValidation";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -45,6 +47,10 @@ export default function EditTripScreen() {
 	const { settings } = useAppSettings();
 	const t = getTranslations(settings.language)
 	
+	function handleStartDateChange(selectedDate: Date) {
+      setStartDate(dateToDateString(selectedDate));
+    }
+
     // Load the right trip when screen finishes loading
     useEffect(() => {
         async function loadTrip() {
@@ -167,29 +173,14 @@ export default function EditTripScreen() {
 				/>
 			
 				{/* DATES */}
-				<View style={styles.row}>
-					<View style={styles.half}>
-					<InputField
-						label={t.time.startDate.toUpperCase()}
-						value={startDate}
-						onChangeText={setStartDate}
-						placeholder={t.time.datePlaceholder}
-						keyboardType="numbers-and-punctuation"
-					/>
-					</View>
-			
-					<View style={styles.rowGap} />
-			
-					<View style={styles.half}>
-					<InputField
-						label={t.time.endDate.toUpperCase()}
-						value={endDate}
-						onChangeText={setEndDate}
-						placeholder={capitalize(t.common.optional)}
-						keyboardType="numbers-and-punctuation"
-					/>
-					</View>
-				</View>
+				<StartEndDateSelector
+					startDate={startDate ? dateStringToLocalDate(startDate) : new Date()}
+					endDate={endDate ? dateStringToLocalDate(endDate) : null}
+					onStartDateChange={handleStartDateChange}
+					onEndDateChange={(date) => {
+						setEndDate(date ? dateToDateString(date) : "");
+					}}
+				/>
 			
 				{/* DESCRIPTION */}
 				<View style={styles.notesContainer}>

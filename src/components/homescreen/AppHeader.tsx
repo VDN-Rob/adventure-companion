@@ -1,4 +1,5 @@
 import { styles } from '@/styling/styles';
+import { textStyles } from '@/styling/textStyles';
 import { theme } from '@/styling/theme';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -19,7 +20,7 @@ export function AppHeader({
 		<View style={localStyles.container}>
 			<View style={localStyles.topRow}>
 				<View style={styles.simpleContainer}>
-					<Text style={styles.headerTitle}>{appName}</Text>
+					<Text style={textStyles.headerTitle}>{appName}</Text>
 					<View style={localStyles.accentLine} />
 				</View>
 
@@ -43,7 +44,7 @@ export function AppHeader({
 				)}
 			</View>
 
-			<Text style={styles.headerSubTitle}>
+			<Text style={textStyles.headerSubTitle}>
 				{tripName}
 			</Text>
 		</View>

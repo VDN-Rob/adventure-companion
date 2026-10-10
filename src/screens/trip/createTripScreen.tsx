@@ -1,6 +1,6 @@
 import { InputField } from "@/components/forms/InputField";
 import { SectionLabel } from "@/components/forms/SectionLabel";
-import { DateSelector } from "@/components/reusableUI/forms/DateSelector";
+import { StartEndDateSelector } from "@/components/reusableUI/combinations/startEndDateSelector";
 import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
@@ -11,11 +11,14 @@ import { validateTripFields } from "@/utils/validation/tripValidation";
 import * as Crypto from "expo-crypto";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function CreateTripScreen() {
+    const { settings } = useAppSettings();
+    const t = getTranslations(settings.language);
+
     // State
     const [name, setName] = useState("");
     const [startDate, setStartDate] = useState("");
@@ -23,20 +26,12 @@ export default function CreateTripScreen() {
     const [description, setDescription] = useState("");
     const [budget, setBudget] = useState("");
     const [budgetCurrency, setBudgetCurrency] = useState("EUR");
-    const { settings } = useAppSettings();
-    const t = getTranslations(settings.language);
-	const [hasNoEndDate, setHasNoEndDate] = useState(false);
-    
-    
+
     // Access application layer
     const { tripServices } = useAppServices();
 
     function handleStartDateChange(selectedDate: Date) {
       setStartDate(dateToDateString(selectedDate));
-    }
-
-    function handleEndDateChange(selectedDate: Date) {
-      setEndDate(dateToDateString(selectedDate));
     }
 
     async function handleSaveTrip() {
@@ -142,50 +137,14 @@ export default function CreateTripScreen() {
 				/>
 		
 				{/* DATES */}
-				<View style={styles.row}>
-					<View style={styles.half}>
-						<DateSelector
-							label={t.time.startDate.toUpperCase()}
-							date={new Date()}
-							onDateChange={handleStartDateChange}
-						/>
-					</View>
-
-					<View style={[styles.half, styles.dateButton]}>
-						<Switch
-							value={hasNoEndDate}
-							onValueChange={(value) => {
-								setHasNoEndDate(value);
-
-								if (value) {
-									setEndDate("");
-								}
-							}}
-						/>
-					</View>
-
-					{!hasNoEndDate && (
-						<View>
-							<View style={styles.half}>
-								<DateSelector
-									label={t.time.endDate.toUpperCase()}
-									date={
-										startDate
-											? dateStringToLocalDate(startDate)
-											: new Date()
-									}
-									minimumDate={
-										startDate
-											? dateStringToLocalDate(startDate)
-											: undefined
-									}
-									onDateChange={handleEndDateChange}
-								/>
-							</View>
-						</View>
-					)}
-				</View>
-				
+				<StartEndDateSelector
+					startDate={startDate ? dateStringToLocalDate(startDate) : new Date()}
+					endDate={endDate ? dateStringToLocalDate(endDate) : null}
+					onStartDateChange={handleStartDateChange}
+					onEndDateChange={(date) => {
+						setEndDate(date ? dateToDateString(date) : "");
+					}}
+				/>
 		
 				{/* DESCRIPTION */}
 				<View style={styles.notesContainer}>
@@ -259,17 +218,14 @@ export default function CreateTripScreen() {
 const styles = StyleSheet.create({
 	dateButton: {
         minHeight: 64,
-        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: theme.spacing.md,
-        paddingHorizontal: theme.spacing.md,
         paddingVertical: theme.spacing.sm,
         borderWidth: 1,
         borderColor: theme.colours.border,
         borderRadius: theme.radius.md,
         backgroundColor: theme.colours.surface,
     },
+	
     container: {
       flex: 1,
       backgroundColor: theme.colours.background,

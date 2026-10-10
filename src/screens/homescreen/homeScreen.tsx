@@ -7,6 +7,7 @@ import { QuickActions } from "@/components/homescreen/QuickActions";
 import { getTranslations } from "@/i18n";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { styles } from "@/styling/styles";
+import { textStyles } from "@/styling/textStyles";
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -62,11 +63,11 @@ export default function HomeScreen() {
             <View style={styles.content}>
                 {activeTrips.length === 0 && (
                     <View style={styles.centeringContainer}>
-                        <Text style={styles.subTitle}>
+                        <Text style={textStyles.subTitle}>
                             {t.homeScreen.noAdventure}
                         </Text>
                         
-                        <Text style={styles.normalText}>
+                        <Text style={textStyles.normalText}>
                             {t.homeScreen.noAdventureDesc}
                         </Text>
                         

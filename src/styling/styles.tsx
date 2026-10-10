@@ -195,45 +195,6 @@ export const styles = StyleSheet.create({
 		color: theme.colours.textMuted,
 	},
 
-	// TEXT 
-	headerTitle: {
-		fontFamily: theme.fonts.displayBold,
-		fontSize: theme.fontSize.xxl,
-
-		color: theme.colours.text,
-
-		letterSpacing: 3,
-		textTransform: 'uppercase',
-	},
-
-	headerSubTitle: {
-		marginTop: theme.spacing.sm,
-
-		fontFamily: theme.fonts.body,
-		fontSize: theme.fontSize.sm,
-
-		color: theme.colours.textSecondary,
-
-		letterSpacing: 1,
-		textTransform: 'uppercase',
-	},
-
-    subTitle: {
-        ...theme.typography.display,
-        fontSize: theme.fontSize.xl,
-        color: theme.colours.text,
-        textAlign: 'center',
-        marginBottom: theme.spacing.sm,
-    },
-
-    normalText: {
-        ...theme.typography.body,
-        fontSize: theme.fontSize.md,
-        color: theme.colours.textSecondary,
-        textAlign: 'center',
-        marginBottom: theme.spacing.xl,
-    },
-
 	// ACCENTED BUTTON
     yellowButtonContainer: {
         backgroundColor: theme.colours.accent,
@@ -248,4 +209,22 @@ export const styles = StyleSheet.create({
         fontSize: theme.fontSize.sm,
         color: theme.colours.background,
     },
+
+	simpleButton: {
+        minHeight: 64,
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: theme.spacing.md,
+        paddingHorizontal: theme.spacing.md,
+        paddingVertical: theme.spacing.sm,
+        borderWidth: 1,
+        borderColor: theme.colours.border,
+        borderRadius: theme.radius.md,
+        backgroundColor: theme.colours.surface,
+    },
+
+	simpleButtonPressed: {
+		backgroundColor: theme.colours.surfaceRaised,
+		borderColor: theme.colours.accent,
+	},
 });
