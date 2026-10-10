@@ -2,7 +2,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { theme } from "@/styling/theme";
 
-type GameModalProps = {
+type ChoiceModalProps = {
     visible: boolean;
     title: string;
     message: string;
@@ -16,7 +16,7 @@ type GameModalProps = {
     onCancel: () => void;
 };
 
-export function GameModal({
+export function ChoiceModal({
 	visible,
 	title,
 	message,
@@ -25,7 +25,7 @@ export function GameModal({
 	destructive = false,
 	onConfirm,
 	onCancel,
-}: GameModalProps) {
+}: ChoiceModalProps) {
 	return (
 		<Modal
 		visible={visible}

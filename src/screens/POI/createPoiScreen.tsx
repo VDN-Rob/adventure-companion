@@ -15,9 +15,9 @@ import {
     View,
 } from "react-native";
 
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { InputField } from "@/components/forms/InputField";
-import { POITypeSelector } from "@/components/forms/POITypeSelector";
-import { SectionLabel } from "@/components/forms/SectionLabel";
+import { POITypeSelector } from "@/components/oldForms/POITypeSelector";
 import { getTranslations } from "@/i18n";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";

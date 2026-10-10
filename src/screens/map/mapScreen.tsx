@@ -1,8 +1,8 @@
-import { MapNavigationControls } from "@/components/map/MapNavigationControls";
-import { RouteNavigationInfo } from "@/components/map/RouteNavigationInfo";
 import { MAP_STYLE } from "@/constants/map";
 import { POI } from "@/models/POI";
 import { Route } from "@/models/Route";
+import { MapNavigationControls } from "@/screens/map/components/MapNavigationControls";
+import { RouteNavigationInfo } from "@/screens/map/components/RouteNavigationInfo";
 import { RouteProgress } from "@/services/RouteNavigationService";
 import { calculateBounds } from "@/utils/map/calculateMapBounds";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";

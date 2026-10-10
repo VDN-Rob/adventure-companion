@@ -1,5 +1,5 @@
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { InputField } from "@/components/forms/InputField";
-import { SectionLabel } from "@/components/forms/SectionLabel";
 import { Expense, ExpenseCategory } from "@/models/Expense";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";

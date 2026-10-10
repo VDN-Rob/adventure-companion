@@ -1,7 +1,7 @@
 import { InputField } from "@/components/forms/InputField";
-import { POITypeSelector } from "@/components/forms/POITypeSelector";
-import { SectionLabel } from "@/components/forms/SectionLabel";
-import { GameModal } from "@/components/GameModal";
+import { ChoiceModal } from "@/components/modals/ChoiceModal";
+import { POITypeSelector } from "@/components/oldForms/POITypeSelector";
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { getTranslations } from "@/i18n";
 import { POI, POIType } from "@/models/POI";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
@@ -418,7 +418,7 @@ export default function EditPOIScreen() {
                     </View>
                 </ScrollView>
 
-                <GameModal
+                <ChoiceModal
                     visible={
                         deleteModalVisible
                     }

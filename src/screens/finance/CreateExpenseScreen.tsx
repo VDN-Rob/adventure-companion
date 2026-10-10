@@ -1,5 +1,5 @@
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { InputField } from "@/components/forms/InputField";
-import { SectionLabel } from "@/components/forms/SectionLabel";
 import { getTranslations } from "@/i18n";
 import { Expense, ExpenseCategory } from "@/models/Expense";
 import { useAppSettings } from "@/providers/AppSettingsProvider";

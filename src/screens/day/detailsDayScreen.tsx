@@ -1,6 +1,6 @@
 import { POICard } from "@/components/card/POICard";
 import { RouteCard } from "@/components/card/RouteCard";
-import { SectionLabel } from "@/components/forms/SectionLabel";
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";

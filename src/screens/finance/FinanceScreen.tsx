@@ -1,13 +1,13 @@
 import { ExpenseCard } from "@/components/card/ExpenseCard";
-import { CategoryBreakdown } from "@/components/finance/CategoryBreakdown";
-import { FinanceSummary } from "@/components/finance/FinanceSummary";
-import { FinancePeriod, PeriodSelector } from "@/components/finance/PeriodSelector";
-import { SpendingOverview } from "@/components/finance/SpendingOverview";
-import { TripSelector } from "@/components/finance/TripSelector";
 import { getTranslations } from "@/i18n";
 import { Expense } from "@/models/Expense";
 import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
+import { CategoryBreakdown } from "@/screens/finance/components/CategoryBreakdown";
+import { FinanceSummary } from "@/screens/finance/components/FinanceSummary";
+import { FinancePeriod, PeriodSelector } from "@/screens/finance/components/PeriodSelector";
+import { SpendingOverview } from "@/screens/finance/components/SpendingOverview";
+import { TripSelector } from "@/screens/finance/components/TripSelector";
 import { ExpenseStatistics } from "@/services/ExpenseService";
 import { theme } from "@/styling/theme";
 import { ExpenseFilter } from "@/types/expenseFilter";

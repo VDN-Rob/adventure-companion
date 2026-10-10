@@ -1,7 +1,7 @@
-import { NavigationItem } from "@/components/homescreen/BottomNavigation";
 import { Day } from "@/models/Day";
 import { POI } from "@/models/POI";
 import { Trip } from "@/models/Trip";
+import { NavigationItem } from "@/screens/homescreen/components/BottomNavigation";
 import { formatDate, getDayNumber, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useFocusEffect } from "expo-router";

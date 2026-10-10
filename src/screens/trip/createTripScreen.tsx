@@ -1,6 +1,6 @@
+import { SectionLabel } from "@/components/UI/SectionLabel";
+import { StartEndDateSelector } from "@/components/combinations/startEndDateSelector";
 import { InputField } from "@/components/forms/InputField";
-import { SectionLabel } from "@/components/forms/SectionLabel";
-import { StartEndDateSelector } from "@/components/reusableUI/combinations/startEndDateSelector";
 import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";

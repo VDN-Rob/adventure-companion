@@ -14,10 +14,10 @@ import {
 	View,
 } from "react-native";
 
+import { StartEndDateSelector } from "@/components/combinations/startEndDateSelector";
 import { InputField } from "@/components/forms/InputField";
-import { SectionLabel } from "@/components/forms/SectionLabel";
-import { GameModal } from "@/components/GameModal";
-import { StartEndDateSelector } from "@/components/reusableUI/combinations/startEndDateSelector";
+import { ChoiceModal } from "@/components/modals/ChoiceModal";
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { getTranslations } from "@/i18n";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
 import { theme } from "@/styling/theme";
@@ -262,7 +262,7 @@ export default function EditTripScreen() {
 					</Pressable>
 				</View>
 				</ScrollView>
-				<GameModal
+				<ChoiceModal
 					visible={deleteModalVisible}
 					title={t.adventures.delAdventure + "?"}
 					message={t.adventures.delAdventureDesc}

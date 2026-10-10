@@ -1,5 +1,5 @@
-import { SectionLabel } from "@/components/forms/SectionLabel";
-import { GameModal } from "@/components/GameModal";
+import { ChoiceModal } from "@/components/modals/ChoiceModal";
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { MAP_STYLE } from "@/constants/map";
 import { Route } from "@/models/Route";
 import { theme } from "@/styling/theme";
@@ -366,7 +366,7 @@ export default function RouteDetailsScreen() {
                 </Text>
                 </Pressable>
             </View>
-            <GameModal
+            <ChoiceModal
                 visible={deleteModalVisible}
                 title="Delete route?"
                 message="This route will be permanently deleted. This action cannot be undone."

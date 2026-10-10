@@ -1,22 +1,22 @@
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { InputField } from "@/components/forms/InputField";
-import { SectionLabel } from "@/components/forms/SectionLabel";
 import { dateStringToLocalDate, dateToDateString, getTodayDate } from "@/utils/date";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-	Alert,
-	Image,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
+    Alert,
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
-import { DateSelector } from "@/components/reusableUI/forms/DateSelector";
+import { DateSelector } from "@/components/forms/DateSelector";
 import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";

@@ -1,11 +1,11 @@
 import { DayCard } from "@/components/card/DayCard";
 import { Selector } from "@/components/forms/Selector";
-import { AppHeader } from "@/components/homescreen/AppHeader";
-import { BottomNavigation } from "@/components/homescreen/BottomNavigation";
-import { CheckInModal } from "@/components/homescreen/CheckInModal";
-import { QuickActions } from "@/components/homescreen/QuickActions";
+import { AppHeader } from "@/components/UI/AppHeader";
 import { getTranslations } from "@/i18n";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
+import { BottomNavigation } from "@/screens/homescreen/components/BottomNavigation";
+import { CheckInModal } from "@/screens/homescreen/components/CheckInModal";
+import { QuickActions } from "@/screens/homescreen/components/QuickActions";
 import { styles } from "@/styling/styles";
 import { textStyles } from "@/styling/textStyles";
 import { router } from "expo-router";

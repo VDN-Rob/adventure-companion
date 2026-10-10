@@ -1,8 +1,8 @@
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { DiaryItem } from "@/screens/diary/detailsDiaryScreen";
 import { theme } from "@/styling/theme";
 import { formatDate } from "@/utils/date";
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SectionLabel } from "../forms/SectionLabel";
 
 type DiaryDetailProps = {
     item: DiaryItem;

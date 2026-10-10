@@ -1,5 +1,5 @@
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { InputField } from "@/components/forms/InputField";
-import { SectionLabel } from "@/components/forms/SectionLabel";
 import { getTranslations } from "@/i18n";
 import { DiaryEntry } from "@/models/DiaryEntry";
 import { useAppSettings } from "@/providers/AppSettingsProvider";

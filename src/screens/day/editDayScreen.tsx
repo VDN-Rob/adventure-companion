@@ -1,23 +1,23 @@
-import { GameModal } from "@/components/GameModal";
 import { InputField } from "@/components/forms/InputField";
-import { SectionLabel } from "@/components/forms/SectionLabel";
+import { ChoiceModal } from "@/components/modals/ChoiceModal";
+import { SectionLabel } from "@/components/UI/SectionLabel";
 import { Day } from "@/models/Day";
 import { useAppServices } from "@/utils/useRepository/useAppServiceProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-	Alert,
-	KeyboardAvoidingView,
-	Platform,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 
-import { DateSelector } from "@/components/reusableUI/forms/DateSelector";
+import { DateSelector } from "@/components/forms/DateSelector";
 import { getTranslations } from "@/i18n";
 import { Trip } from "@/models/Trip";
 import { useAppSettings } from "@/providers/AppSettingsProvider";
@@ -344,7 +344,7 @@ export default function EditDayScreen() {
 				</View>
 			</ScrollView>
 		
-			<GameModal
+			<ChoiceModal
 				visible={deleteModalVisible}
 				title={t.day.deleteConfirmation.title}
 				message={t.day.deleteConfirmation.message}

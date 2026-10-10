@@ -1,5 +1,5 @@
+import { DateSelector } from "@/components/forms/DateSelector";
 import { InputField } from "@/components/forms/InputField";
-import { DateSelector } from "@/components/reusableUI/forms/DateSelector";
 import { getTranslations } from "@/i18n";
 import { Day } from "@/models/Day";
 import { Trip } from "@/models/Trip";
